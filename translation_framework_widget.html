@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Research Translation Decision Framework</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a2e;
+    --cream: #f8f5ef;
+    --gold: #c9a84c;
+    --gold-light: #e8d5a3;
+    --sage: #4a6741;
+    --sage-light: #e8f0e7;
+    --red: #8b2635;
+    --red-light: #f5e8ea;
+    --mist: #e8edf2;
+    --slate: #4a5568;
+    --border: #d4cfc7;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  /* Header */
+  .header {
+    background: var(--ink);
+    padding: 2.5rem 2rem 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 40px,
+      rgba(201,168,76,0.04) 40px,
+      rgba(201,168,76,0.04) 41px
+    );
+  }
+
+  .header-badge {
+    display: inline-block;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.8rem;
+    margin-bottom: 1rem;
+  }
+
+  .header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.4rem, 4vw, 2rem);
+    color: #fff;
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
+  }
+
+  .header h1 em {
+    color: var(--gold);
+    font-style: italic;
+  }
+
+  .header p {
+    color: rgba(255,255,255,0.55);
+    font-size: 0.8rem;
+    font-weight: 300;
+    letter-spacing: 0.02em;
+  }
+
+  .header .author {
+    margin-top: 0.8rem;
+    color: rgba(255,255,255,0.4);
+    font-size: 0.72rem;
+    letter-spacing: 0.05em;
+  }
+
+  /* Progress */
+  .progress-bar {
+    background: var(--ink);
+    padding: 0 2rem 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .progress-track {
+    flex: 1;
+    height: 2px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--gold);
+    border-radius: 2px;
+    transition: width 0.5s ease;
+  }
+
+  .progress-label {
+    color: rgba(255,255,255,0.4);
+    font-size: 0.7rem;
+    white-space: nowrap;
+    letter-spacing: 0.05em;
+  }
+
+  /* Main container */
+  .container {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  /* Question card */
+  .question-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    padding: 2rem;
+    margin-bottom: 1rem;
+    animation: slideIn 0.4s ease;
+    position: relative;
+  }
+
+  .question-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--gold);
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .question-number {
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 500;
+    margin-bottom: 0.6rem;
+  }
+
+  .question-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.25rem;
+    color: var(--ink);
+    margin-bottom: 0.5rem;
+    line-height: 1.3;
+  }
+
+  .question-hint {
+    font-size: 0.8rem;
+    color: var(--slate);
+    line-height: 1.5;
+    font-weight: 300;
+    padding: 0.8rem;
+    background: var(--mist);
+    border-left: 2px solid var(--border);
+    margin: 1rem 0;
+  }
+
+  /* Answer buttons */
+  .answer-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    margin-top: 1.2rem;
+  }
+
+  .btn {
+    padding: 0.9rem 1.2rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1.5px solid;
+    transition: all 0.2s ease;
+    letter-spacing: 0.02em;
+    text-align: center;
+  }
+
+  .btn-yes {
+    background: var(--sage);
+    border-color: var(--sage);
+    color: #fff;
+  }
+
+  .btn-yes:hover {
+    background: #3a5331;
+    border-color: #3a5331;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(74,103,65,0.25);
+  }
+
+  .btn-no {
+    background: #fff;
+    border-color: var(--border);
+    color: var(--slate);
+  }
+
+  .btn-no:hover {
+    background: var(--red-light);
+    border-color: var(--red);
+    color: var(--red);
+    transform: translateY(-1px);
+  }
+
+  /* Hold my hand CTA */
+  .handhold-card {
+    background: var(--ink);
+    padding: 1.2rem 1.5rem;
+    margin-top: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    animation: slideIn 0.4s ease 0.1s both;
+    cursor: pointer;
+    transition: background 0.2s;
+    text-decoration: none;
+  }
+
+  .handhold-card:hover {
+    background: #2a2a4e;
+  }
+
+  .handhold-icon {
+    font-size: 1.4rem;
+    flex-shrink: 0;
+  }
+
+  .handhold-text {
+    flex: 1;
+  }
+
+  .handhold-text strong {
+    display: block;
+    color: var(--gold);
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 0.2rem;
+  }
+
+  .handhold-text span {
+    color: rgba(255,255,255,0.7);
+    font-size: 0.78rem;
+    font-weight: 300;
+    line-height: 1.4;
+  }
+
+  .handhold-arrow {
+    color: var(--gold);
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+
+  /* Redirect card */
+  .redirect-card {
+    background: var(--red-light);
+    border: 1px solid #d4a0a8;
+    border-left: 3px solid var(--red);
+    padding: 1.2rem 1.5rem;
+    margin-top: 0.75rem;
+    animation: slideIn 0.4s ease;
+  }
+
+  .redirect-card .redirect-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--red);
+    font-weight: 500;
+    margin-bottom: 0.4rem;
+  }
+
+  .redirect-card p {
+    font-size: 0.82rem;
+    color: #5a2028;
+    line-height: 1.5;
+  }
+
+  /* Result cards */
+  .result-card {
+    padding: 2rem;
+    margin-bottom: 1rem;
+    animation: slideIn 0.5s ease;
+    text-align: center;
+  }
+
+  .result-card.success {
+    background: var(--sage-light);
+    border: 1px solid #b8d4b5;
+    border-top: 4px solid var(--sage);
+  }
+
+  .result-card.license {
+    background: #fff8e8;
+    border: 1px solid #e8d5a3;
+    border-top: 4px solid var(--gold);
+  }
+
+  .result-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .result-card h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    margin-bottom: 0.6rem;
+    color: var(--ink);
+  }
+
+  .result-card p {
+    font-size: 0.85rem;
+    color: var(--slate);
+    line-height: 1.6;
+    max-width: 480px;
+    margin: 0 auto 1.2rem;
+  }
+
+  .next-steps {
+    text-align: left;
+    background: rgba(255,255,255,0.6);
+    padding: 1rem 1.2rem;
+    margin: 1rem auto;
+    max-width: 460px;
+  }
+
+  .next-steps h4 {
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--slate);
+    margin-bottom: 0.6rem;
+  }
+
+  .next-steps ol {
+    padding-left: 1.2rem;
+  }
+
+  .next-steps li {
+    font-size: 0.82rem;
+    color: var(--ink);
+    line-height: 1.6;
+    margin-bottom: 0.3rem;
+  }
+
+  /* Big CTA */
+  .cta-block {
+    background: var(--ink);
+    padding: 2rem;
+    margin-top: 1rem;
+    text-align: center;
+    animation: slideIn 0.5s ease 0.2s both;
+  }
+
+  .cta-block .cta-eyebrow {
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.6rem;
+  }
+
+  .cta-block h3 {
+    font-family: 'Playfair Display', serif;
+    color: #fff;
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .cta-block p {
+    color: rgba(255,255,255,0.55);
+    font-size: 0.8rem;
+    margin-bottom: 1.2rem;
+    line-height: 1.5;
+  }
+
+  .cta-button {
+    display: inline-block;
+    background: var(--gold);
+    color: var(--ink);
+    padding: 0.85rem 2rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+  }
+
+  .cta-button:hover {
+    background: #e8c86a;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(201,168,76,0.3);
+  }
+
+  .cta-rate {
+    margin-top: 0.8rem;
+    color: rgba(255,255,255,0.3);
+    font-size: 0.72rem;
+  }
+
+  /* Restart */
+  .restart-btn {
+    display: block;
+    width: 100%;
+    margin-top: 0.75rem;
+    padding: 0.8rem;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--slate);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    transition: all 0.2s;
+  }
+
+  .restart-btn:hover {
+    border-color: var(--ink);
+    color: var(--ink);
+    background: var(--mist);
+  }
+
+  /* Email modal */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(26,26,46,0.85);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+  }
+
+  .modal-overlay.open {
+    display: flex;
+  }
+
+  .modal {
+    background: var(--cream);
+    max-width: 460px;
+    width: 100%;
+    padding: 2rem;
+    animation: slideIn 0.3s ease;
+    position: relative;
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 1rem; right: 1rem;
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: var(--slate);
+  }
+
+  .modal h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    margin-bottom: 0.4rem;
+    color: var(--ink);
+  }
+
+  .modal p {
+    font-size: 0.8rem;
+    color: var(--slate);
+    margin-bottom: 1.2rem;
+    line-height: 1.5;
+  }
+
+  .modal input, .modal textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    color: var(--ink);
+    background: #fff;
+    margin-bottom: 0.75rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .modal input:focus, .modal textarea:focus {
+    border-color: var(--gold);
+  }
+
+  .modal textarea {
+    height: 80px;
+    resize: none;
+  }
+
+  .modal-submit {
+    width: 100%;
+    padding: 0.9rem;
+    background: var(--ink);
+    color: #fff;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    transition: background 0.2s;
+  }
+
+  .modal-submit:hover { background: #2a2a4e; }
+
+  .modal-success {
+    text-align: center;
+    padding: 1rem 0;
+    display: none;
+  }
+
+  .modal-success .check { font-size: 2rem; margin-bottom: 0.5rem; }
+  .modal-success h4 { font-family: 'Playfair Display', serif; margin-bottom: 0.3rem; }
+  .modal-success p { font-size: 0.8rem; color: var(--slate); }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    padding: 1.5rem;
+    font-size: 0.7rem;
+    color: rgba(26,26,46,0.35);
+    letter-spacing: 0.04em;
+    border-top: 1px solid var(--border);
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-badge">V1.0 · DRG Innovation LLC</div>
+  <h1>Research Translation<br><em>Decision Framework</em></h1>
+  <p>A 10-Minute Diagnostic for Researchers & Clinicians</p>
+  <div class="author">Dr. Gabriel Gruionu, MS, PhD · Former Faculty, Harvard Medical School & MGH</div>
+</div>
+
+<div class="progress-bar">
+  <div class="progress-track">
+    <div class="progress-fill" id="progressFill" style="width:0%"></div>
+  </div>
+  <div class="progress-label" id="progressLabel">Q 0 / 5</div>
+</div>
+
+<div class="container" id="app"></div>
+
+<div class="footer">© 2026 Dr. Gabriel Gruionu, PhD · DRG Innovation LLC · All Rights Reserved</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div id="modalForm">
+      <h3>Let's Talk</h3>
+      <p>Tell me where you're stuck. I'll reach out within 24 hours to schedule a session.</p>
+      <input type="text" id="modalName" placeholder="Your name" />
+      <input type="email" id="modalEmail" placeholder="Your email" />
+      <textarea id="modalMessage" placeholder="Briefly describe your project and where you're stuck..."></textarea>
+      <button class="modal-submit" onclick="submitModal()">Request a Consulting Session →</button>
+    </div>
+    <div class="modal-success" id="modalSuccess">
+      <div class="check">✓</div>
+      <h4>Message sent.</h4>
+      <p>Dr. Gruionu will be in touch within 24 hours.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+const CONTACT_EMAIL = 'gruionu@gmail.com';
+
+const questions = [
+  {
+    id: 'q1',
+    number: 'Question 1 of 5',
+    title: 'Problem Validity',
+    label: 'Is there a clear, unmet need that your idea directly addresses?',
+    hint: 'Think: patient burden, clinical gap, system inefficiency, or evidence void. Can you name it in one sentence?',
+    redirectTitle: 'Strengthen the problem definition first',
+    redirectText: 'Conduct a focused needs assessment, patient or clinician interviews, or a landscape review. Return once the problem is clearly defined.',
+    handholdText: 'Not sure if your problem is real enough? I can help you run a needs assessment and define your clinical gap clearly — before you invest more time.',
+  },
+  {
+    id: 'q2',
+    number: 'Question 2 of 5',
+    title: 'Differentiation',
+    label: 'Does your idea offer something genuinely different from existing solutions?',
+    hint: 'Consider: better efficacy, lower cost, more accessible, simpler to use, or more equitable delivery.',
+    redirectTitle: 'Refine or reconsider',
+    redirectText: 'Existing solutions may be sufficient. Explore whether meaningful improvement — not invention — is the real opportunity.',
+    handholdText: 'Unsure how your idea compares to what already exists? I can walk you through a competitive landscape review and help you find your real differentiator.',
+  },
+  {
+    id: 'q3',
+    number: 'Question 3 of 5',
+    title: 'Evidence Readiness',
+    label: 'Do you have proof of concept — data, pilots, or early validation?',
+    hint: 'Lab data, case series, feasibility study, or structured patient/clinician feedback counts.',
+    redirectTitle: 'Build proof of concept first',
+    redirectText: 'Apply for exploratory funding (NIH R21, NSF SBIR, foundation grants). Design a small validation study before committing to translation.',
+    handholdText: 'Not sure what evidence you need — or how to get it? I can help you design a minimal validation study and identify the right funding to support it.',
+  },
+  {
+    id: 'q4',
+    number: 'Question 4 of 5',
+    title: 'Pathway Clarity',
+    label: 'Do you know how this would reach patients, clinicians, or the system?',
+    hint: 'Options: spinout company, IP licensing, hospital adoption, academic partnership, or commercial partner.',
+    redirectTitle: 'Map the ecosystem first',
+    redirectText: 'Engage your Technology Transfer Office (TTO), innovation hub, or outside consultants. Attend an accelerator or translation workshop before proceeding.',
+    handholdText: 'Not sure which path to take — startup, license, or partnership? This is one of the most consequential decisions in translation. I can help you map it out.',
+  },
+  {
+    id: 'q5',
+    number: 'Question 5 of 5',
+    title: 'Personal Fit',
+    label: 'Are you willing and positioned to lead or champion this idea?',
+    hint: 'Consider: time availability, risk tolerance, non-research work appetite, institutional support, co-founders.',
+    redirectTitle: 'Not ready to lead yet',
+    redirectText: 'Consider licensing the IP, finding a co-founder champion, or publishing fully to enable others to build on the work.',
+    handholdText: 'Unsure whether you\'re the right person to lead this — or how to find the right partner? I can help you assess your options honestly.',
+  }
+];
+
+let currentStep = 0;
+let currentContext = '';
+
+function render() {
+  const app = document.getElementById('app');
+  
+  if (currentStep < questions.length) {
+    const q = questions[currentStep];
+    updateProgress(currentStep, questions.length);
+    app.innerHTML = `
+      <div class="question-card">
+        <div class="question-number">${q.number}</div>
+        <div class="question-title">${q.title}</div>
+        <div class="question-hint">${q.hint}</div>
+        <p style="font-size:0.95rem; font-weight:500; color:var(--ink); margin-top:0.5rem;">${q.label}</p>
+        <div class="answer-buttons">
+          <button class="btn btn-yes" onclick="answer(true)">✓ Yes — Continue</button>
+          <button class="btn btn-no" onclick="answer(false)">✗ Not yet</button>
+        </div>
+      </div>
+    `;
+  }
+}
+
+function answer(yes) {
+  const q = questions[currentStep];
+  const app = document.getElementById('app');
+
+  if (yes) {
+    currentStep++;
+    if (currentStep >= questions.length) {
+      showResult('success');
+    } else {
+      render();
+    }
+  } else {
+    // Show redirect + handhold
+    currentContext = `Stuck on: ${q.title}`;
+    updateProgress(currentStep, questions.length);
+    app.innerHTML = `
+      <div class="question-card">
+        <div class="question-number">${q.number}</div>
+        <div class="question-title">${q.title}</div>
+        <div class="question-hint">${q.hint}</div>
+        <p style="font-size:0.95rem; font-weight:500; color:var(--ink); margin-top:0.5rem;">${q.label}</p>
+        <div class="answer-buttons">
+          <button class="btn btn-yes" onclick="answer(true)">✓ Yes — Continue</button>
+          <button class="btn btn-no" style="background:var(--red-light);border-color:var(--red);color:var(--red);">✗ Not yet</button>
+        </div>
+      </div>
+      <div class="redirect-card">
+        <div class="redirect-label">→ Develop First</div>
+        <p><strong>${q.redirectTitle}.</strong> ${q.redirectText}</p>
+      </div>
+      <a class="handhold-card" onclick="openModal('${q.title}')">
+        <div class="handhold-icon">🤝</div>
+        <div class="handhold-text">
+          <strong>Need someone to hold your hand through this?</strong>
+          <span>${q.handholdText}</span>
+        </div>
+        <div class="handhold-arrow">→</div>
+      </a>
+      <button class="restart-btn" onclick="restart()">↺ Start over with a different idea</button>
+    `;
+  }
+}
+
+function showResult(type) {
+  updateProgress(5, 5);
+  const app = document.getElementById('app');
+
+  if (type === 'success') {
+    app.innerHTML = `
+      <div class="result-card success">
+        <div class="result-icon">✓</div>
+        <h2>You Are Ready to Translate</h2>
+        <p>Your idea has cleared all five readiness criteria. You are positioned to begin the formal translation journey.</p>
+        <div class="next-steps">
+          <h4>Your Recommended Next Steps</h4>
+          <ol>
+            <li>Engage your Technology Transfer Office (TTO) or innovation office</li>
+            <li>Protect your IP if not already done</li>
+            <li>Define your 90-day milestones and identify your core team</li>
+          </ol>
+        </div>
+      </div>
+      <div class="cta-block">
+        <div class="cta-eyebrow">Ready to Move — But Need a Guide?</div>
+        <h3>Don't navigate translation alone.</h3>
+        <p>Even when you're ready, the path from research to practice is full of invisible traps. I've helped dozens of clinician-innovators move faster by avoiding the mistakes I've seen derail careers.</p>
+        <button class="cta-button" onclick="openModal('Ready to translate')">Book a 1-on-1 Session with Dr. Gruionu →</button>
+        <div class="cta-rate">$250 / hr · No long-term commitment · Results from session one</div>
+      </div>
+      <button class="restart-btn" onclick="restart()">↺ Evaluate a different idea</button>
+    `;
+  }
+}
+
+function updateProgress(step, total) {
+  const pct = Math.round((step / total) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = `Q ${step} / ${total}`;
+}
+
+function openModal(context) {
+  currentContext = context || '';
+  document.getElementById('modalOverlay').classList.add('open');
+  document.getElementById('modalForm').style.display = 'block';
+  document.getElementById('modalSuccess').style.display = 'none';
+  if (document.getElementById('modalMessage')) {
+    document.getElementById('modalMessage').placeholder = `I'm stuck on: ${currentContext}. My project involves...`;
+  }
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+}
+
+function submitModal() {
+  const name = document.getElementById('modalName').value.trim();
+  const email = document.getElementById('modalEmail').value.trim();
+  const message = document.getElementById('modalMessage').value.trim();
+
+  if (!name || !email) {
+    alert('Please enter your name and email.');
+    return;
+  }
+
+  // Build mailto link
+  const subject = encodeURIComponent(`Consulting Request — ${currentContext || 'Translation Framework'}`);
+  const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\nContext: ${currentContext}\n\n${message}`);
+  window.location.href = `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
+
+  document.getElementById('modalForm').style.display = 'none';
+  document.getElementById('modalSuccess').style.display = 'block';
+}
+
+function restart() {
+  currentStep = 0;
+  render();
+}
+
+// Close modal on overlay click
+document.getElementById('modalOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+// Init
+render();
+</script>
+</body>
+</html>

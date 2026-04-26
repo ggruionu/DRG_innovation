@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Base Camp — TRL 1–3 Early Prototype Diagnostic · DRG Innovation</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:#1A2744; --blue:#185FA5; --blue-lt:#E8F1FB;
+  --amber:#B87020; --amber-lt:#FFF3DC; --amber-bd:#C8920A;
+  --green:#2E6B3E; --green-lt:#EAF3DE;
+  --red:#A32D2D; --red-lt:#FCEAEA;
+  --gray-1:#F7F6F3; --gray-2:#EEECEA; --gray-3:#C8C6C2;
+  --gray-4:#777570; --gray-5:#3A3936; --text:#1C1B19;
+  --bg:#F4F2EE; --white:#FFFFFF; --border:rgba(0,0,0,0.10);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Source Serif 4',Georgia,serif;background:var(--bg);color:var(--text);font-size:17px;line-height:1.6;padding-bottom:80px}
+.site-header{background:var(--navy);padding:36px 24px 32px;margin-bottom:36px}
+.header-inner{max-width:800px;margin:0 auto}
+.series-tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:14px;display:flex;align-items:center;gap:12px}
+.series-tag::after{content:'';flex:1;height:1px;background:rgba(255,255,255,0.12)}
+.trl-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.08);border:1px solid rgba(200,130,40,0.5);border-radius:4px;padding:5px 14px;font-family:'JetBrains Mono',monospace;font-size:12px;color:#E8A840;letter-spacing:0.1em;margin-bottom:18px}
+.trl-dot{width:7px;height:7px;border-radius:50%;background:#E8A840;animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+.header-titles{display:flex;align-items:flex-end;gap:24px;flex-wrap:wrap;margin-bottom:16px}
+h1.camp-name{font-family:'Bebas Neue',sans-serif;font-size:clamp(56px,12vw,96px);line-height:0.9;letter-spacing:0.02em;color:#fff}
+h1.camp-name span{color:#E8A840}
+.header-subtitle{font-family:'Source Serif 4',serif;font-size:18px;font-weight:300;font-style:italic;color:rgba(255,255,255,0.55);line-height:1.4;padding-bottom:6px}
+.terrain-strip{display:flex;height:5px;border-radius:3px;overflow:hidden}
+.t1{flex:1;background:#8B3A1A}.t2{flex:1;background:#B87020}.t3{flex:1;background:#E8A840}.t4{flex:1;background:#A89880}.t5{flex:1;background:#6B6558}
+.wrap{max-width:800px;margin:0 auto;padding:0 20px}
+.warning{background:var(--white);border-left:4px solid var(--amber-bd);border-radius:0 8px 8px 0;padding:18px 22px;margin-bottom:32px;border:1px solid var(--border);border-left:4px solid var(--amber-bd)}
+.warning strong{color:var(--navy);font-size:17px;display:block;margin-bottom:6px}
+.warning p{font-size:16px;color:var(--gray-4);font-style:italic;line-height:1.6}
+.prog-wrap{margin-bottom:32px}
+.prog-row{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gray-4);margin-bottom:6px}
+.prog-track{height:5px;background:var(--gray-2);border-radius:3px;overflow:hidden}
+.prog-fill{height:100%;background:var(--blue);border-radius:3px;width:0%;transition:width 0.4s}
+.section{margin-bottom:40px}
+.sec-header{display:flex;align-items:center;gap:14px;padding:12px 16px;background:var(--blue-lt);border-left:4px solid var(--blue);border-radius:0 6px 6px 0;margin-bottom:16px}
+.sec-num{font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--blue);line-height:1;min-width:36px}
+.sec-title{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--navy);margin-bottom:2px}
+.sec-sub{font-size:14px;color:var(--gray-4);font-style:italic}
+.qcard{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:20px 22px;margin-bottom:12px;transition:border-color 0.2s}
+.qcard.answered{border-color:rgba(24,95,165,0.3)}
+.qcard.has-error{border-color:#C43030!important;background:#FFF8F8}
+.q-meta{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--blue);margin-bottom:8px}
+.q-text{font-size:17px;font-weight:600;color:var(--navy);line-height:1.45;margin-bottom:6px}
+.q-sub{font-size:14px;color:var(--gray-4);font-style:italic;margin-bottom:14px;line-height:1.5}
+.opts{display:flex;flex-direction:column;gap:6px}
+.opt{display:flex;align-items:flex-start;gap:12px;padding:11px 14px;border-radius:7px;border:1px solid var(--gray-2);background:var(--gray-1);cursor:pointer;font-size:15px;color:var(--gray-5);line-height:1.45;transition:all 0.13s;user-select:none;min-height:48px}
+.opt:hover{border-color:var(--gray-3);background:var(--white)}
+.opt:has(input:checked){border-color:var(--blue);background:var(--blue-lt)}
+.opt:has(input:checked).opt-red{border-color:var(--red);background:var(--red-lt)}
+.opt:has(input:checked).opt-amber{border-color:var(--amber-bd);background:var(--amber-lt)}
+.opt:has(input:checked).opt-green{border-color:var(--green);background:var(--green-lt)}
+.opt input[type=radio]{accent-color:var(--blue);width:18px;height:18px;flex-shrink:0;margin-top:2px;cursor:pointer}
+.flag-pill{display:inline-flex;align-items:center;padding:2px 8px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:500;letter-spacing:0.1em;flex-shrink:0;margin-top:2px;align-self:flex-start}
+.pill-green{background:var(--green);color:#fff}
+.pill-amber{background:var(--amber-bd);color:#fff}
+.pill-red{background:var(--red);color:#fff}
+.submit-zone{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:28px 24px;text-align:center}
+.submit-zone>p{font-size:16px;color:var(--gray-4);font-style:italic;margin-bottom:18px}
+.err-banner{background:var(--red-lt);color:var(--red);border-radius:6px;padding:12px 16px;font-size:15px;margin-bottom:14px;display:none;font-family:'JetBrains Mono',monospace;letter-spacing:0.02em}
+.btn-assess{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;background:var(--navy);color:#fff;border:none;border-radius:8px;padding:16px;cursor:pointer;font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:0.08em;transition:background 0.2s}
+.btn-assess:hover{background:var(--blue)}
+#resultsSection{display:none;margin-top:48px}
+.results-verdict{text-align:center;padding:32px 20px 28px;border-radius:10px;margin-bottom:24px}
+.results-verdict.v-ready{background:var(--green-lt);border:1px solid var(--green)}
+.results-verdict.v-caution{background:var(--amber-lt);border:1px solid var(--amber-bd)}
+.results-verdict.v-blocked{background:var(--red-lt);border:1px solid var(--red)}
+.verdict-title{font-family:'Bebas Neue',sans-serif;font-size:52px;letter-spacing:0.04em;line-height:1;margin-bottom:8px}
+.v-ready .verdict-title{color:var(--green)}
+.v-caution .verdict-title{color:var(--amber)}
+.v-blocked .verdict-title{color:var(--red)}
+.verdict-sub{font-size:17px;color:var(--gray-5);font-style:italic}
+.score-section{margin-bottom:28px}
+.score-section-title,.flag-cards-title{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gray-4);margin-bottom:12px}
+.score-row{background:var(--white);border:1px solid var(--border);border-radius:8px;padding:14px 18px;margin-bottom:8px}
+.score-row-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.score-label{font-size:15px;font-weight:600;color:var(--navy)}
+.score-pct{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--gray-4)}
+.bar-track{height:6px;background:var(--gray-2);border-radius:3px;overflow:hidden}
+.bar-fill{height:100%;border-radius:3px;transition:width 0.8s ease}
+.bar-green{background:var(--green)}.bar-amber{background:var(--amber-bd)}.bar-red{background:var(--red)}
+.flag-cards{margin-bottom:28px}
+.flag-card{border-radius:8px;padding:16px 18px;margin-bottom:8px;border-left:4px solid transparent}
+.flag-card.fc-red{background:var(--red-lt);border-color:var(--red)}
+.flag-card.fc-amber{background:var(--amber-lt);border-color:var(--amber-bd)}
+.flag-card.fc-green{background:var(--green-lt);border-color:var(--green)}
+.fc-q{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray-4);margin-bottom:4px}
+.fc-a{font-size:15px;font-weight:600;color:var(--text);margin-bottom:5px;line-height:1.4}
+.fc-insight{font-size:14px;color:var(--gray-5);font-style:italic;line-height:1.55}
+.next-step{background:var(--navy);border-radius:10px;padding:24px 26px;margin-bottom:20px}
+.next-step-label{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.15em;text-transform:uppercase;color:#E8A840;margin-bottom:10px}
+.next-step-text{font-size:16px;color:rgba(255,255,255,0.80);line-height:1.7}
+.next-step-text strong{color:#fff}
+.btn-restart{display:block;width:100%;background:transparent;border:1px solid var(--gray-3);border-radius:8px;padding:13px;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray-4);cursor:pointer;transition:all 0.15s}
+.btn-restart:hover{border-color:var(--blue);color:var(--blue)}
+.tool-footer{max-width:800px;margin:60px auto 0;padding:20px 20px 0;border-top:1px solid var(--gray-2);display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.footer-l{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gray-4);line-height:1.8}
+.footer-r{font-size:13px;color:var(--gray-4);text-align:right;font-style:italic;line-height:1.7}
+@media(max-width:600px){h1.camp-name{font-size:64px}.opt{font-size:14px}}
+</style>
+</head>
+<body>
+
+<div class="site-header">
+  <div class="header-inner">
+    <div class="series-tag">DRG Innovation LLC · Research Translation Series · Roadmap</div>
+    <div class="trl-badge"><span class="trl-dot"></span>BASE CAMP · TRL 1–3 · EARLY PROTOTYPE</div>
+    <div class="header-titles">
+      <h1 class="camp-name">BASE<br><span>CAMP</span></h1>
+      <p class="header-subtitle">Early Prototype Diagnostic<br>TRL 1–3</p>
+    </div>
+    <div class="terrain-strip"><span class="t1"></span><span class="t2"></span><span class="t3"></span><span class="t4"></span><span class="t5"></span></div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="warning">
+    <strong>Perpetual optimization feels like progress. It is not.</strong>
+    <p>A prototype that keeps changing has never been tested against reality. This diagnostic tells you whether you are genuinely ready to leave Base Camp — or whether you are still tinkering at altitude, burning oxygen.</p>
+  </div>
+
+  <div class="prog-wrap">
+    <div class="prog-row"><span id="progLabel">0 of 12 answered</span><span id="progPct">0%</span></div>
+    <div class="prog-track"><div class="prog-fill" id="progFill"></div></div>
+  </div>
+
+  <!-- SECTION 1 -->
+  <div class="section">
+    <div class="sec-header"><div class="sec-num">01</div><div><div class="sec-title">Prototype Readiness</div><div class="sec-sub">Is your design actually frozen?</div></div></div>
+
+    <div class="qcard" id="card_q1">
+      <div class="q-meta">Q1 · Design Freeze</div>
+      <div class="q-text">How would you describe the current state of your prototype design?</div>
+      <div class="q-sub">Be honest. "Almost done" is not frozen.</div>
+      <div class="opts">
+        <label class="opt opt-green"><input type="radio" name="q1" value="frozen"><span class="flag-pill pill-green">READY</span>Design is frozen. I have stopped adding features and am not changing core parameters.</label>
+        <label class="opt opt-amber"><input type="radio" name="q1" value="mostly"><span class="flag-pill pill-amber">CAUTION</span>Mostly frozen — one or two small things still being refined but core design is set.</label>
+        <label class="opt opt-red"><input type="radio" name="q1" value="optimizing"><span class="flag-pill pill-red">STUCK</span>Still optimizing — I keep finding improvements and the design continues to evolve.</label>
+        <label class="opt opt-red"><input type="radio" name="q1" value="concepts"><span class="flag-pill pill-red">STUCK</span>Still exploring multiple design concepts — have not converged on one approach yet.</label>
+      </div>
+    </div>
+
+    <div class="qcard" id="card_q2">
+      <div class="q-meta">Q2 · Scope Control</div>
+      <div class="q-text">In the last 60 days, have you added new features or capabilities not in your original design specification?</div>
+      <div class="q-sub">Scope creep is the enemy of Base Camp. New ideas belong in version 2.</div>
+      <div class="opts">
+        <label class="opt opt-green"><input type="radio" name="q2" value="no"><span class="flag-pill pill-green">READY</span>No. I have held the line on scope and resisted feature additions.</label>
+        <label class="opt opt-amber"><input type="radio" name="q2" value="minor"><span class="flag-pill pill-amber">CAUTION</span>Minor additions only — small things genuinely required for basic function.</label>
+        <label class="opt opt-red"><input type="radio" name="q2" value="yes"><span class="flag-pill pill-red">STUCK</span>Yes — new capabilities added based on ideas that emerged during development.</label>
+        <label class="opt opt-red"><input type="radio" name="q2" value="nospec"><span class="flag-pill pill-red">STUCK</span>I do not have a formal design specification to measure scope against.</label>
+      </div>
+    </div>
+
+    <div class="qcard" id="card_q3">
+      <div class="q-meta">Q3 · Version Discipline</div>
+      <div class="q-text">How many distinct prototype versions have you built in the past 6 months?</div>
+      <div class="q-sub">One iterated version is progress. Five versions without user testing is avoidance.</div>
+      <div class="opts">
+        <label class="opt opt-green"><input type="radio" name="q3" value="one"><span class="flag-pill pill-green">READY</span>One — built it, tested it, made only targeted changes based on specific findings.</label>
+        <label class="opt opt-amber"><input type="radio" name="q3" value="two"><span class="flag-pill pill-amber">CAUTION</span>Two — an initial version and one significant revision based on structured feedback.</label>
+        <label class="opt opt-red"><input type="radio" name="q3" value="three"><span class="flag-pill pill-red">STUCK</span>Three or more — each version addressed problems found after the previous was "complete."</label>
+        <label class="opt opt-red"><input type="radio" name="q3" value="continuous"><span class="flag-pill pill-red">STUCK</span>Continuous iteration — no clear version boundary; the prototype is always changing.</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 2 -->
+  <div class="section">
+    <div class="sec-header"><div class="sec-num">02</div><div><div class="sec-title">User Requirements</div><div class="sec-sub">Does it meet what actual users need — not what you think they need?</div></div></div>
+
+    <div class="qcard" id="card_q4">
+      <div class="q-meta">Q4 · Requirements Source</div>
+      <div class="q-text">Where did your prototype's key performance requirements come from?</div>
+      <div class="q-sub">Requirements defined by you alone are hypotheses. Requirements defined by users are evidence.</div>
+      <div class="opts">
+        <label class="opt opt-green"><input type="radio" name="q4" value="users"><span class="flag-pill pill-green">READY</span>Structured input from at least 5 potential end users — interviews, observation, or formal needs assessment.</label>
+        <label class="opt opt-amber"><input type="radio" name="q4" value="some"><span class="flag-pill pill-amber">CAUTION</span>Informal conversations with 2–4 potential users, but no structured needs assessment.</label>
+        <label class="opt opt-red"><input type="radio" name="q4" value="experts"><span class="flag-pill pill-red">STUCK</span>Input from colleagues or domain experts — but not from actual end users of the product.</label>
+        <label class="opt opt-red"><input type="radio" name="q4" value="self"><span class="flag-pill pill-red">STUCK</span>Primarily from my own experience and judgment as an expert in the field.</label>
+      </div>
+    </div>
+
+    <div class="qcard" id="card_q5">
+      <div class="q-meta">Q5 · Requirements Documentation</div>
+      <div class="q-text">Do you have a written document listing specific, measurable performance requirements your prototype must meet?</div>
+      <div class="q-sub">"It works well" is not a requirement. "Accuracy ≥ 92% on blinded test set" is a requirement.</div>
+      <div class="opts">
+        <label class="opt opt-green"><input type="radio" name="q5" value="yes_measured"><span class="flag-pill pill-green">READY</span>Yes — specific, measurable criteria with target values that I test against explicitly.</label>
+        <label class="opt opt-amber"><input type="radio" name="q5" value="yes_vague"><span class="flag-pill pill-amber">CAUTION</span>Yes — but requirements are qualitative or vague rather than specific and measurable.</label>
+        <label class="opt opt-red"><input type="radio" name="q5" value="informal"><span class="flag-pill pill-red">STUCK</span>Informal list in my head or notes — not a formal document tested against.</label>
+        <label class="opt opt-red"><input type="radio" name="q5" value="no"><span class="flag-pill pill-red">STUCK</span>No written requirements — I know what success looks like but have not written it down.</label>
+      </div>
+    </div>
+
+    <div class="qcard" id="card_q6">
+      <div class="q-meta">Q6 · External Evaluation</div>
+      <div class="q-text">Has your prototype been evaluated against requirements by someone other than yourself or your immediate team?</div>
+      <div class="q-sub">You cannot objectively evaluate your own invention. External evaluation is not optional.</div>
+      <div class="opts">
+        <label class="opt opt-green"><input type="radio" name="q6" value="external_blind"><span class="flag-pill pill-green">READY</span>Yes — evaluated by external reviewers or potential users who did not know my hypothesis.</label>
+        <label class="opt opt-amber"><input type="radio" name="q6" value="external_aware"><span class="flag-pill pill-amber">CAUTION</span>External evaluation, but evaluators were aware of the concept and expected outcomes.</label>
+        <label class="opt opt-red"><input type="radio" name="q6" value="team_only"><span class="flag-pill pill-red">STUCK</span>Only evaluated internally by my lab or immediate collaborators.</label>
+        <label class="opt opt-red"><input type="radio" name="q6" value="not_yet"><span class="flag-pill pill-red">STUCK</span>Not yet — waiting until the prototype is more complete before external evaluation.</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 3 -->
+  <div class="section">
+    <div class="sec-header"><div class="sec-num">03</div><div><div class="sec-title">Reproducibility</div><div class="sec-sub">Can it work outside your lab, run by someone else?</div></div></div>
+
+    <div class="qcard" id="card_q7">
+      <div class="q-meta">Q7 · Independent Replication</div>
+      <div class="q-text">Has your core finding or prototype function been replicated by someone outside your immediate lab or team?</div>
+      <div class="q-sub">If only you can make it work, you have a skill — not a product.</div>
+      <div class="opts">
+        <label class="opt opt-green"><input type="radio" name="q7" value="yes_independent"><span class="flag-pill pill-green">READY</span>Yes — independently replicated by a different lab or institution using my protocols.</label>
+        <label class="opt opt-amber"><input type="radio" name="q7" value="yes_collab"><span class="flag-pill pill-amber">CAUTION</span>Replicated by a collaborating lab with some technical guidance from my team.</label>
+        <label class="opt opt-red"><input type="radio" name="q7" value="attempted"><span class="flag-pill pill-red">STUCK</span>Attempted but not yet successfully replicated by others without significant help.</label>
+        <label class="opt opt-red"><input type="radio" name="q7" value="no"><span class="flag-pill pill-red">STUCK</span>Not yet attempted — only demonstrated in my own hands in my own lab.</label>
+      </div>
+    </div>
+
+    <div class="qcard" id="card_q8">
+      <div class="q-meta">Q8 · Protocol Documentation</div>
+      <div class="q-text">If handed your prototype and documentation tomorrow, could a qualified person achieve the same results without asking you questions?</div>
+      <div class="q-sub">Tacit knowledge is a translation barrier. Write it down.</div>
+      <div class="opts">
+        <label class="opt opt-green"><input type="radio" name="q8" value="yes_proven"><span class="flag-pill pill-green">READY</span>Yes — documentation tested and a new user achieved comparable results independently.</label>
+        <label class="opt opt-amber"><input type="radio" name="q8" value="probably"><span class="flag-pill pill-amber">CAUTION</span>Probably yes — documentation is thorough but has not been tested with an independent user.</label>
+        <label class="opt opt-red"><input type="radio" name="q8" value="with_help"><span class="flag-pill pill-red">STUCK</span>They would need significant guidance — critical steps exist only in my head.</label>
+        <label class="opt opt-red"><input type="radio" name="q8" value="no_docs"><span class="flag-pill pill-red">STUCK</span>No — documentation is incomplete and the process is not fully written down.</label>
+      </div>
+    </div>
+
+    <div class="qcard" id="card_q9">
+      <div class="q-meta">Q9 · Real-World Conditions</div>
+      <div class="q-text">Has your prototype been tested under conditions that simulate real-world use — not optimized lab conditions?</div>
+      <div class="q-sub">Lab performance and real-world performance are almost never the same. The gap always surprises.</div>
+      <div class="opts">
+        <label class="opt opt-green"><input type="radio" name="q9" value="real_world"><span class="flag-pill pill-green">READY</span>Yes — tested in a real-world or realistic simulation environment with matching results.</label>
+        <label class="opt opt-amber"><input type="radio" name="q9" value="simulated"><span class="flag-pill pill-amber">CAUTION</span>Tested under simulated real-world conditions in the lab — not yet in an actual use environment.</label>
+        <label class="opt opt-red"><input type="radio" name="q9" value="ideal_only"><span class="flag-pill pill-red">STUCK</span>Only tested under optimized lab conditions — have not yet introduced real-world variability.</label>
+        <label class="opt opt-red"><input type="radio" name="q9" value="bench_only"><span class="flag-pill pill-red">STUCK</span>Bench only — the prototype has never left the lab bench in any form.</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 4 -->
+  <div class="section">
+    <div class="sec-header"><div class="sec-num">04</div><div><div class="sec-title">Camp 1 Readiness</div><div class="sec-sub">Funding, regulatory, IP — are you equipped for the next climb?</div></div></div>
+
+    <div class="qcard" id="card_q10">
+      <div class="q-meta">Q10 · Funding Pathway</div>
+      <div class="q-text">Do you have a specific funding pathway identified — SBIR, STTR, angel, accelerator, or institutional grant?</div>
+      <div class="q-sub">Camp 1 requires oxygen. Funding is that oxygen. "I'll figure it out" is not a plan.</div>
+      <div class="opts">
+        <label class="opt opt-green"><input type="radio" name="q10" value="active"><span class="flag-pill pill-green">READY</span>Yes — active application submitted or in preparation with a specific target and deadline.</label>
+        <label class="opt opt-amber"><input type="radio" name="q10" value="identified"><span class="flag-pill pill-amber">CAUTION</span>Identified the pathway but have not yet started the application or outreach process.</label>
+        <label class="opt opt-red"><input type="radio" name="q10" value="vague"><span class="flag-pill pill-red">STUCK</span>Generally aware of options but have not chosen a specific pathway or set a timeline.</label>
+        <label class="opt opt-red"><input type="radio" name="q10" value="none"><span class="flag-pill pill-red">STUCK</span>No funding strategy — waiting until the prototype is more developed before thinking about this.</label>
+      </div>
+    </div>
+
+    <div class="qcard" id="card_q11">
+      <div class="q-meta">Q11 · Regulatory Awareness</div>
+      <div class="q-text">Do you know which regulatory pathway your innovation will require — FDA 510(k), De Novo, PMA, exempt, or non-device?</div>
+      <div class="q-sub">Regulatory surprises at Camp 1 end more climbs than any other single factor.</div>
+      <div class="opts">
+        <label class="opt opt-green"><input type="radio" name="q11" value="confirmed"><span class="flag-pill pill-green">READY</span>Yes — pathway confirmed through FDA pre-submission meeting or formal regulatory consultation.</label>
+        <label class="opt opt-amber"><input type="radio" name="q11" value="researched"><span class="flag-pill pill-amber">CAUTION</span>Researched and have a strong hypothesis — but not yet formally confirmed with FDA.</label>
+        <label class="opt opt-red"><input type="radio" name="q11" value="general"><span class="flag-pill pill-red">STUCK</span>General awareness that regulation is required but have not identified the specific pathway.</label>
+        <label class="opt opt-red"><input type="radio" name="q11" value="none"><span class="flag-pill pill-red">STUCK</span>Not yet considered — regulatory strategy has not been part of my planning process.</label>
+      </div>
+    </div>
+
+    <div class="qcard" id="card_q12">
+      <div class="q-meta">Q12 · IP Status</div>
+      <div class="q-text">What is the current status of intellectual property protection for your innovation?</div>
+      <div class="q-sub">Climbing without IP protection means you may be building someone else's mountain.</div>
+      <div class="opts">
+        <label class="opt opt-green"><input type="radio" name="q12" value="filed"><span class="flag-pill pill-green">READY</span>Provisional or full patent filed — freedom to operate has been assessed.</label>
+        <label class="opt opt-amber"><input type="radio" name="q12" value="disclosed"><span class="flag-pill pill-amber">CAUTION</span>Invention disclosure filed with my institution — patent application in preparation.</label>
+        <label class="opt opt-red"><input type="radio" name="q12" value="planning"><span class="flag-pill pill-red">STUCK</span>Planning to file but have not yet done so — no formal IP protection in place.</label>
+        <label class="opt opt-red"><input type="radio" name="q12" value="none"><span class="flag-pill pill-red">STUCK</span>No IP strategy — I have been publishing or presenting without filing first.</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUBMIT -->
+  <div class="submit-zone">
+    <p>Answer all 12 questions honestly. The mountain does not grade on a curve.</p>
+    <div class="err-banner" id="errBanner"></div>
+    <button type="button" class="btn-assess" onclick="runAssessment()">ASSESS MY BASE CAMP READINESS →</button>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="resultsSection">
+    <div class="results-verdict" id="verdictBox">
+      <div class="verdict-title" id="verdictTitle">—</div>
+      <div class="verdict-sub" id="verdictSub"></div>
+    </div>
+    <div class="score-section"><div class="score-section-title">Score by section</div><div id="scoreBars"></div></div>
+    <div class="flag-cards"><div class="flag-cards-title">Questions to address</div><div id="flagCards"></div></div>
+    <div class="next-step" id="nextStep"><div class="next-step-label">Your next move</div><div class="next-step-text" id="nextStepText"></div></div>
+    <button class="btn-restart" onclick="restart()">↺ RESTART ASSESSMENT</button>
+  </div>
+</div>
+
+<footer class="tool-footer">
+  <div class="footer-l">DRG INNOVATION LLC<br>RESEARCH TRANSLATION SERIES · BASE CAMP TRL 1–3</div>
+  <div class="footer-r">Dr. Gabriel Gruionu, MS, PhD<br>Former Faculty &amp; Director of Medical Innovation<br>Harvard Medical School &amp; MGH · © 2026</div>
+</footer>
+
+<script>
+const QN=['q1','q2','q3','q4','q5','q6','q7','q8','q9','q10','q11','q12'];
+const SC={q1:{frozen:3,mostly:2,optimizing:0,concepts:0},q2:{no:3,minor:2,yes:0,nospec:0},q3:{one:3,two:2,three:0,continuous:0},q4:{users:3,some:2,experts:0,self:0},q5:{yes_measured:3,yes_vague:2,informal:0,no:0},q6:{external_blind:3,external_aware:2,team_only:0,not_yet:0},q7:{yes_independent:3,yes_collab:2,attempted:0,no:0},q8:{yes_proven:3,probably:2,with_help:0,no_docs:0},q9:{real_world:3,simulated:2,ideal_only:0,bench_only:0},q10:{active:3,identified:2,vague:0,none:0},q11:{confirmed:3,researched:2,general:0,none:0},q12:{filed:3,disclosed:2,planning:0,none:0}};
+const QL={q1:'Design freeze',q2:'Scope control',q3:'Version discipline',q4:'Requirements source',q5:'Requirements documentation',q6:'External evaluation',q7:'Independent replication',q8:'Protocol documentation',q9:'Real-world testing',q10:'Funding pathway',q11:'Regulatory awareness',q12:'IP status'};
+const SECS=[{title:'Prototype Readiness',qs:['q1','q2','q3']},{title:'User Requirements',qs:['q4','q5','q6']},{title:'Reproducibility',qs:['q7','q8','q9']},{title:'Camp 1 Readiness',qs:['q10','q11','q12']}];
+const INS={q1:{0:'Set a design freeze date today, tell your team, and hold it. Write a "version 2 list" for every new idea after that date.',2:'Identify the remaining items, set a hard completion date.'},q2:{0:'Lock version 1 now. Create a version 2 backlog for every new idea.',2:'Minor additions acceptable only if genuinely required — not for perfectionism.'},q3:{0:'Multiple versions without structured user testing means you are solving the wrong problem. Stop building, start testing.',2:'Two versions is fine if the second addressed a specific documented finding.'},q4:{0:'Return to your users. Five structured conversations with real end users will change your design more than six months of lab work.',2:'Good start — plan a structured needs assessment to close blind spots.'},q5:{0:'Write your requirements today. Measurable, specific, testable. Without them you cannot know when you are done.',2:'Convert qualitative requirements to measurable targets before your next test cycle.'},q6:{0:'Organize external evaluation before climbing to Camp 1. It is not a threat — it is proof of concept.',2:'Blind external evaluation is stronger. Arrange it if feasible.'},q7:{0:'If no one else can replicate your results, your documentation is incomplete or your process is too person-dependent.',2:'Replication with guidance is progress. Goal is independent replication with documentation alone.'},q8:{0:'Document every step, including the obvious ones. The obvious steps are always the ones that fail in others\' hands.',2:'Test your documentation with a new user before claiming it is complete.'},q9:{0:'Do not wait for a perfect prototype to test in real-world conditions. The gap is information you need now.',2:'Simulated conditions are a bridge — schedule your first real-world test as the next milestone.'},q10:{0:'Identify your funding mechanism this week. SBIR/STTR deadlines are fixed. Missing a cycle costs 6 months.',2:'Identified but unfiled is still zero funding. Start the application.'},q11:{0:'Schedule an FDA pre-submission meeting or engage a regulatory consultant now.',2:'Validate your pathway hypothesis with formal consultation before committing resources.'},q12:{0:'If you have published without filing, check with your tech transfer office immediately. The 1-year US grace period may still be open.',2:'Push from disclosure to provisional filing before any further public disclosure.'}};
+function upd(){const n=QN.filter(name=>document.querySelector(`input[name="${name}"]:checked`)).length;const p=Math.round(n/12*100);document.getElementById('progFill').style.width=p+'%';document.getElementById('progLabel').textContent=n+' of 12 answered';document.getElementById('progPct').textContent=p+'%'}
+document.querySelectorAll('input[type=radio]').forEach(i=>{i.addEventListener('change',()=>{const c=i.closest('.qcard');if(c){c.classList.remove('has-error');c.classList.add('answered')}upd()})});
+function gv(n){const c=document.querySelector(`input[name="${n}"]:checked`);return c?c.value:null}
+function gs(n){return SC[n][gv(n)]??null}
+function runAssessment(){
+  document.querySelectorAll('.has-error').forEach(c=>c.classList.remove('has-error'));
+  document.getElementById('errBanner').style.display='none';
+  const miss=QN.filter(n=>!gv(n));
+  if(miss.length){miss.forEach(n=>{const c=document.getElementById('card_'+n);if(c)c.classList.add('has-error')});const b=document.getElementById('errBanner');b.textContent=miss.length+' question(s) still unanswered — highlighted above.';b.style.display='block';document.querySelector('.has-error').scrollIntoView({behavior:'smooth',block:'center'});return}
+  const ss=SECS.map(s=>{const t=s.qs.reduce((a,n)=>a+(gs(n)||0),0);return{title:s.title,total:t,max:s.qs.length*3,pct:Math.round(t/(s.qs.length*3)*100)}});
+  const tot=ss.reduce((a,s)=>a+s.total,0);const red=QN.filter(n=>gs(n)===0).length;
+  let vc,vt,vs;
+  if(tot>=27&&red<=1){vc='v-ready';vt='READY TO CLIMB';vs='Your Base Camp assessment is solid. Advance to Camp 1.'}
+  else if(tot>=18&&red<=4){vc='v-caution';vt='ALMOST READY';vs='Several gaps need attention before you advance. Review the flags below.'}
+  else{vc='v-blocked';vt='NOT YET';vs='Significant structural gaps remain. Advancing now will cost more to fix at Camp 1.'}
+  const box=document.getElementById('verdictBox');box.className='results-verdict '+vc;
+  document.getElementById('verdictTitle').textContent=vt;document.getElementById('verdictSub').textContent=vs;
+  const bars=document.getElementById('scoreBars');bars.innerHTML='';
+  ss.forEach(s=>{const fc=s.pct>=75?'bar-green':s.pct>=50?'bar-amber':'bar-red';bars.innerHTML+=`<div class="score-row"><div class="score-row-top"><span class="score-label">${s.title}</span><span class="score-pct">${s.total}/${s.max} — ${s.pct}%</span></div><div class="bar-track"><div class="bar-fill ${fc}" style="width:${s.pct}%"></div></div></div>`});
+  const cards=document.getElementById('flagCards');cards.innerHTML='';let hf=false;
+  QN.forEach(n=>{const sc=gs(n);if(sc===3)return;hf=true;const cls=sc===0?'fc-red':'fc-amber';const ch=document.querySelector(`input[name="${n}"]:checked`);const at=ch?ch.closest('.opt').textContent.replace(/READY|CAUTION|STUCK/g,'').trim():'';const ins=(INS[n]&&INS[n][sc])||'';cards.innerHTML+=`<div class="flag-card ${cls}"><div class="fc-q">${QL[n]}</div><div class="fc-a">${at}</div>${ins?`<div class="fc-insight">${ins}</div>`:''}</div>`});
+  if(!hf)cards.innerHTML='<div class="flag-card fc-green"><div class="fc-q">All 12 questions</div><div class="fc-a">No flags — all answers meet Base Camp standard.</div></div>';
+  const weak=[...ss].sort((a,b)=>a.pct-b.pct)[0];let nx='';
+  if(vc==='v-ready')nx=`<strong>Your next move is Camp 1.</strong> Use the Camp 1 tool in this series to plan your funding application, FDA pre-submission meeting, and first hire decision. The platform above Base Camp is narrow — move deliberately.`;
+  else if(vc==='v-caution')nx=`<strong>Your weakest area is ${weak.title} (${weak.pct}%).</strong> Address the red flags above before committing to the climb. Set a 30-day deadline for your most critical gap, then re-run this assessment. You are closer than you think — but close is not ready.`;
+  else nx=`<strong>Do not advance yet.</strong> The flags above are structural gaps that become expensive failures at Camp 1 — where resources are thinner and mistakes harder to recover from. Return to the Base Camp fundamentals: freeze the design, get external evaluation, document your protocols so someone else can reproduce your results.`;
+  document.getElementById('nextStepText').innerHTML=nx;
+  document.getElementById('resultsSection').style.display='block';
+  setTimeout(()=>document.getElementById('resultsSection').scrollIntoView({behavior:'smooth',block:'start'}),100);
+}
+function restart(){document.querySelectorAll('input[type=radio]').forEach(r=>r.checked=false);document.querySelectorAll('.qcard').forEach(c=>c.classList.remove('has-error','answered'));document.getElementById('errBanner').style.display='none';document.getElementById('resultsSection').style.display='none';upd();window.scrollTo({top:0,behavior:'smooth'})}
+upd();
+</script>
+</body>
+</html>

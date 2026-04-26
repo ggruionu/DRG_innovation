@@ -1,0 +1,1616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DRG Innovation · Mentoring OS</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0f1117;
+    --paper: #f7f5f0;
+    --cream: #ede9e0;
+    --gold: #c8922a;
+    --gold-light: #e8b84b;
+    --rust: #9b3a1e;
+    --sage: #4a6741;
+    --slate: #3d4a5c;
+    --muted: #7a7469;
+    --border: #d4cfc6;
+    --white: #ffffff;
+    --card: #fdfcfa;
+    --shadow: 0 2px 12px rgba(15,17,23,0.08);
+    --shadow-lg: 0 8px 40px rgba(15,17,23,0.14);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* HEADER */
+  header {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 2px solid var(--gold);
+  }
+  .header-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .logo {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+  .logo-mark {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    color: var(--gold-light);
+    letter-spacing: -0.5px;
+  }
+  .logo-sub {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .phase-indicator {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .phase-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--muted);
+    transition: background 0.3s;
+  }
+  .phase-dot.active { background: var(--gold-light); }
+  .phase-dot.done { background: var(--sage); }
+
+  /* MAIN LAYOUT */
+  .main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 32px 80px;
+  }
+
+  /* SCREENS */
+  .screen { display: none; animation: fadeIn 0.35s ease; }
+  .screen.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* HERO / LANDING */
+  .hero {
+    text-align: center;
+    padding: 60px 0 48px;
+  }
+  .hero-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 20px;
+  }
+  .hero h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(36px, 5vw, 58px);
+    line-height: 1.1;
+    color: var(--ink);
+    margin-bottom: 20px;
+    max-width: 720px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .hero h1 em {
+    font-style: italic;
+    color: var(--gold);
+  }
+  .hero-desc {
+    font-size: 17px;
+    color: var(--muted);
+    max-width: 560px;
+    margin: 0 auto 40px;
+    font-weight: 300;
+  }
+
+  .role-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    max-width: 860px;
+    margin: 0 auto;
+  }
+  .role-card {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 28px 24px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+    position: relative;
+    overflow: hidden;
+  }
+  .role-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--border);
+    transition: background 0.2s;
+  }
+  .role-card:hover { border-color: var(--gold); box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+  .role-card:hover::before { background: var(--gold); }
+  .role-icon { font-size: 28px; margin-bottom: 12px; }
+  .role-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px;
+    margin-bottom: 6px;
+    color: var(--ink);
+  }
+  .role-desc { font-size: 13px; color: var(--muted); line-height: 1.5; }
+  .role-badge {
+    display: inline-block;
+    margin-top: 12px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: var(--cream);
+    color: var(--muted);
+  }
+
+  /* SECTION DIVIDER */
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  .section-header h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 28px;
+    color: var(--ink);
+  }
+  .section-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 20px;
+    background: var(--cream);
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+
+  /* FORM STYLES */
+  .form-grid { display: grid; gap: 20px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } }
+
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: var(--slate);
+    text-transform: uppercase;
+  }
+  .field input, .field select, .field textarea {
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--ink);
+    transition: border-color 0.2s;
+    outline: none;
+    width: 100%;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(200,146,42,0.1);
+  }
+  .field textarea { resize: vertical; min-height: 90px; }
+  .field-hint { font-size: 12px; color: var(--muted); }
+
+  /* CHECKBOX GRID */
+  .checkbox-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 8px;
+  }
+  .check-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: 7px;
+    cursor: pointer;
+    transition: all 0.15s;
+    background: var(--white);
+    font-size: 13px;
+  }
+  .check-item:hover { border-color: var(--gold); background: #fffdf7; }
+  .check-item input[type=checkbox] { accent-color: var(--gold); width: 15px; height: 15px; }
+  .check-item.checked { border-color: var(--gold); background: #fffbf0; }
+
+  /* CARDS */
+  .card {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 28px;
+    margin-bottom: 20px;
+  }
+  .card-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px;
+    margin-bottom: 16px;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* BUTTONS */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    text-decoration: none;
+  }
+  .btn-primary {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .btn-primary:hover { background: var(--slate); transform: translateY(-1px); box-shadow: var(--shadow); }
+  .btn-gold {
+    background: var(--gold);
+    color: var(--white);
+  }
+  .btn-gold:hover { background: #b07d20; transform: translateY(-1px); }
+  .btn-outline {
+    background: transparent;
+    color: var(--ink);
+    border: 1.5px solid var(--border);
+  }
+  .btn-outline:hover { border-color: var(--ink); }
+  .btn-sm { padding: 8px 16px; font-size: 13px; }
+
+  .btn-row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 28px;
+  }
+
+  /* PROGRESS BAR */
+  .progress-bar {
+    height: 3px;
+    background: var(--cream);
+    border-radius: 2px;
+    margin-bottom: 32px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+
+  /* SUBMISSION STATUS */
+  .submission-status {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 32px;
+  }
+  .status-pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    border: 1px solid var(--border);
+    background: var(--white);
+    color: var(--muted);
+  }
+  .status-pill.submitted { border-color: var(--sage); background: #f0f7ee; color: var(--sage); }
+  .status-pill .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--border); }
+  .status-pill.submitted .dot { background: var(--sage); }
+
+  /* AI OUTPUT */
+  .ai-output {
+    background: var(--ink);
+    border-radius: 12px;
+    padding: 32px;
+    color: var(--paper);
+    margin-bottom: 20px;
+  }
+  .ai-output h3 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    color: var(--gold-light);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .ai-output-content {
+    font-size: 14px;
+    line-height: 1.75;
+    color: #d4cfc6;
+    white-space: pre-wrap;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .ai-output-content strong {
+    color: var(--gold-light);
+    font-weight: 600;
+  }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    border-bottom: 2px solid var(--border);
+    margin-bottom: 28px;
+  }
+  .tab {
+    padding: 10px 20px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: all 0.2s;
+    border-radius: 6px 6px 0 0;
+  }
+  .tab:hover { color: var(--ink); }
+  .tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* MATRIX TABLE */
+  .matrix-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .matrix-table th {
+    background: var(--cream);
+    padding: 10px 14px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--slate);
+    border-bottom: 2px solid var(--border);
+  }
+  .matrix-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    color: var(--ink);
+  }
+  .matrix-table tr:last-child td { border-bottom: none; }
+  .matrix-table tr:hover td { background: #fdfbf5; }
+  .lead-badge {
+    display: inline-block;
+    background: var(--gold);
+    color: white;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-weight: 600;
+    margin-left: 4px;
+  }
+
+  /* LOADING */
+  .loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 60px 0;
+    color: var(--muted);
+  }
+  .spinner {
+    width: 36px; height: 36px;
+    border: 3px solid var(--cream);
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-text { font-size: 14px; font-style: italic; }
+
+  /* ALERT */
+  .alert {
+    padding: 14px 18px;
+    border-radius: 8px;
+    font-size: 13px;
+    margin-bottom: 20px;
+    border-left: 4px solid;
+  }
+  .alert-info { background: #f0f7ff; border-color: #4a90d9; color: #2d5a8e; }
+  .alert-success { background: #f0f7ee; border-color: var(--sage); color: #2d5a3d; }
+  .alert-warn { background: #fff8ec; border-color: var(--gold); color: #7a5010; }
+
+  /* STEP INDICATOR */
+  .step-indicator {
+    display: flex;
+    gap: 0;
+    margin-bottom: 36px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .step {
+    flex: 1;
+    padding: 12px 8px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+    background: var(--white);
+    border-right: 1px solid var(--border);
+    transition: all 0.2s;
+  }
+  .step:last-child { border-right: none; }
+  .step.active { background: var(--ink); color: var(--gold-light); font-weight: 600; }
+  .step.done { background: var(--cream); color: var(--sage); }
+
+  /* PRINT UTILITY */
+  .print-btn-row { display: flex; gap: 10px; margin-top: 20px; }
+
+  @media print {
+    header, .btn-row, .tabs, .print-btn-row { display: none !important; }
+    .ai-output { background: #f5f5f5 !important; color: #111 !important; }
+    .ai-output h3 { color: #c8922a !important; }
+    .ai-output-content { color: #333 !important; }
+  }
+
+  /* SAVE SCREEN */
+  .save-screen {
+    position: fixed;
+    inset: 0;
+    background: rgba(15,17,23,0.85);
+    z-index: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    backdrop-filter: blur(4px);
+  }
+  .save-box {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 36px;
+    max-width: 560px;
+    width: 100%;
+    box-shadow: var(--shadow-lg);
+    border: 1.5px solid var(--border);
+    position: relative;
+  }
+  .save-box h3 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    margin-bottom: 8px;
+    color: var(--ink);
+  }
+  .save-box p { font-size: 14px; color: var(--muted); margin-bottom: 20px; line-height: 1.5; }
+  .save-textarea {
+    width: 100%;
+    height: 200px;
+    background: var(--ink);
+    color: #d4cfc6;
+    border: none;
+    border-radius: 10px;
+    padding: 16px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    line-height: 1.6;
+    resize: none;
+    outline: none;
+    margin-bottom: 16px;
+  }
+  .save-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  .save-close {
+    position: absolute;
+    top: 16px; right: 16px;
+    background: none; border: none;
+    font-size: 20px; cursor: pointer;
+    color: var(--muted);
+    line-height: 1;
+  }
+  .save-close:hover { color: var(--ink); }
+  .save-success {
+    background: #f0f7ee;
+    border: 1px solid var(--sage);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: var(--sage);
+    margin-bottom: 12px;
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo">
+      <span class="logo-mark">DRG Innovation</span>
+      <span class="logo-sub">Mentoring OS</span>
+    </div>
+    <div class="phase-indicator" id="phaseIndicator">
+      <div class="phase-dot" id="pd1"></div>
+      <div class="phase-dot" id="pd2"></div>
+      <div class="phase-dot" id="pd3"></div>
+    </div>
+  </div>
+</header>
+
+<div class="main">
+
+  <!-- ==================== SCREEN: HOME ==================== -->
+  <div class="screen active" id="screen-home">
+    <div class="hero">
+      <div class="hero-eyebrow">DRG Innovation LLC · Mentoring Intelligence</div>
+      <h1>The right mentor,<br>for the <em>right</em> problem,<br>at the right time.</h1>
+      <p class="hero-desc">A structured system that aligns startup needs, mentee experience, and mentor expertise — then generates session agendas, roadmaps, and assignment matrices automatically.</p>
+    </div>
+
+    <div style="text-align:center; margin-bottom: 16px;">
+      <p style="font-size:13px; color:var(--muted); margin-bottom: 24px;">Select your role to begin. Each person completes their own form independently.</p>
+    </div>
+
+    <div class="role-grid">
+      <div class="role-card" onclick="startForm('lead')">
+        <div class="role-icon">🎯</div>
+        <div class="role-title">Lead Mentor</div>
+        <div class="role-desc">Define the startup's stage, goals, and overall mentoring arc for the program.</div>
+        <span class="role-badge">Intake + Session Prep</span>
+      </div>
+      <div class="role-card" onclick="startForm('mentor')">
+        <div class="role-icon">🧠</div>
+        <div class="role-title">Mentor</div>
+        <div class="role-desc">Share your domain expertise, availability, and what you can most effectively contribute.</div>
+        <span class="role-badge">Intake + Session Prep</span>
+      </div>
+      <div class="role-card" onclick="startForm('mentee')">
+        <div class="role-icon">🚀</div>
+        <div class="role-title">Mentee / Founder</div>
+        <div class="role-desc">Describe your startup, current challenges, and what help you need most right now.</div>
+        <span class="role-badge">Intake + Session Prep</span>
+      </div>
+      <div class="role-card" onclick="showDashboard()">
+        <div class="role-icon">⚡</div>
+        <div class="role-title">Generate Outputs</div>
+        <div class="role-desc">Once forms are submitted, generate the session agenda, roadmap, and mentor matrix.</div>
+        <span class="role-badge">AI-Powered</span>
+      </div>
+    </div>
+
+    <div style="margin-top: 40px; text-align: center;">
+      <div class="submission-status" id="homeStatusBar" style="justify-content:center;"></div>
+    </div>
+  </div>
+
+  <!-- ==================== SCREEN: LEAD MENTOR FORM ==================== -->
+  <div class="screen" id="screen-lead">
+    <div class="section-header">
+      <h2>Lead Mentor Intake</h2>
+      <span class="section-tag">🎯 Your Role</span>
+    </div>
+
+    <div class="step-indicator">
+      <div class="step active" id="lead-step-1">1 · Profile</div>
+      <div class="step" id="lead-step-2">2 · Startup Assessment</div>
+      <div class="step" id="lead-step-3">3 · Session Prep</div>
+    </div>
+
+    <!-- Step 1: Profile -->
+    <div id="lead-panel-1">
+      <div class="card">
+        <div class="card-title">🧑‍💼 Your Profile</div>
+        <div class="form-grid">
+          <div class="form-row">
+            <div class="field">
+              <label>Full Name</label>
+              <input type="text" id="lead-name" placeholder="Dr. Jane Smith">
+            </div>
+            <div class="field">
+              <label>Primary Domain Expertise</label>
+              <input type="text" id="lead-domain" placeholder="e.g. Medical Device Regulation, Strategy">
+            </div>
+          </div>
+          <div class="field">
+            <label>Years of Relevant Experience</label>
+            <select id="lead-years">
+              <option value="">Select range</option>
+              <option>5–10 years</option>
+              <option>10–15 years</option>
+              <option>15–20 years</option>
+              <option>20–25 years</option>
+              <option>25+ years</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Key Areas You Can Mentor On</label>
+            <div class="checkbox-grid" id="lead-expertise-grid"></div>
+          </div>
+          <div class="field">
+            <label>Other Expertise (not listed above)</label>
+            <input type="text" id="lead-expertise-other" placeholder="e.g. SBIR grants, international markets">
+          </div>
+          <div class="field">
+            <label>Your Mentoring Style</label>
+            <select id="lead-style">
+              <option value="">Select style</option>
+              <option>Directive — I give clear direction and structure</option>
+              <option>Facilitative — I ask questions and surface insights</option>
+              <option>Collaborative — We problem-solve together</option>
+              <option>Connector — I make introductions and open doors</option>
+              <option>Mixed — adapts to what the team needs</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="leadNext(1)">Continue →</button>
+        <button class="btn btn-outline" onclick="showHome()">← Back</button>
+      </div>
+    </div>
+
+    <!-- Step 2: Startup Assessment -->
+    <div id="lead-panel-2" style="display:none;">
+      <div class="card">
+        <div class="card-title">🏢 Startup Assessment</div>
+        <div class="form-grid">
+          <div class="form-row">
+            <div class="field">
+              <label>Startup / Company Name</label>
+              <input type="text" id="lead-startup-name" placeholder="e.g. CardioTech Inc.">
+            </div>
+            <div class="field">
+              <label>Technology / Product Type</label>
+              <input type="text" id="lead-tech-type" placeholder="e.g. AI diagnostic, med device, drug delivery">
+            </div>
+          </div>
+          <div class="field">
+            <label>Current TRL / Development Stage</label>
+            <select id="lead-trl">
+              <option value="">Select stage</option>
+              <option>TRL 1–2 · Basic concept / early research</option>
+              <option>TRL 3–4 · Proof of concept / bench validation</option>
+              <option>TRL 5–6 · Prototype / preclinical</option>
+              <option>TRL 7–8 · Clinical pilot / regulatory path</option>
+              <option>TRL 9 · Commercial / post-market</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Top 3 Startup Needs Right Now (select up to 3)</label>
+            <div class="checkbox-grid" id="lead-needs-grid"></div>
+          </div>
+          <div class="field">
+            <label>Biggest Risk / Obstacle You See</label>
+            <textarea id="lead-risk" placeholder="In your view as lead mentor, what is the primary obstacle this startup faces?"></textarea>
+          </div>
+          <div class="field">
+            <label>Program Duration & Goals</label>
+            <select id="lead-duration">
+              <option value="">Select duration</option>
+              <option>3 months (6 sessions)</option>
+              <option>6 months (12 sessions)</option>
+              <option>9 months (18 sessions)</option>
+              <option>12 months (24 sessions)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Desired Milestone at Program End</label>
+            <textarea id="lead-milestone" placeholder="e.g. Pitch-ready deck + lead investor identified + regulatory pathway defined"></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="leadNext(2)">Continue →</button>
+        <button class="btn btn-outline" onclick="leadBack(1)">← Back</button>
+      </div>
+    </div>
+
+    <!-- Step 3: Session Prep -->
+    <div id="lead-panel-3" style="display:none;">
+      <div class="card">
+        <div class="card-title">📋 Session Prep (Recurring)</div>
+        <div class="form-grid">
+          <div class="field">
+            <label>Session Number</label>
+            <select id="lead-session-num">
+              <option>Session 1 (Kickoff)</option>
+              <option>Session 2</option>
+              <option>Session 3</option>
+              <option>Session 4</option>
+              <option>Session 5</option>
+              <option>Session 6+</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Progress Since Last Session</label>
+            <textarea id="lead-progress" placeholder="What has the startup accomplished? What milestones were hit or missed?"></textarea>
+          </div>
+          <div class="field">
+            <label>Priority Focus for This Session</label>
+            <textarea id="lead-focus" placeholder="What is the single most important thing to address in this session?"></textarea>
+          </div>
+          <div class="field">
+            <label>Which mentor(s) should lead this session?</label>
+            <input type="text" id="lead-session-lead" placeholder="Name(s) of mentor(s) most relevant to today's focus">
+          </div>
+          <div class="field">
+            <label>Any Concerns or Flags for the Group?</label>
+            <textarea id="lead-flags" placeholder="Team dynamics, founder mindset, pacing issues, or other observations..."></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-gold" onclick="submitForm('lead')">✓ Submit Lead Mentor Form</button>
+        <button class="btn btn-outline" onclick="leadBack(2)">← Back</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SCREEN: MENTOR FORM ==================== -->
+  <div class="screen" id="screen-mentor">
+    <div class="section-header">
+      <h2>Mentor Intake</h2>
+      <span class="section-tag">🧠 Your Role</span>
+    </div>
+
+    <div class="step-indicator">
+      <div class="step active" id="mentor-step-1">1 · Profile</div>
+      <div class="step" id="mentor-step-2">2 · Session Prep</div>
+    </div>
+
+    <!-- Step 1 -->
+    <div id="mentor-panel-1">
+      <div class="card">
+        <div class="card-title">🧑‍💼 Your Profile</div>
+        <div class="form-grid">
+          <div class="form-row">
+            <div class="field">
+              <label>Full Name</label>
+              <input type="text" id="mentor-name" placeholder="Dr. John Doe">
+            </div>
+            <div class="field">
+              <label>Primary Domain Expertise</label>
+              <input type="text" id="mentor-domain" placeholder="e.g. Clinical Trials, Venture Finance">
+            </div>
+          </div>
+          <div class="field">
+            <label>Years of Relevant Experience</label>
+            <select id="mentor-years">
+              <option value="">Select range</option>
+              <option>5–10 years</option>
+              <option>10–15 years</option>
+              <option>15–20 years</option>
+              <option>20–25 years</option>
+              <option>25+ years</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Your Core Strengths (select all that apply)</label>
+            <div class="checkbox-grid" id="mentor-expertise-grid"></div>
+          </div>
+          <div class="field">
+            <label>Additional Expertise</label>
+            <input type="text" id="mentor-expertise-other" placeholder="Anything not listed above">
+          </div>
+          <div class="field">
+            <label>Your Network — Who Can You Connect This Startup To?</label>
+            <textarea id="mentor-network" placeholder="e.g. FDA contacts, angel investors, clinical site PIs, potential strategic partners..."></textarea>
+          </div>
+          <div class="field">
+            <label>What You Cannot or Prefer Not to Mentor On</label>
+            <textarea id="mentor-limits" placeholder="Areas outside your expertise or comfort zone"></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="mentorNext(1)">Continue →</button>
+        <button class="btn btn-outline" onclick="showHome()">← Back</button>
+      </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div id="mentor-panel-2" style="display:none;">
+      <div class="card">
+        <div class="card-title">📋 Session Prep (Recurring)</div>
+        <div class="form-grid">
+          <div class="field">
+            <label>What is your primary contribution to the upcoming session?</label>
+            <textarea id="mentor-contribution" placeholder="Specific expertise, feedback, contacts, or materials you're bringing"></textarea>
+          </div>
+          <div class="field">
+            <label>Questions You Want the Group to Address</label>
+            <textarea id="mentor-questions" placeholder="What do you think the team should be discussing that they might not be?"></textarea>
+          </div>
+          <div class="field">
+            <label>Your Capacity for This Session</label>
+            <select id="mentor-capacity">
+              <option>Full engagement — I'll lead a segment</option>
+              <option>Active participation — contributing throughout</option>
+              <option>Advisory — limited time, specific input only</option>
+              <option>Observer this session — catching up</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Any Introductions or Referrals Ready to Make?</label>
+            <textarea id="mentor-intro" placeholder="Names, organizations, or resources you can connect the startup to now"></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-gold" onclick="submitForm('mentor')">✓ Submit Mentor Form</button>
+        <button class="btn btn-outline" onclick="mentorBack(1)">← Back</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SCREEN: MENTEE FORM ==================== -->
+  <div class="screen" id="screen-mentee">
+    <div class="section-header">
+      <h2>Founder / Mentee Intake</h2>
+      <span class="section-tag">🚀 Your Role</span>
+    </div>
+
+    <div class="step-indicator">
+      <div class="step active" id="mentee-step-1">1 · You & Your Startup</div>
+      <div class="step" id="mentee-step-2">2 · Gaps & Needs</div>
+      <div class="step" id="mentee-step-3">3 · Session Prep</div>
+    </div>
+
+    <!-- Step 1 -->
+    <div id="mentee-panel-1">
+      <div class="card">
+        <div class="card-title">👤 About You</div>
+        <div class="form-grid">
+          <div class="form-row">
+            <div class="field">
+              <label>Your Name</label>
+              <input type="text" id="mentee-name" placeholder="Your full name">
+            </div>
+            <div class="field">
+              <label>Your Background / Training</label>
+              <input type="text" id="mentee-background" placeholder="e.g. Cardiologist, PhD Biomedical Engineer, MBA">
+            </div>
+          </div>
+          <div class="field">
+            <label>Previous Startup / Commercialization Experience</label>
+            <select id="mentee-experience">
+              <option>None — this is my first startup</option>
+              <option>Early — I've had one idea but no company formed</option>
+              <option>Some — I've been part of a startup team</option>
+              <option>Moderate — I've co-founded or led a startup before</option>
+              <option>Experienced — multiple startups or exits</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Your Startup / Innovation Name</label>
+            <input type="text" id="mentee-startup" placeholder="Company or project name">
+          </div>
+          <div class="field">
+            <label>Describe Your Innovation in 2–3 Sentences</label>
+            <textarea id="mentee-description" placeholder="What does it do? Who does it help? What problem does it solve?"></textarea>
+          </div>
+          <div class="field">
+            <label>Current Development Stage</label>
+            <select id="mentee-stage">
+              <option>Idea — no prototype yet</option>
+              <option>Concept — drawings or early design</option>
+              <option>Bench prototype — not yet tested</option>
+              <option>Bench validated — tested in lab setting</option>
+              <option>Preclinical / animal studies</option>
+              <option>Early clinical / IRB approved</option>
+              <option>Clinical data collected</option>
+              <option>Seeking regulatory clearance</option>
+              <option>Commercial / seeking growth</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="menteeNext(1)">Continue →</button>
+        <button class="btn btn-outline" onclick="showHome()">← Back</button>
+      </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div id="mentee-panel-2" style="display:none;">
+      <div class="card">
+        <div class="card-title">🎯 Your Gaps & Needs</div>
+        <div class="form-grid">
+          <div class="field">
+            <label>What skills or knowledge are you missing? (select all that apply)</label>
+            <div class="checkbox-grid" id="mentee-gaps-grid"></div>
+          </div>
+          <div class="field">
+            <label>What is your single biggest challenge right now?</label>
+            <textarea id="mentee-challenge" placeholder="Be specific — not 'funding' but 'I can't find investors who understand medical devices'"></textarea>
+          </div>
+          <div class="field">
+            <label>What does success look like in 6 months for you?</label>
+            <textarea id="mentee-success" placeholder="e.g. LOI from a hospital partner, $500K raised, 510(k) submitted..."></textarea>
+          </div>
+          <div class="field">
+            <label>What is your funding status?</label>
+            <select id="mentee-funding">
+              <option>No funding — bootstrapped or pre-revenue</option>
+              <option>Friends & family / personal funds only</option>
+              <option>Non-dilutive (grants, awards) only</option>
+              <option>Pre-seed raised (&lt;$500K)</option>
+              <option>Seed raised ($500K–$2M)</option>
+              <option>Series A or beyond</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Do you have a team? If so, what roles are covered?</label>
+            <textarea id="mentee-team" placeholder="e.g. Solo founder, co-founder with business background, no regulatory person yet..."></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="menteeNext(2)">Continue →</button>
+        <button class="btn btn-outline" onclick="menteeBack(1)">← Back</button>
+      </div>
+    </div>
+
+    <!-- Step 3 -->
+    <div id="mentee-panel-3" style="display:none;">
+      <div class="card">
+        <div class="card-title">📋 Session Prep (Recurring)</div>
+        <div class="form-grid">
+          <div class="field">
+            <label>What did you accomplish since the last session?</label>
+            <textarea id="mentee-accomplished" placeholder="Be honest — wins AND setbacks both matter"></textarea>
+          </div>
+          <div class="field">
+            <label>Where are you stuck right now?</label>
+            <textarea id="mentee-stuck" placeholder="What's the specific decision, barrier, or question you most need help with today?"></textarea>
+          </div>
+          <div class="field">
+            <label>What do you need from this session?</label>
+            <select id="mentee-need-type">
+              <option>Specific advice on a decision I need to make</option>
+              <option>Feedback on a deliverable (pitch, plan, prototype)</option>
+              <option>An introduction or connection to a specific type of person</option>
+              <option>A reality check on my assumptions</option>
+              <option>Help prioritizing — I have too many directions</option>
+              <option>Accountability — did I do what I said I would?</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Is there anything you don't want to discuss or aren't ready to share yet?</label>
+            <textarea id="mentee-private" placeholder="Optional — helps the team respect your current limits"></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-gold" onclick="submitForm('mentee')">✓ Submit Founder Form</button>
+        <button class="btn btn-outline" onclick="menteeBack(2)">← Back</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SCREEN: DASHBOARD ==================== -->
+  <div class="screen" id="screen-dashboard">
+    <div class="section-header">
+      <h2>Mentoring Dashboard</h2>
+      <span class="section-tag" id="dash-session-label">⚡ AI Output</span>
+    </div>
+
+    <div class="submission-status" id="dashStatusBar"></div>
+
+    <div id="dash-generate-prompt" class="alert alert-info">
+      Complete at least the Lead Mentor and Mentee forms to generate outputs. More submissions = richer outputs.
+    </div>
+
+    <div class="btn-row" style="margin-bottom: 32px; margin-top: 0;">
+      <button class="btn btn-gold" id="generateBtn" onclick="generateOutputs()">⚡ Generate Session Plan + Outputs</button>
+      <button class="btn btn-outline" onclick="showHome()">← Back to Home</button>
+    </div>
+
+    <!-- Loading -->
+    <div id="dash-loading" style="display:none;">
+      <div class="loading">
+        <div class="spinner"></div>
+        <div class="loading-text">Analyzing submissions and generating mentoring plan…</div>
+      </div>
+    </div>
+
+    <!-- Output Tabs -->
+    <div id="dash-outputs" style="display:none;">
+      <div class="tabs">
+        <div class="tab active" onclick="switchTab('agenda')">📋 Session Agenda</div>
+        <div class="tab" onclick="switchTab('roadmap')">🗺 Program Roadmap</div>
+        <div class="tab" onclick="switchTab('matrix')">🧩 Mentor Matrix</div>
+        <div class="tab" onclick="switchTab('raw')">📄 Full Analysis</div>
+      </div>
+
+      <div class="tab-panel active" id="tab-agenda">
+        <div class="ai-output">
+          <h3>📋 Session Agenda</h3>
+          <div class="ai-output-content" id="output-agenda">Generating…</div>
+        </div>
+      </div>
+      <div class="tab-panel" id="tab-roadmap">
+        <div class="ai-output">
+          <h3>🗺 Program Roadmap</h3>
+          <div class="ai-output-content" id="output-roadmap">Generating…</div>
+        </div>
+      </div>
+      <div class="tab-panel" id="tab-matrix">
+        <div class="ai-output">
+          <h3>🧩 Mentor-to-Topic Assignment Matrix</h3>
+          <div class="ai-output-content" id="output-matrix">Generating…</div>
+        </div>
+      </div>
+      <div class="tab-panel" id="tab-raw">
+        <div class="ai-output">
+          <h3>📄 Full Situation Analysis</h3>
+          <div class="ai-output-content" id="output-raw">Generating…</div>
+        </div>
+      </div>
+
+      <div class="print-btn-row">
+        <button class="btn btn-outline btn-sm" onclick="window.print()">🖨 Print / Save PDF</button>
+        <button class="btn btn-outline btn-sm" onclick="copyOutput()">📋 Copy Current Tab</button>
+        <button class="btn btn-outline btn-sm" onclick="clearAll()">🔄 Reset All Data</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<!-- ==================== SAVE MODAL ==================== -->
+<div class="save-screen" id="saveModal" style="display:none;">
+  <div class="save-box">
+    <button class="save-close" onclick="closeSaveModal()">✕</button>
+    <div style="font-size:32px; margin-bottom:12px;" id="saveModalIcon">✅</div>
+    <h3 id="saveModalTitle">Form Submitted!</h3>
+    <p id="saveModalDesc">Your answers are saved in this browser session. <strong>To make sure nothing is lost</strong>, copy the text below and email or text it to yourself or to the program coordinator before closing this tab.</p>
+    <div class="save-success" id="saveCopiedMsg">✓ Copied to clipboard! Paste it into an email or text message.</div>
+    <textarea class="save-textarea" id="saveModalText" readonly></textarea>
+    <div class="save-actions">
+      <button class="btn btn-gold" onclick="copyModalText()">📋 Copy My Answers</button>
+      <button class="btn btn-primary" onclick="openEmail()">✉️ Email to Coordinator</button>
+      <button class="btn btn-outline" onclick="closeSaveModal()">Done</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// STATE
+// ============================================================
+const state = {
+  submissions: {},
+  outputs: null
+};
+
+const EXPERTISE_OPTIONS = [
+  'Regulatory (FDA/CE)', 'Reimbursement & Coding', 'Clinical Trial Design',
+  'IP / Patent Strategy', 'Venture Finance & Fundraising', 'Business Plan / Strategy',
+  'Medical Device Development', 'Pharma / Drug Development', 'AI / Software / Digital Health',
+  'Manufacturing & Scale-up', 'Hospital / Health System Sales', 'Physician Engagement',
+  'Grant Writing (NIH/NSF/SBIR)', 'Team Building & Hiring', 'International Markets',
+  'Academic-Industry Partnerships', 'Pitch & Presentation', 'Financial Modeling'
+];
+
+const STARTUP_NEEDS = [
+  'Investor introductions', 'Clinical partner / pilot site', 'Regulatory pathway clarity',
+  'Reimbursement strategy', 'Technical / engineering help', 'Business model refinement',
+  'IP protection', 'Grant funding', 'Team / co-founder recruitment',
+  'Customer discovery / market validation', 'Pitch deck refinement', 'Financial modeling'
+];
+
+// ============================================================
+// INIT CHECKBOX GRIDS
+// ============================================================
+function buildCheckboxGrid(containerId, options, name) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  el.innerHTML = options.map((opt, i) =>
+    `<label class="check-item" id="${name}-check-${i}">
+      <input type="checkbox" name="${name}" value="${opt}" onchange="updateCheckStyle('${name}-check-${i}', this)">
+      ${opt}
+    </label>`
+  ).join('');
+}
+
+function updateCheckStyle(labelId, input) {
+  document.getElementById(labelId).classList.toggle('checked', input.checked);
+}
+
+function getChecked(name) {
+  return [...document.querySelectorAll(`input[name="${name}"]:checked`)].map(el => el.value);
+}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + id).classList.add('active');
+  updatePhaseIndicator(id);
+  window.scrollTo(0, 0);
+}
+
+function showHome() { showScreen('home'); updateHomeStatus(); }
+function showDashboard() { showScreen('dashboard'); updateDashStatus(); }
+
+function startForm(role) {
+  showScreen(role);
+  buildCheckboxGrid('lead-expertise-grid', EXPERTISE_OPTIONS, 'lead-expertise');
+  buildCheckboxGrid('lead-needs-grid', STARTUP_NEEDS, 'lead-needs');
+  buildCheckboxGrid('mentor-expertise-grid', EXPERTISE_OPTIONS, 'mentor-expertise');
+  buildCheckboxGrid('mentee-gaps-grid', EXPERTISE_OPTIONS, 'mentee-gaps');
+}
+
+function updatePhaseIndicator(screen) {
+  const map = { home: [0,0,0], lead: [1,0,0], mentor: [1,0,0], mentee: [1,0,0], dashboard: [1,1,1] };
+  const dots = map[screen] || [0,0,0];
+  ['pd1','pd2','pd3'].forEach((id, i) => {
+    const el = document.getElementById(id);
+    el.className = 'phase-dot' + (dots[i] === 1 ? ' active' : '');
+  });
+}
+
+// LEAD STEPS
+function showLeadPanel(n) {
+  [1,2,3].forEach(i => {
+    document.getElementById(`lead-panel-${i}`).style.display = i===n ? 'block' : 'none';
+    const s = document.getElementById(`lead-step-${i}`);
+    s.className = 'step' + (i===n ? ' active' : i<n ? ' done' : '');
+  });
+}
+function leadNext(from) { showLeadPanel(from + 1); }
+function leadBack(to) { showLeadPanel(to); }
+
+// MENTOR STEPS
+function showMentorPanel(n) {
+  [1,2].forEach(i => {
+    document.getElementById(`mentor-panel-${i}`).style.display = i===n ? 'block' : 'none';
+    const s = document.getElementById(`mentor-step-${i}`);
+    s.className = 'step' + (i===n ? ' active' : i<n ? ' done' : '');
+  });
+}
+function mentorNext(from) { showMentorPanel(from + 1); }
+function mentorBack(to) { showMentorPanel(to); }
+
+// MENTEE STEPS
+function showMenteePanel(n) {
+  [1,2,3].forEach(i => {
+    document.getElementById(`mentee-panel-${i}`).style.display = i===n ? 'block' : 'none';
+    const s = document.getElementById(`mentee-step-${i}`);
+    s.className = 'step' + (i===n ? ' active' : i<n ? ' done' : '');
+  });
+}
+function menteeNext(from) { showMenteePanel(from + 1); }
+function menteeBack(to) { showMenteePanel(to); }
+
+// TABS
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach((t,i) => {
+    const names = ['agenda','roadmap','matrix','raw'];
+    t.classList.toggle('active', names[i] === name);
+  });
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+}
+
+// ============================================================
+// FORM SUBMISSION
+// ============================================================
+const COORDINATOR_EMAIL = 'gruionu@gmail.com'; // ← update this as needed
+
+function submitForm(role) {
+  const data = collectFormData(role);
+  state.submissions[role] = data;
+  updateHomeStatus();
+  showSaveModal(role, data);
+}
+
+// ============================================================
+// SAVE MODAL
+// ============================================================
+function showSaveModal(role, data) {
+  const labels = {
+    lead: { icon: '🎯', title: 'Lead Mentor Form Submitted!', name: 'Lead Mentor' },
+    mentor: { icon: '🧠', title: 'Mentor Form Submitted!', name: 'Mentor' },
+    mentee: { icon: '🚀', title: 'Founder Form Submitted!', name: 'Founder / Mentee' }
+  };
+  const info = labels[role];
+  document.getElementById('saveModalIcon').textContent = info.icon;
+  document.getElementById('saveModalTitle').textContent = info.title;
+  document.getElementById('saveModalText').value = formatAnswersAsText(role, data, info.name);
+  document.getElementById('saveCopiedMsg').style.display = 'none';
+  document.getElementById('saveModal').style.display = 'flex';
+}
+
+function closeSaveModal() {
+  document.getElementById('saveModal').style.display = 'none';
+  showHome();
+}
+
+function copyModalText() {
+  const ta = document.getElementById('saveModalText');
+  ta.select();
+  try {
+    navigator.clipboard.writeText(ta.value).then(() => {
+      document.getElementById('saveCopiedMsg').style.display = 'block';
+    }).catch(() => {
+      document.execCommand('copy');
+      document.getElementById('saveCopiedMsg').style.display = 'block';
+    });
+  } catch(e) {
+    document.execCommand('copy');
+    document.getElementById('saveCopiedMsg').style.display = 'block';
+  }
+}
+
+function openEmail() {
+  const text = document.getElementById('saveModalText').value;
+  const title = document.getElementById('saveModalTitle').textContent;
+  const subject = encodeURIComponent('DRG Innovation Mentoring — ' + title);
+  const body = encodeURIComponent(text);
+  window.location.href = `mailto:${COORDINATOR_EMAIL}?subject=${subject}&body=${body}`;
+}
+
+function formatAnswersAsText(role, d, roleName) {
+  const ts = new Date().toLocaleString();
+  const line = '─'.repeat(48);
+  let out = `DRG INNOVATION LLC — ${roleName.toUpperCase()} SUBMISSION\n${line}\nSubmitted: ${ts}\n${line}\n\n`;
+
+  if (role === 'lead') {
+    out += `PROFILE\n`;
+    out += `Name: ${d.name || '—'}\n`;
+    out += `Domain: ${d.domain || '—'}\n`;
+    out += `Experience: ${d.years || '—'}\n`;
+    out += `Expertise: ${[...d.expertise, d.expertiseOther].filter(Boolean).join(', ') || '—'}\n`;
+    out += `Mentoring Style: ${d.style || '—'}\n\n`;
+    out += `STARTUP ASSESSMENT\n`;
+    out += `Startup Name: ${d.startupName || '—'}\n`;
+    out += `Technology Type: ${d.techType || '—'}\n`;
+    out += `Development Stage (TRL): ${d.trl || '—'}\n`;
+    out += `Top Needs: ${d.needs.join(', ') || '—'}\n`;
+    out += `Primary Risk: ${d.risk || '—'}\n`;
+    out += `Program Duration: ${d.duration || '—'}\n`;
+    out += `End-of-Program Milestone: ${d.milestone || '—'}\n\n`;
+    out += `SESSION PREP\n`;
+    out += `Session: ${d.sessionNum || '—'}\n`;
+    out += `Progress Since Last Session: ${d.progress || '—'}\n`;
+    out += `Priority Focus: ${d.focus || '—'}\n`;
+    out += `Suggested Session Lead: ${d.sessionLead || '—'}\n`;
+    out += `Flags / Concerns: ${d.flags || '—'}\n`;
+
+  } else if (role === 'mentor') {
+    out += `PROFILE\n`;
+    out += `Name: ${d.name || '—'}\n`;
+    out += `Domain: ${d.domain || '—'}\n`;
+    out += `Experience: ${d.years || '—'}\n`;
+    out += `Core Strengths: ${[...d.expertise, d.expertiseOther].filter(Boolean).join(', ') || '—'}\n`;
+    out += `Network / Connections Available: ${d.network || '—'}\n`;
+    out += `Limits / Preferences: ${d.limits || '—'}\n\n`;
+    out += `SESSION PREP\n`;
+    out += `Primary Contribution: ${d.contribution || '—'}\n`;
+    out += `Questions for the Group: ${d.questions || '—'}\n`;
+    out += `Capacity This Session: ${d.capacity || '—'}\n`;
+    out += `Introductions Ready to Make: ${d.intro || '—'}\n`;
+
+  } else {
+    out += `ABOUT YOU\n`;
+    out += `Name: ${d.name || '—'}\n`;
+    out += `Background / Training: ${d.background || '—'}\n`;
+    out += `Startup Experience Level: ${d.experience || '—'}\n`;
+    out += `Startup / Innovation Name: ${d.startup || '—'}\n`;
+    out += `Description: ${d.description || '—'}\n`;
+    out += `Current Development Stage: ${d.stage || '—'}\n\n`;
+    out += `GAPS & NEEDS\n`;
+    out += `Skill Gaps Identified: ${d.gaps.join(', ') || '—'}\n`;
+    out += `Biggest Challenge Right Now: ${d.challenge || '—'}\n`;
+    out += `6-Month Success Vision: ${d.success || '—'}\n`;
+    out += `Funding Status: ${d.funding || '—'}\n`;
+    out += `Team / Roles Covered: ${d.team || '—'}\n\n`;
+    out += `SESSION PREP\n`;
+    out += `Accomplished Since Last Session: ${d.accomplished || '—'}\n`;
+    out += `Currently Stuck On: ${d.stuck || '—'}\n`;
+    out += `What I Need From This Session: ${d.needType || '—'}\n`;
+    out += `Not for Discussion This Session: ${d.private || '—'}\n`;
+  }
+
+  out += `\n${line}\nGenerated by DRG Innovation LLC`;
+  return out;
+}
+
+function collectFormData(role) {
+  if (role === 'lead') {
+    return {
+      name: v('lead-name'), domain: v('lead-domain'), years: v('lead-years'),
+      expertise: getChecked('lead-expertise'), expertiseOther: v('lead-expertise-other'),
+      style: v('lead-style'), startupName: v('lead-startup-name'), techType: v('lead-tech-type'),
+      trl: v('lead-trl'), needs: getChecked('lead-needs'), risk: v('lead-risk'),
+      duration: v('lead-duration'), milestone: v('lead-milestone'),
+      sessionNum: v('lead-session-num'), progress: v('lead-progress'),
+      focus: v('lead-focus'), sessionLead: v('lead-session-lead'), flags: v('lead-flags')
+    };
+  } else if (role === 'mentor') {
+    return {
+      name: v('mentor-name'), domain: v('mentor-domain'), years: v('mentor-years'),
+      expertise: getChecked('mentor-expertise'), expertiseOther: v('mentor-expertise-other'),
+      network: v('mentor-network'), limits: v('mentor-limits'),
+      contribution: v('mentor-contribution'), questions: v('mentor-questions'),
+      capacity: v('mentor-capacity'), intro: v('mentor-intro')
+    };
+  } else {
+    return {
+      name: v('mentee-name'), background: v('mentee-background'), experience: v('mentee-experience'),
+      startup: v('mentee-startup'), description: v('mentee-description'), stage: v('mentee-stage'),
+      gaps: getChecked('mentee-gaps'), challenge: v('mentee-challenge'),
+      success: v('mentee-success'), funding: v('mentee-funding'), team: v('mentee-team'),
+      accomplished: v('mentee-accomplished'), stuck: v('mentee-stuck'),
+      needType: v('mentee-need-type'), private: v('mentee-private')
+    };
+  }
+}
+
+function v(id) {
+  const el = document.getElementById(id);
+  return el ? el.value.trim() : '';
+}
+
+// ============================================================
+// STATUS BARS
+// ============================================================
+function buildStatusBar(containerId) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  const roles = [
+    { key: 'lead', label: '🎯 Lead Mentor' },
+    { key: 'mentor', label: '🧠 Mentor' },
+    { key: 'mentee', label: '🚀 Founder' }
+  ];
+  el.innerHTML = roles.map(r => {
+    const done = !!state.submissions[r.key];
+    return `<div class="status-pill ${done ? 'submitted' : ''}">
+      <div class="dot"></div>${r.label} ${done ? '✓' : '· Pending'}
+    </div>`;
+  }).join('');
+}
+
+function updateHomeStatus() { buildStatusBar('homeStatusBar'); }
+function updateDashStatus() {
+  buildStatusBar('dashStatusBar');
+  const count = Object.keys(state.submissions).length;
+  const prompt = document.getElementById('dash-generate-prompt');
+  if (prompt) prompt.style.display = count >= 2 ? 'none' : 'block';
+}
+
+// ============================================================
+// AI GENERATION
+// ============================================================
+async function generateOutputs() {
+  const count = Object.keys(state.submissions).length;
+  if (count === 0) { alert('Please submit at least one form before generating.'); return; }
+
+  document.getElementById('dash-loading').style.display = 'block';
+  document.getElementById('dash-outputs').style.display = 'none';
+  document.getElementById('generateBtn').disabled = true;
+
+  const prompt = buildPrompt();
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: `You are an expert biomedical startup mentoring coordinator at DRG Innovation LLC.
+Your job is to analyze intake data from mentors and a founder in a structured mentoring program, then generate three distinct outputs in a single JSON response.
+
+Always respond with ONLY valid JSON in this exact structure — no markdown, no preamble:
+{
+  "agenda": "...",
+  "roadmap": "...",
+  "matrix": "...",
+  "analysis": "..."
+}
+
+Each value is a plain text string with line breaks using \\n.
+Use **bold** markers for section headers within each string.
+Be specific, actionable, and concise. Tailor everything to the submitted data.`,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    const data = await res.json();
+    const text = data.content?.map(b => b.text || '').join('') || '';
+
+    let parsed;
+    try {
+      const clean = text.replace(/```json|```/g, '').trim();
+      parsed = JSON.parse(clean);
+    } catch (e) {
+      parsed = {
+        agenda: text,
+        roadmap: 'See full analysis tab for complete output.',
+        matrix: 'See full analysis tab for complete output.',
+        analysis: text
+      };
+    }
+
+    renderOutputs(parsed);
+
+  } catch (err) {
+    document.getElementById('dash-loading').style.display = 'none';
+    document.getElementById('generateBtn').disabled = false;
+    alert('Error connecting to AI. Please check your network and try again.\n\n' + err.message);
+  }
+}
+
+function renderOutputs(parsed) {
+  document.getElementById('dash-loading').style.display = 'none';
+  document.getElementById('dash-outputs').style.display = 'block';
+  document.getElementById('generateBtn').disabled = false;
+
+  ['agenda','roadmap','matrix'].forEach(key => {
+    const el = document.getElementById('output-' + key);
+    if (el) el.innerHTML = formatOutput(parsed[key] || 'Not generated.');
+  });
+  const raw = document.getElementById('output-raw');
+  if (raw) raw.innerHTML = formatOutput(parsed.analysis || parsed.agenda || 'Not generated.');
+}
+
+function formatOutput(text) {
+  return text
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\n/g, '<br>');
+}
+
+function buildPrompt() {
+  const s = state.submissions;
+  const lines = [];
+
+  if (s.lead) {
+    const l = s.lead;
+    lines.push(`LEAD MENTOR: ${l.name || 'Not provided'}
+Domain: ${l.domain} | Experience: ${l.years} | Style: ${l.style}
+Expertise: ${[...l.expertise, l.expertiseOther].filter(Boolean).join(', ')}
+Startup: ${l.startupName} | Tech type: ${l.techType} | Stage: ${l.trl}
+Top needs identified: ${l.needs.join(', ')}
+Primary risk: ${l.risk}
+Program: ${l.duration} | End milestone: ${l.milestone}
+SESSION PREP — ${l.sessionNum}:
+Progress: ${l.progress}
+Focus: ${l.focus}
+Suggested session lead: ${l.sessionLead}
+Flags: ${l.flags}`);
+  }
+
+  if (s.mentor) {
+    const m = s.mentor;
+    lines.push(`MENTOR: ${m.name || 'Not provided'}
+Domain: ${m.domain} | Experience: ${m.years}
+Expertise: ${[...m.expertise, m.expertiseOther].filter(Boolean).join(', ')}
+Network available: ${m.network}
+Limits: ${m.limits}
+SESSION PREP:
+Contribution: ${m.contribution}
+Questions for group: ${m.questions}
+Capacity: ${m.capacity}
+Intros ready: ${m.intro}`);
+  }
+
+  if (s.mentee) {
+    const f = s.mentee;
+    lines.push(`FOUNDER/MENTEE: ${f.name || 'Not provided'}
+Background: ${f.background} | Startup experience: ${f.experience}
+Startup: ${f.startup}
+Description: ${f.description}
+Stage: ${f.stage} | Funding: ${f.funding}
+Team: ${f.team}
+Skill gaps: ${f.gaps.join(', ')}
+Biggest challenge: ${f.challenge}
+6-month success vision: ${f.success}
+SESSION PREP:
+Accomplished since last session: ${f.accomplished}
+Currently stuck on: ${f.stuck}
+Needs from this session: ${f.needType}
+Private/not for discussion: ${f.private}`);
+  }
+
+  return `Based on the following DRG Innovation mentoring program intake data, generate:
+
+1. SESSION AGENDA — A structured 60–90 minute session agenda with timed segments, role assignments, and specific discussion questions tailored to what the founder needs most.
+
+2. PROGRAM ROADMAP — A month-by-month mentoring roadmap for the full program duration showing: focus areas per phase, key milestones, which mentor leads each phase, and go/no-go decision points.
+
+3. MENTOR-TOPIC ASSIGNMENT MATRIX — A clear mapping of each mentor to the topics, sessions, and tasks they are best suited for, based on their expertise and the startup's needs. Flag where gaps exist.
+
+4. FULL ANALYSIS — A concise situation assessment: startup readiness, founder blind spots, team dynamics risks, top 3 priorities, and the most important thing the mentoring team should do first.
+
+DATA:
+${lines.join('\n\n')}`;
+}
+
+// ============================================================
+// UTILITIES
+// ============================================================
+function copyOutput() {
+  const active = document.querySelector('.tab-panel.active .ai-output-content');
+  if (active) {
+    navigator.clipboard.writeText(active.innerText).then(() => alert('Copied to clipboard!'));
+  }
+}
+
+function clearAll() {
+  if (confirm('Reset all submitted data? This cannot be undone.')) {
+    state.submissions = {};
+    state.outputs = null;
+    document.getElementById('dash-outputs').style.display = 'none';
+    updateHomeStatus();
+    showHome();
+  }
+}
+
+// ============================================================
+// BOOT
+// ============================================================
+window.addEventListener('DOMContentLoaded', () => {
+  updateHomeStatus();
+});
+</script>
+</body>
+</html>

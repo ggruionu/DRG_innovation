@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Small Molecule Program Feasibility Survey</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Serif+Display&display=swap');
+
+:root {
+  --blue: #185FA5;
+  --blue-light: #E8F1FB;
+  --blue-dark: #0C447C;
+  --green: #1D9E75;
+  --green-dark: #0F6E56;
+  --red-light: #FCEBEB;
+  --red: #A32D2D;
+  --text: #1A1A18;
+  --text-soft: #5A5A57;
+  --border: rgba(0,0,0,0.09);
+  --bg: #F0EEE9;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  padding-bottom: 60px;
+}
+
+.header { background: var(--blue-dark); padding: 32px 20px 26px; margin-bottom: 24px; }
+.kicker { font-size: 10px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 8px; }
+.header h1 { font-family: 'DM Serif Display', serif; font-size: 22px; font-weight: 400; color: #fff; line-height: 1.3; margin-bottom: 8px; }
+.header-desc { font-size: 13px; color: rgba(255,255,255,0.55); line-height: 1.6; }
+.prog-wrap { margin-top: 18px; }
+.prog-meta { display: flex; justify-content: space-between; font-size: 11px; color: rgba(255,255,255,0.4); margin-bottom: 5px; }
+.prog-track { height: 3px; background: rgba(255,255,255,0.15); border-radius: 2px; overflow: hidden; }
+.prog-fill { height: 100%; background: rgba(255,255,255,0.65); border-radius: 2px; width: 0%; transition: width 0.4s; }
+
+.wrap { padding: 0 16px; max-width: 680px; margin: 0 auto; }
+
+.identity { background: #fff; border-radius: 12px; border: 1px solid var(--border); padding: 18px 20px; margin-bottom: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.field-group label { display: block; font-size: 10px; font-weight: 600; letter-spacing: 0.09em; text-transform: uppercase; color: var(--text-soft); margin-bottom: 6px; }
+.field-group input { width: 100%; border: none; border-bottom: 1.5px solid var(--border); padding: 6px 2px; font-family: 'DM Sans', sans-serif; font-size: 15px; background: transparent; color: var(--text); outline: none; }
+.field-group input:focus { border-bottom-color: var(--blue); }
+.field-group input::placeholder { color: #C0BFBC; }
+
+.section { margin-bottom: 24px; }
+.sec-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.sec-num { width: 24px; height: 24px; background: var(--blue); color: #fff; border-radius: 50%; font-size: 11px; font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.sec-title { font-family: 'DM Serif Display', serif; font-size: 16px; font-weight: 400; }
+
+.qcard { background: #fff; border-radius: 10px; border: 1px solid var(--border); padding: 16px 18px; margin-bottom: 8px; transition: border-color 0.2s; }
+.qcard.answered { border-color: rgba(24,95,165,0.25); }
+.qcard.has-error { border-color: #E24B4A !important; }
+.q-num { font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--blue); margin-bottom: 4px; }
+.q-text { font-size: 14px; font-weight: 500; line-height: 1.45; margin-bottom: 12px; }
+.q-hint { font-size: 11px; color: var(--text-soft); font-style: italic; margin-bottom: 8px; margin-top: -6px; }
+
+.opts { display: flex; flex-direction: column; gap: 5px; }
+.opt {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 10px 12px; border-radius: 8px;
+  border: 1px solid #ECEAE6; background: #FAFAF7;
+  cursor: pointer; font-size: 13px; color: var(--text-soft);
+  line-height: 1.4; transition: all 0.12s; user-select: none; min-height: 44px;
+}
+.opt:active { background: var(--blue-light); }
+.opt:has(input:checked) { border-color: var(--blue); background: var(--blue-light); color: var(--blue-dark); font-weight: 500; }
+.opt input[type=radio], .opt input[type=checkbox] { accent-color: var(--blue); width: 18px; height: 18px; flex-shrink: 0; margin-top: 1px; cursor: pointer; }
+.other-inp { border: none; border-bottom: 1px solid rgba(0,0,0,0.15); background: transparent; font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--text); outline: none; flex: 1; min-width: 0; padding: 0 3px; }
+
+.submit-zone { background: #fff; border-radius: 12px; border: 1px solid var(--border); padding: 22px 20px; }
+.submit-zone > p { font-size: 13px; color: var(--text-soft); line-height: 1.65; margin-bottom: 16px; text-align: center; }
+.err-banner { background: var(--red-light); color: var(--red); border-radius: 8px; padding: 12px 14px; font-size: 13px; margin-bottom: 14px; display: none; line-height: 1.5; }
+
+.btn-main { display: flex; align-items: center; justify-content: center; width: 100%; background: var(--blue); color: #fff; border: none; border-radius: 10px; padding: 15px; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; min-height: 52px; }
+.btn-main:active { opacity: 0.85; }
+.btn-green { background: var(--green) !important; }
+
+/* ── Results / Print view ── */
+#resultsWrap { margin-top: 20px; }
+.hidden { display: none !important; }
+
+/* Save as PDF button — big and obvious */
+.save-btn {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  width: 100%; background: var(--blue-dark); color: #fff; border: none;
+  border-radius: 12px; padding: 18px; font-family: 'DM Sans', sans-serif;
+  font-size: 16px; font-weight: 600; cursor: pointer; min-height: 56px;
+  margin-bottom: 12px;
+}
+.save-btn:active { opacity: 0.85; }
+.save-btn svg { width: 20px; height: 20px; flex-shrink: 0; }
+
+.save-note {
+  background: #fff; border-radius: 10px; border: 1px solid var(--border);
+  padding: 14px 16px; font-size: 13px; color: var(--text-soft); line-height: 1.6;
+  margin-bottom: 16px; text-align: center;
+}
+.save-note strong { color: var(--text); }
+
+/* The printable results card */
+.results-card {
+  background: #fff;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+.rc-header { background: var(--blue-dark); padding: 16px 20px; }
+.rc-header-title { font-family: 'DM Serif Display', serif; font-size: 15px; color: #fff; font-weight: 400; margin-bottom: 2px; }
+.rc-header-meta { font-size: 11px; color: rgba(255,255,255,0.55); }
+.rc-body { padding: 4px 20px 16px; }
+.rc-section { margin-top: 14px; }
+.rc-sec-title { font-size: 9px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--blue); padding: 6px 0 4px; border-bottom: 1px solid #EEECEA; margin-bottom: 8px; }
+.rc-row { display: flex; gap: 8px; margin-bottom: 7px; font-size: 12px; line-height: 1.4; }
+.rc-q { color: var(--text-soft); flex: 0 0 40%; font-size: 11px; padding-top: 1px; }
+.rc-a { color: var(--text); font-weight: 500; flex: 1; }
+.rc-footer { background: #F7F6F3; padding: 8px 20px; font-size: 10px; color: var(--text-soft); text-align: center; }
+
+/* Print styles — hides everything except the results card */
+@media print {
+  body { background: #fff !important; padding: 0 !important; }
+  .header, .wrap > *:not(#resultsWrap) { display: none !important; }
+  #resultsWrap { display: block !important; margin: 0 !important; }
+  .save-btn, .save-note { display: none !important; }
+  .results-card { border: none !important; border-radius: 0 !important; box-shadow: none !important; margin: 0 !important; }
+  .rc-header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="kicker">DRG Innovation LLC · Expert Input</div>
+  <h1>Small Molecule Program<br>Feasibility Survey</h1>
+  <div class="header-desc">20 click-based questions. Takes about 5 minutes.</div>
+  <div class="prog-wrap">
+    <div class="prog-meta">
+      <span id="progLabel">0 of 20 answered</span>
+      <span id="progPct">0%</span>
+    </div>
+    <div class="prog-track"><div class="prog-fill" id="progFill"></div></div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="identity">
+    <div class="field-group">
+      <label>Your name</label>
+      <input type="text" id="respName" placeholder="Your name" autocomplete="name" value="John Doe">
+    </div>
+    <div class="field-group">
+      <label>Date</label>
+      <input type="text" id="respDate" placeholder="Today's date" value="01/01/2020">
+    </div>
+  </div>
+
+  <!-- SECTION 1 -->
+  <div class="section">
+    <div class="sec-head"><div class="sec-num">1</div><div class="sec-title">About You</div></div>
+
+    <div class="qcard" id="card_role">
+      <div class="q-num">Question 1</div>
+      <div class="q-text">What best describes your current primary role in drug discovery?</div>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="Q1_role" value="Primary pharmacology / target biology scientist"> Primary pharmacology / target biology scientist</label>
+        <label class="opt"><input type="radio" name="Q1_role" value="Medicinal chemist"> Medicinal chemist</label>
+        <label class="opt"><input type="radio" name="Q1_role" value="Translational scientist / biomarker lead"> Translational scientist / biomarker lead</label>
+        <label class="opt"><input type="radio" name="Q1_role" value="Drug discovery project leader or team leader"> Drug discovery project leader or team leader</label>
+        <label class="opt"><input type="radio" name="Q1_role" value="__other__"> Other: <input type="text" class="other-inp" id="other_role" placeholder="specify"></label>
+      </div>
+    </div>
+
+    <div class="qcard" id="card_exp">
+      <div class="q-num">Question 2</div>
+      <div class="q-text">How many years of drug discovery experience do you have?</div>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="Q2_exp" value="1–3 years"> 1–3 years</label>
+        <label class="opt"><input type="radio" name="Q2_exp" value="4–7 years"> 4–7 years</label>
+        <label class="opt"><input type="radio" name="Q2_exp" value="8–15 years"> 8–15 years</label>
+        <label class="opt"><input type="radio" name="Q2_exp" value="More than 15 years"> More than 15 years</label>
+      </div>
+    </div>
+
+    <div class="qcard" id="card_ta">
+      <div class="q-num">Question 3</div>
+      <div class="q-text">Which therapeutic area(s) do you primarily work in?</div>
+      <div class="q-hint">Select all that apply</div>
+      <div class="opts">
+        <label class="opt"><input type="checkbox" name="Q3_ta" value="Oncology"> Oncology</label>
+        <label class="opt"><input type="checkbox" name="Q3_ta" value="Cardiovascular / metabolic"> Cardiovascular / metabolic</label>
+        <label class="opt"><input type="checkbox" name="Q3_ta" value="Neuroscience / CNS"> Neuroscience / CNS</label>
+        <label class="opt"><input type="checkbox" name="Q3_ta" value="Immunology / inflammation"> Immunology / inflammation</label>
+        <label class="opt"><input type="checkbox" name="Q3_ta" value="Rare / genetic disease"> Rare / genetic disease</label>
+        <label class="opt"><input type="checkbox" name="Q3_ta" value="Infectious disease"> Infectious disease</label>
+        <label class="opt"><input type="checkbox" name="Q3_ta" value="__other__"> Other: <input type="text" class="other-inp" id="other_ta" placeholder="specify"></label>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 2 -->
+  <div class="section">
+    <div class="sec-head"><div class="sec-num">2</div><div class="sec-title">Unmet Need</div></div>
+
+    <div class="qcard" id="card_un1">
+      <div class="q-num">Question 4</div>
+      <div class="q-text">When evaluating unmet need, which factor matters most?</div>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="Q4_un1" value="No approved therapies exist"> No approved therapies exist in the indication</label>
+        <label class="opt"><input type="radio" name="Q4_un1" value="Approved therapies but efficacy is limited"> Approved therapies exist but efficacy is limited or partial</label>
+        <label class="opt"><input type="radio" name="Q4_un1" value="Approved therapies have unacceptable safety or tolerability"> Approved therapies have unacceptable safety or tolerability</label>
+        <label class="opt"><input type="radio" name="Q4_un1" value="High disease burden — mortality, QoL, economic impact"> High disease burden — mortality, QoL, economic impact</label>
+        <label class="opt"><input type="radio" name="Q4_un1" value="__other__"> Other: <input type="text" class="other-inp" id="other_un1" placeholder="specify"></label>
+      </div>
+    </div>
+
+    <div class="qcard" id="card_un2">
+      <div class="q-num">Question 5</div>
+      <div class="q-text">Should rare diseases score lower on unmet need in a screening tool?</div>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="Q5_un2" value="Yes — patient volume and commercial viability matter"> Yes — patient volume and commercial viability matter</label>
+        <label class="opt"><input type="radio" name="Q5_un2" value="No — rare diseases often have extreme unmet need"> No — rare diseases often have extreme unmet need and can score equally</label>
+        <label class="opt"><input type="radio" name="Q5_un2" value="Depends — no-treatment rare diseases score high; me-too should not"> Depends — no-treatment rare diseases score high; me-too should not</label>
+        <label class="opt"><input type="radio" name="Q5_un2" value="Rare disease should be scored separately"> Rare disease scoring should be handled separately</label>
+        <label class="opt"><input type="radio" name="Q5_un2" value="__other__"> Other: <input type="text" class="other-inp" id="other_un2" placeholder="specify"></label>
+      </div>
+    </div>
+
+    <div class="qcard" id="card_un3">
+      <div class="q-num">Question 6</div>
+      <div class="q-text">At TPP definition stage, how important is payer / reimbursement thinking?</div>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="Q6_un3" value="Critical — if it won't be reimbursed it's irrelevant"> Critical — if it won't be reimbursed, unmet need is irrelevant</label>
+        <label class="opt"><input type="radio" name="Q6_un3" value="Important but not a gating criterion yet"> Important but not a gating criterion at this stage</label>
+        <label class="opt"><input type="radio" name="Q6_un3" value="Premature — too early in discovery"> Premature — too early in discovery to assess reliably</label>
+        <label class="opt"><input type="radio" name="Q6_un3" value="Not relevant — this is a clinical/biological question"> Not relevant — this is a clinical/biological question</label>
+        <label class="opt"><input type="radio" name="Q6_un3" value="__other__"> Other: <input type="text" class="other-inp" id="other_un3" placeholder="specify"></label>
+      </div>
+    </div>
+
+    <div class="qcard" id="card_un4">
+      <div class="q-num">Question 7</div>
+      <div class="q-text">Does a validated patient stratification biomarker affect how you rate unmet need?</div>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="Q7_un4" value="Yes strongly — increases confidence in differentiation"> Yes strongly — increases confidence in the differentiation story</label>
+        <label class="opt"><input type="radio" name="Q7_un4" value="Yes somewhat — depends on biomarker type and precedent"> Yes somewhat — depends on biomarker type and precedent</label>
+        <label class="opt"><input type="radio" name="Q7_un4" value="Not really — that's a validation question not unmet need"> Not really — that's a validation question, not unmet need</label>
+        <label class="opt"><input type="radio" name="Q7_un4" value="No — I separate biomarker readiness from unmet need"> No — I separate biomarker readiness from unmet need</label>
+        <label class="opt"><input type="radio" name="Q7_un4" value="__other__"> Other: <input type="text" class="other-inp" id="other_un4" placeholder="specify"></label>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 3 -->
+  <div class="section">
+    <div class="sec-head"><div class="sec-num">3</div><div class="sec-title">Target Validation</div></div>
+
+    <div class="qcard" id="card_tv1">
+      <div class="q-num">Question 8</div>
+      <div class="q-text">Which is the single gold standard for target validation?</div>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="Q8_tv1" value="Human genetic evidence (GWAS, rare variant, Mendelian)"> Human genetic evidence (GWAS, rare variant, Mendelian)</label>
+        <label class="opt"><input type="radio" name="Q8_tv1" value="Pharmacological PoC in humans with a tool compound"> Pharmacological PoC in humans with a tool compound</label>
+        <label class="opt"><input type="radio" name="Q8_tv1" value="Strong animal model data (KO/knockin) with mechanistic rationale"> Strong animal model data (KO/knockin) with mechanistic rationale</label>
+        <label class="opt"><input type="radio" name="Q8_tv1" value="Preclinical pharmacology in disease-relevant animal models"> Preclinical pharmacology in disease-relevant animal models</label>
+        <label class="opt"><input type="radio" name="Q8_tv1" value="__other__"> Other: <input type="text" class="other-inp" id="other_tv1" placeholder="specify"></label>
+      </div>
+    </div>
+
+    <div class="qcard" id="card_tv2">
+      <div class="q-num">Question 9</div>
+      <div class="q-text">Minimum validation package to start a new small molecule program?</div>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="Q9_tv2" value="Human genetics alone"> Human genetics alone, even without pharmacological evidence</label>
+        <label class="opt"><input type="radio" name="Q9_tv2" value="Human genetics plus one animal model confirmation"> Human genetics plus one animal model confirmation</label>
+        <label class="opt"><input type="radio" name="Q9_tv2" value="Pharmacological PoC in humans — no genetics required"> Pharmacological PoC in humans — no genetics required</label>
+        <label class="opt"><input type="radio" name="Q9_tv2" value="Two independent lines of evidence, at least one in vivo"> Two independent lines of evidence, at least one in vivo</label>
+        <label class="opt"><input type="radio" name="Q9_tv2" value="__other__"> Other: <input type="text" class="other-inp" id="other_tv2" placeholder="specify"></label>
+      </div>
+    </div>
+
+    <div class="qcard" id="card_tv3">
+      <div class="q-num">Question 10</div>
+      <div class="q-text">Excellent validation but poor small molecule tractability — proceed?</div>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="Q10_tv3" value="Yes — validation trumps tractability"> Yes — validation trumps tractability; fix it with resources</label>
+        <label class="opt"><input type="radio" name="Q10_tv3" value="Yes but only with a concrete tractability plan first"> Yes but only with a concrete plan: structure or fragment screen first</label>
+        <label class="opt"><input type="radio" name="Q10_tv3" value="Only if parallel modalities exist as a hedge"> Only if parallel modalities exist (PROTAC, biologics) as a hedge</label>
+        <label class="opt"><input type="radio" name="Q10_tv3" value="No — poor tractability is a hard stop"> No — poor tractability is a hard stop for a small molecule program</label>
+        <label class="opt"><input type="radio" name="Q10_tv3" value="__other__"> Other: <input type="text" class="other-inp" id="other_tv3" placeholder="specify"></label>
+      </div>
+    </div>
+
+    <div class="qcard" id="card_tv4">
+      <div class="q-num">Question 11</div>
+      <div class="q-text">How critical are translational PD or efficacy biomarkers to target validation?</div>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="Q11_tv4" value="Critical — no biomarker, no program"> Critical — no biomarker, no program</label>
+        <label class="opt"><input type="radio" name="Q11_tv4" value="Important — absence is a major risk flag but not a hard stop"> Important — absence is a major risk flag but not a hard stop</label>
+        <label class="opt"><input type="radio" name="Q11_tv4" value="Helpful for Phase 1/2 but not required at discovery stage"> Helpful for Phase 1/2 but not required at discovery stage</label>
+        <label class="opt"><input type="radio" name="Q11_tv4" value="Not required — can develop biomarkers during lead optimisation"> Not required — can develop biomarkers during lead optimisation</label>
+        <label class="opt"><input type="radio" name="Q11_tv4" value="__other__"> Other: <input type="text" class="other-inp" id="other_tv4" placeholder="specify"></label>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 4 -->
+  <div class="section">
+    <div class="sec-head"><div class="sec-num">4</div><div class="sec-title">Novelty</div></div>
+
+    <div class="qcard" id="card_nv1">
+      <div class="q-num">Question 12</div>
+      <div class="q-text">Which type of novelty matters most at early stage?</div>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="Q12_nv1" value="Target novelty — first-in-class, never clinically validated"> Target novelty — first-in-class, never clinically validated</label>
+        <label class="opt"><input type="radio" name="Q12_nv1" value="Mechanistic differentiation — distinct MOA on known target class"> Mechanistic differentiation — distinct MOA on known target class</label>
+        <label class="opt"><input type="radio" name="Q12_nv1" value="Clinical differentiation — better efficacy or safety in defined patients"> Clinical differentiation — better efficacy or safety in defined patients</label>
+        <label class="opt"><input type="radio" name="Q12_nv1" value="IP novelty — composition-of-matter patent regardless of mechanism"> IP novelty — composition-of-matter patent regardless of mechanism</label>
+        <label class="opt"><input type="radio" name="Q12_nv1" value="__other__"> Other: <input type="text" class="other-inp" id="other_nv1" placeholder="specify"></label>
+      </div>
+    </div>
+
+    <div class="qcard" id="card_nv2">
+      <div class="q-num">Question 13</div>
+      <div class="q-text">For a resource-limited spinoff, which starting position is stronger?</div>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="Q13_nv2" value="First-in-class (FIC) — highest risk and reward"> First-in-class (FIC) — highest risk and reward, no validated path</label>
+        <label class="opt"><input type="radio" name="Q13_nv2" value="Best-in-class (BIC) — de-risked target, needs differentiation"> Best-in-class (BIC) — de-risked target, needs clear differentiation</label>
+        <label class="opt"><input type="radio" name="Q13_nv2" value="Depends on quality of validation data for that target"> Depends on quality of validation data for that specific target</label>
+        <label class="opt"><input type="radio" name="Q13_nv2" value="Depends on the therapeutic area"> Depends on the therapeutic area</label>
+        <label class="opt"><input type="radio" name="Q13_nv2" value="__other__"> Other: <input type="text" class="other-inp" id="other_nv2" placeholder="specify"></label>
+      </div>
+    </div>
+
+    <div class="qcard" id="card_nv3">
+      <div class="q-num">Question 14</div>
+      <div class="q-text">How should IP freedom-to-operate (FTO) be weighted?</div>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="Q14_nv3" value="Hard stop — no FTO, no program"> Hard stop — no FTO, no program regardless of biology</label>
+        <label class="opt"><input type="radio" name="Q14_nv3" value="Major risk flag — address before significant investment"> Major risk flag — must address before significant investment</label>
+        <label class="opt"><input type="radio" name="Q14_nv3" value="Moderate concern — manageable via design-around or licensing"> Moderate concern — manageable via design-around or licensing</label>
+        <label class="opt"><input type="radio" name="Q14_nv3" value="Minor concern — address closer to IND filing"> Minor concern — address closer to IND filing</label>
+        <label class="opt"><input type="radio" name="Q14_nv3" value="__other__"> Other: <input type="text" class="other-inp" id="other_nv3" placeholder="specify"></label>
+      </div>
+    </div>
+
+    <div class="qcard" id="card_nv4">
+      <div class="q-num">Question 15</div>
+      <div class="q-text">Your threshold for calling a program sufficiently novel vs the pipeline?</div>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="Q15_nv4" value="No approved or clinical-stage drug for same target"> No approved or clinical-stage drug for the same target</label>
+        <label class="opt"><input type="radio" name="Q15_nv4" value="No Phase 2 or later asset"> No Phase 2 or later asset — Phase 1 does not disqualify</label>
+        <label class="opt"><input type="radio" name="Q15_nv4" value="No Phase 3 or approved drug — earlier activity acceptable"> No Phase 3 or approved drug — earlier activity acceptable</label>
+        <label class="opt"><input type="radio" name="Q15_nv4" value="Clear differentiation regardless of pipeline stage"> Clear differentiation exists regardless of pipeline stage</label>
+        <label class="opt"><input type="radio" name="Q15_nv4" value="__other__"> Other: <input type="text" class="other-inp" id="other_nv4" placeholder="specify"></label>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 5 -->
+  <div class="section">
+    <div class="sec-head"><div class="sec-num">5</div><div class="sec-title">Tool Design</div></div>
+
+    <div class="qcard" id="card_td1">
+      <div class="q-num">Question 16</div>
+      <div class="q-text">Who is the primary audience this screening tool should target?</div>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="Q16_td1" value="Scientists in spinoffs with limited drug discovery experience"> Scientists in spinoffs with limited drug discovery experience</label>
+        <label class="opt"><input type="radio" name="Q16_td1" value="Academic researchers considering translation"> Academic researchers considering translation</label>
+        <label class="opt"><input type="radio" name="Q16_td1" value="Non-scientist biotech founders or CEOs"> Non-scientist biotech founders or CEOs</label>
+        <label class="opt"><input type="radio" name="Q16_td1" value="Scientists who know the biology but lack industry framing"> Scientists who know the biology but lack industry framing</label>
+        <label class="opt"><input type="radio" name="Q16_td1" value="__other__"> Other: <input type="text" class="other-inp" id="other_td1" placeholder="specify"></label>
+      </div>
+    </div>
+
+    <div class="qcard" id="card_td2">
+      <div class="q-num">Question 17</div>
+      <div class="q-text">Which dimension, if critically weak, should be a hard stop?</div>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="Q17_td2" value="No human genetic or pharmacological validation at all"> No human genetic or pharmacological validation at all</label>
+        <label class="opt"><input type="radio" name="Q17_td2" value="No unmet need — well-managed indication"> No unmet need — well-managed indication with good standard of care</label>
+        <label class="opt"><input type="radio" name="Q17_td2" value="No FTO or severe IP conflict"> No FTO or severe IP conflict</label>
+        <label class="opt"><input type="radio" name="Q17_td2" value="No tractable small molecule approach"> No tractable small molecule approach to the target</label>
+        <label class="opt"><input type="radio" name="Q17_td2" value="No single dimension should be an automatic hard stop"> No single dimension should be an automatic hard stop</label>
+      </div>
+    </div>
+
+    <div class="qcard" id="card_td3">
+      <div class="q-num">Question 18</div>
+      <div class="q-text">If the three dimensions are weighted, which carries the most weight?</div>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="Q18_td3" value="Target validation — bad biology sinks programs most"> Target validation — bad biology sinks programs most</label>
+        <label class="opt"><input type="radio" name="Q18_td3" value="Unmet need — good biology without clinical need has no value"> Unmet need — good biology without clinical need has no value</label>
+        <label class="opt"><input type="radio" name="Q18_td3" value="Novelty — undifferentiated programs fail commercially"> Novelty — undifferentiated programs fail commercially</label>
+        <label class="opt"><input type="radio" name="Q18_td3" value="Equal weighting — all three essential"> Equal weighting — all three essential</label>
+        <label class="opt"><input type="radio" name="Q18_td3" value="Adjustable by user based on context"> Adjustable by user based on their strategic context</label>
+      </div>
+    </div>
+
+    <div class="qcard" id="card_td4">
+      <div class="q-num">Question 19</div>
+      <div class="q-text">What is most commonly overlooked by non-experts assessing a new program?</div>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="Q19_td4" value="Target safety / antitarget liability"> Target safety and antitarget liability — on-target tox, tissue expression</label>
+        <label class="opt"><input type="radio" name="Q19_td4" value="Biomarker strategy — how to measure target engagement in clinic?"> Biomarker strategy — how to measure target engagement in the clinic</label>
+        <label class="opt"><input type="radio" name="Q19_td4" value="Competitive intelligence — who else is on this target?"> Competitive intelligence — who else is on this target?</label>
+        <label class="opt"><input type="radio" name="Q19_td4" value="Regulatory precedent — FDA/EMA engagement with indication"> Regulatory precedent — FDA/EMA engagement with the indication</label>
+        <label class="opt"><input type="radio" name="Q19_td4" value="__other__"> Other: <input type="text" class="other-inp" id="other_td4" placeholder="specify"></label>
+      </div>
+    </div>
+
+    <div class="qcard" id="card_td5">
+      <div class="q-num">Question 20</div>
+      <div class="q-text">What output format would be most useful for this screening tool?</div>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="Q20_td5" value="Traffic light scorecard — red/amber/green per dimension"> Traffic light scorecard — red/amber/green per dimension</label>
+        <label class="opt"><input type="radio" name="Q20_td5" value="Radar chart across all three dimensions"> Radar chart showing scores across all three dimensions</label>
+        <label class="opt"><input type="radio" name="Q20_td5" value="Narrative summary with gap identification and next steps"> Narrative summary with gap identification and next steps</label>
+        <label class="opt"><input type="radio" name="Q20_td5" value="Prioritised action list — what to address first"> Prioritised action list — what to address first</label>
+        <label class="opt"><input type="radio" name="Q20_td5" value="__other__"> Other: <input type="text" class="other-inp" id="other_td5" placeholder="specify"></label>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUBMIT -->
+  <div class="submit-zone">
+    <p>Answered all 20? Hit the button to generate your results.</p>
+    <div class="err-banner" id="errBanner"></div>
+    <button type="button" class="btn-main" id="submitBtn" onclick="buildResults()">
+      Generate my results →
+    </button>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="resultsWrap" class="hidden">
+
+    <div class="save-note">
+      ✓ &nbsp;All done! Your answers are saved below.<br>
+      <strong>Tap "Save as PDF" to save and share the file.</strong>
+    </div>
+
+    <button type="button" class="save-btn" onclick="window.print()">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M10 2v10M6 8l4 4 4-4"/><rect x="3" y="14" width="14" height="4" rx="1"/>
+      </svg>
+      Save as PDF
+    </button>
+
+    <div class="results-card" id="resultsCard">
+      <div class="rc-header">
+        <div class="rc-header-title">Drug Discovery Program Feasibility Survey</div>
+        <div class="rc-header-meta" id="rcMeta"></div>
+      </div>
+      <div class="rc-body" id="rcBody"></div>
+      <div class="rc-footer">DRG Innovation LLC · <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b7d0c5c2ded8d9c2f7d0dad6dedb99d4d8da">[email&#160;protected]</a></div>
+    </div>
+
+  </div>
+
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+const RADIO_NAMES = ['Q1_role','Q2_exp','Q4_un1','Q5_un2','Q6_un3','Q7_un4',
+  'Q8_tv1','Q9_tv2','Q10_tv3','Q11_tv4','Q12_nv1','Q13_nv2','Q14_nv3',
+  'Q15_nv4','Q16_td1','Q17_td2','Q18_td3','Q19_td4','Q20_td5'];
+const CHECK_NAME = 'Q3_ta';
+const TOTAL = 20;
+
+const CARD_MAP = {
+  Q1_role:'card_role',Q2_exp:'card_exp',Q3_ta:'card_ta',
+  Q4_un1:'card_un1',Q5_un2:'card_un2',Q6_un3:'card_un3',Q7_un4:'card_un4',
+  Q8_tv1:'card_tv1',Q9_tv2:'card_tv2',Q10_tv3:'card_tv3',Q11_tv4:'card_tv4',
+  Q12_nv1:'card_nv1',Q13_nv2:'card_nv2',Q14_nv3:'card_nv3',Q15_nv4:'card_nv4',
+  Q16_td1:'card_td1',Q17_td2:'card_td2',Q18_td3:'card_td3',Q19_td4:'card_td4',Q20_td5:'card_td5'
+};
+
+const SECTIONS_DEF = [
+  { title:'About You', fields:['Q1_role','Q2_exp','Q3_ta'] },
+  { title:'Unmet Need', fields:['Q4_un1','Q5_un2','Q6_un3','Q7_un4'] },
+  { title:'Target Validation', fields:['Q8_tv1','Q9_tv2','Q10_tv3','Q11_tv4'] },
+  { title:'Novelty', fields:['Q12_nv1','Q13_nv2','Q14_nv3','Q15_nv4'] },
+  { title:'Tool Design', fields:['Q16_td1','Q17_td2','Q18_td3','Q19_td4','Q20_td5'] },
+];
+
+const Q_SHORT = {
+  Q1_role:'Role', Q2_exp:'Experience', Q3_ta:'Therapeutic area(s)',
+  Q4_un1:'Most important unmet need factor', Q5_un2:'Rare disease scoring',
+  Q6_un3:'Payer importance at TPP stage', Q7_un4:'Biomarker effect on unmet need',
+  Q8_tv1:'Gold standard for validation', Q9_tv2:'Minimum validation package',
+  Q10_tv3:'Proceed with poor tractability?', Q11_tv4:'Importance of PD biomarkers',
+  Q12_nv1:'Most important type of novelty', Q13_nv2:'FIC vs BIC for spinoffs',
+  Q14_nv3:'FTO weighting', Q15_nv4:'Threshold for novelty call',
+  Q16_td1:'Primary audience', Q17_td2:'Hard stop dimension',
+  Q18_td3:'Most weighted dimension', Q19_td4:'Most overlooked question',
+  Q20_td5:'Preferred output format'
+};
+
+function updateProgress() {
+  let n = 0;
+  RADIO_NAMES.forEach(name => { if (document.querySelector(`input[name="${name}"]:checked`)) n++; });
+  if (document.querySelector(`input[name="${CHECK_NAME}"]:checked`)) n++;
+  const pct = Math.round((n / TOTAL) * 100);
+  document.getElementById('progFill').style.width = pct + '%';
+  document.getElementById('progLabel').textContent = n + ' of ' + TOTAL + ' answered';
+  document.getElementById('progPct').textContent = pct + '%';
+}
+
+document.querySelectorAll('input[type=radio], input[type=checkbox]').forEach(inp => {
+  inp.addEventListener('change', () => {
+    const card = inp.closest('.qcard');
+    if (card) { card.classList.remove('has-error'); card.classList.add('answered'); }
+    updateProgress();
+  });
+});
+
+function resolveVal(name, isCheck) {
+  if (isCheck) {
+    const checked = [...document.querySelectorAll(`input[name="${name}"]:checked`)];
+    if (!checked.length) return null;
+    return checked.map(c => {
+      if (c.value === '__other__') {
+        const key = name.split('_')[1];
+        const t = document.getElementById('other_' + key);
+        return t && t.value.trim() ? 'Other: ' + t.value.trim() : 'Other';
+      }
+      return c.value;
+    }).join(', ');
+  }
+  const checked = document.querySelector(`input[name="${name}"]:checked`);
+  if (!checked) return null;
+  if (checked.value === '__other__') {
+    const key = name.replace(/Q\d+_/, '');
+    const t = document.getElementById('other_' + key);
+    return t && t.value.trim() ? 'Other: ' + t.value.trim() : 'Other';
+  }
+  return checked.value;
+}
+
+function buildResults() {
+  document.querySelectorAll('.has-error').forEach(c => c.classList.remove('has-error'));
+  document.getElementById('errBanner').style.display = 'none';
+
+  const missing = [];
+  RADIO_NAMES.forEach(n => {
+    if (!resolveVal(n, false)) {
+      missing.push(n);
+      const c = document.getElementById(CARD_MAP[n]);
+      if (c) c.classList.add('has-error');
+    }
+  });
+  if (!resolveVal(CHECK_NAME, true)) {
+    missing.push(CHECK_NAME);
+    document.getElementById('card_ta').classList.add('has-error');
+  }
+
+  if (missing.length) {
+    const b = document.getElementById('errBanner');
+    b.textContent = missing.length + ' question(s) still unanswered — highlighted in red above.';
+    b.style.display = 'block';
+    document.querySelector('.has-error').scrollIntoView({ behavior:'smooth', block:'center' });
+    return;
+  }
+
+  const name = document.getElementById('respName').value.trim() || '(name not entered)';
+  const date = document.getElementById('respDate').value.trim() ||
+    new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+
+  document.getElementById('rcMeta').textContent = 'Completed by: ' + name + '   |   Date: ' + date;
+
+  let html = '';
+  SECTIONS_DEF.forEach(sec => {
+    html += '<div class="rc-section"><div class="rc-sec-title">' + sec.title + '</div>';
+    sec.fields.forEach(f => {
+      const val = (f === CHECK_NAME) ? resolveVal(f, true) : resolveVal(f, false);
+      html += '<div class="rc-row"><div class="rc-q">' + Q_SHORT[f] + '</div><div class="rc-a">' + val + '</div></div>';
+    });
+    html += '</div>';
+  });
+  document.getElementById('rcBody').innerHTML = html;
+
+  var rw = document.getElementById('resultsWrap');
+  rw.classList.remove('hidden');
+  rw.style.display = 'block';
+  setTimeout(function(){ rw.scrollIntoView({behavior:'smooth', block:'start'}); }, 100);
+  document.getElementById('submitBtn').textContent = 'Results ready ✓';
+}
+</script>
+
+<script>
+window.addEventListener('DOMContentLoaded', function() {
+  var groups = {};
+  document.querySelectorAll('input[type=radio]').forEach(function(r) {
+    if (!groups[r.name]) { groups[r.name] = r; }
+  });
+  Object.values(groups).forEach(function(r) {
+    r.checked = true;
+    r.dispatchEvent(new Event('change', {bubbles:true}));
+  });
+  var firstCb = document.querySelector('input[type=checkbox]');
+  if (firstCb) {
+    firstCb.checked = true;
+    firstCb.dispatchEvent(new Event('change', {bubbles:true}));
+  }
+});
+</script>
+</body>
+</html>

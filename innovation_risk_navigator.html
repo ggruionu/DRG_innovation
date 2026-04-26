@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Innovation Risk Navigator</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 18px;
+    line-height: 1.7;
+    background: #ffffff;
+    color: #1a1a1a;
+    min-height: 100vh;
+  }
+
+  .app-header {
+    background: #ffffff;
+    border-bottom: 2px solid #1a1a1a;
+    padding: 24px 40px;
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+  }
+
+  .app-header h1 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: #1a1a1a;
+  }
+
+  .app-header .tagline {
+    font-size: 15px;
+    color: #666;
+    font-style: italic;
+  }
+
+  .step-indicator {
+    display: flex;
+    gap: 0;
+    background: #f5f5f0;
+    border-bottom: 1px solid #ddd;
+    padding: 0 40px;
+    overflow-x: auto;
+  }
+
+  .step-tab {
+    padding: 12px 24px;
+    font-size: 14px;
+    font-family: 'Source Serif 4', serif;
+    color: #999;
+    border-bottom: 3px solid transparent;
+    white-space: nowrap;
+    cursor: default;
+  }
+
+  .step-tab.active {
+    color: #1a1a1a;
+    border-bottom-color: #1a1a1a;
+    font-weight: 600;
+  }
+
+  .step-tab.done {
+    color: #2d6a4f;
+  }
+
+  .main-content {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 40px 40px 80px;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #1a1a1a;
+  }
+
+  .section-subtitle {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 32px;
+    font-style: italic;
+  }
+
+  .form-group {
+    margin-bottom: 28px;
+  }
+
+  .form-group label {
+    display: block;
+    font-size: 16px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 8px;
+    font-family: 'Source Serif 4', serif;
+  }
+
+  .form-group .hint {
+    font-size: 14px;
+    color: #777;
+    margin-bottom: 8px;
+    font-style: italic;
+  }
+
+  textarea, input[type="text"], input[type="number"], select {
+    width: 100%;
+    border: 1.5px solid #ccc;
+    border-radius: 6px;
+    padding: 12px 16px;
+    font-family: 'Source Serif 4', serif;
+    font-size: 17px;
+    line-height: 1.6;
+    color: #1a1a1a;
+    background: #fafaf8;
+    transition: border-color 0.2s;
+    outline: none;
+  }
+
+  textarea:focus, input[type="text"]:focus, input[type="number"]:focus, select:focus {
+    border-color: #1a1a1a;
+    background: #fff;
+  }
+
+  textarea { resize: vertical; min-height: 120px; }
+
+  .pills-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 6px;
+  }
+
+  .pill {
+    padding: 8px 18px;
+    border: 1.5px solid #ccc;
+    border-radius: 24px;
+    font-size: 15px;
+    font-family: 'Source Serif 4', serif;
+    cursor: pointer;
+    background: #fafaf8;
+    color: #444;
+    transition: all 0.15s;
+    user-select: none;
+  }
+
+  .pill:hover { border-color: #888; color: #1a1a1a; }
+  .pill.selected { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
+
+  .tradeoff-box {
+    background: #fff9f0;
+    border: 1.5px solid #e8c97a;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-top: 8px;
+    font-size: 15px;
+    color: #7a5c00;
+    font-style: italic;
+    line-height: 1.6;
+    display: none;
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 14px 32px;
+    font-family: 'Playfair Display', serif;
+    font-size: 17px;
+    font-weight: 600;
+    border: 2px solid #1a1a1a;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+  }
+
+  .btn-primary {
+    background: #1a1a1a;
+    color: #fff;
+  }
+
+  .btn-primary:hover { background: #333; }
+
+  .btn-secondary {
+    background: #fff;
+    color: #1a1a1a;
+  }
+
+  .btn-secondary:hover { background: #f5f5f0; }
+
+  .btn-danger {
+    background: #fff;
+    color: #8b2020;
+    border-color: #8b2020;
+  }
+
+  .btn-danger:hover { background: #fff5f5; }
+
+  .divider {
+    border: none;
+    border-top: 1px solid #e0e0e0;
+    margin: 32px 0;
+  }
+
+  /* AIMS Analysis result panel */
+  .analysis-panel {
+    border: 1.5px solid #ddd;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 32px;
+  }
+
+  .analysis-panel .panel-header {
+    background: #f5f5f0;
+    border-bottom: 1px solid #ddd;
+    padding: 16px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .panel-header h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  .verdict-badge {
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Source Serif 4', serif;
+  }
+
+  .verdict-go { background: #d4edda; color: #1a5c2e; }
+  .verdict-nogo { background: #f8d7da; color: #6b1515; }
+  .verdict-conditional { background: #fff3cd; color: #7a5c00; }
+
+  .analysis-panel .panel-body {
+    padding: 24px;
+  }
+
+  /* Roadmap timeline */
+  .roadmap-phase {
+    margin-bottom: 32px;
+    position: relative;
+    padding-left: 0;
+  }
+
+  .phase-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .phase-number {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #1a1a1a;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .phase-number.risk-low { background: #2d6a4f; }
+  .phase-number.risk-medium { background: #b87c10; }
+  .phase-number.risk-high { background: #8b2020; }
+
+  .phase-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 700;
+  }
+
+  .phase-meta {
+    margin-left: auto;
+    text-align: right;
+    font-size: 14px;
+    color: #666;
+    flex-shrink: 0;
+  }
+
+  .phase-body {
+    border-left: 3px solid #e0e0e0;
+    margin-left: 20px;
+    padding: 0 0 0 28px;
+  }
+
+  .phase-body.risk-low { border-left-color: #2d6a4f; }
+  .phase-body.risk-medium { border-left-color: #b87c10; }
+  .phase-body.risk-high { border-left-color: #8b2020; }
+
+  .task-list { list-style: none; padding: 0; }
+
+  .task-list li {
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 16px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .task-list li:last-child { border-bottom: none; }
+
+  .task-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid #ccc;
+    flex-shrink: 0;
+    margin-top: 3px;
+  }
+
+  .risk-flag {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-left: 8px;
+    font-family: 'Source Serif 4', serif;
+  }
+
+  .risk-flag.low { background: #d4edda; color: #1a5c2e; }
+  .risk-flag.medium { background: #fff3cd; color: #7a5c00; }
+  .risk-flag.high { background: #f8d7da; color: #6b1515; }
+
+  .alert-box {
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 24px 0;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  .alert-danger { background: #fff5f5; border: 1.5px solid #e8a0a0; color: #6b1515; }
+  .alert-warning { background: #fffbf0; border: 1.5px solid #e8c97a; color: #7a5c00; }
+  .alert-success { background: #f0fff5; border: 1.5px solid #a0c8b0; color: #1a5c2e; }
+
+  .go-nogo-banner {
+    border-radius: 10px;
+    padding: 24px 28px;
+    margin-bottom: 32px;
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+  }
+
+  .go-nogo-banner.go { background: #f0fff5; border: 2px solid #2d6a4f; }
+  .go-nogo-banner.nogo { background: #fff5f5; border: 2px solid #8b2020; }
+  .go-nogo-banner.conditional { background: #fffbf0; border: 2px solid #b87c10; }
+
+  .go-nogo-icon {
+    font-size: 32px;
+    flex-shrink: 0;
+    line-height: 1;
+    margin-top: 4px;
+  }
+
+  .go-nogo-banner .banner-text h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .go-nogo-banner.go .banner-text h3 { color: #1a5c2e; }
+  .go-nogo-banner.nogo .banner-text h3 { color: #6b1515; }
+  .go-nogo-banner.conditional .banner-text h3 { color: #7a5c00; }
+
+  .loading-spinner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    gap: 20px;
+  }
+
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid #e0e0e0;
+    border-top-color: #1a1a1a;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .loading-msg {
+    font-size: 16px;
+    color: #666;
+    font-style: italic;
+  }
+
+  .output-stream {
+    font-size: 17px;
+    line-height: 1.8;
+    white-space: pre-wrap;
+    font-family: 'Source Serif 4', serif;
+    color: #1a1a1a;
+  }
+
+  .output-stream h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    margin: 28px 0 10px;
+    color: #1a1a1a;
+  }
+
+  .output-stream h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 600;
+    margin: 20px 0 8px;
+    color: #333;
+  }
+
+  .output-stream strong { font-weight: 600; }
+
+  .output-stream .phase-card {
+    background: #fafaf8;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin: 20px 0;
+  }
+
+  .stream-container {
+    min-height: 200px;
+  }
+
+  .constraint-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+
+  @media (max-width: 600px) {
+    .main-content { padding: 24px 20px 60px; }
+    .app-header { padding: 16px 20px; }
+    .step-indicator { padding: 0 20px; }
+    .constraint-grid { grid-template-columns: 1fr; }
+    .phase-meta { display: none; }
+  }
+
+  .range-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .range-row input[type=range] {
+    flex: 1;
+    height: 4px;
+    accent-color: #1a1a1a;
+    padding: 0;
+    background: none;
+    border: none;
+  }
+
+  .range-val {
+    font-size: 17px;
+    font-weight: 600;
+    min-width: 70px;
+    text-align: right;
+    color: #1a1a1a;
+  }
+
+  .sample-btn {
+    font-size: 14px;
+    padding: 6px 14px;
+    border: 1px solid #999;
+    border-radius: 4px;
+    background: #f9f9f7;
+    cursor: pointer;
+    font-family: 'Source Serif 4', serif;
+    color: #555;
+    transition: all 0.15s;
+    margin-left: 8px;
+  }
+  .sample-btn:hover { background: #eee; color: #1a1a1a; }
+
+  /* Print / export */
+  @media print {
+    .btn, .step-indicator, .no-print { display: none !important; }
+    body { font-size: 14px; }
+  }
+
+  .copy-btn {
+    float: right;
+    font-size: 13px;
+    padding: 4px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: #fff;
+    cursor: pointer;
+    font-family: 'Source Serif 4', serif;
+    color: #666;
+  }
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <h1>Innovation Risk Navigator</h1>
+  <span class="tagline">Advance without burning out — or burning through your savings</span>
+</div>
+
+<div class="step-indicator" id="stepIndicator">
+  <div class="step-tab active" id="tab0">1. Pitch &amp; AIMS</div>
+  <div class="step-tab" id="tab1">2. Your Constraints</div>
+  <div class="step-tab" id="tab2">3. Risk Verdict</div>
+  <div class="step-tab" id="tab3">4. Your Roadmap</div>
+</div>
+
+<div class="main-content">
+
+<!-- STEP 0: Pitch + AIMS input -->
+<div id="step0">
+  <div class="section-title">Start with your pitch</div>
+  <div class="section-subtitle">Paste your pitch description and your AIMS analysis (if available). If no AIMS analysis exists, we'll work from the pitch alone.</div>
+
+  <div class="form-group">
+    <label>Pitch description
+      <button class="sample-btn" onclick="loadSample()">Load AIMS example</button>
+    </label>
+    <div class="hint">Describe the innovation: what problem it solves, who it's for, the proposed solution.</div>
+    <textarea id="pitchText" rows="8" placeholder="Paste your pitch description here..."></textarea>
+  </div>
+
+  <div class="form-group">
+    <label>AIMS analysis output <span style="font-weight:400;color:#888;font-size:14px;">(optional but recommended)</span></label>
+    <div class="hint">If you've run AIMS Navigator, paste the analysis output here. This dramatically improves roadmap precision.</div>
+    <textarea id="aimsText" rows="8" placeholder="Paste the AIMS analysis here (GO/NO-GO verdict, SWOT, financials, risks...)"></textarea>
+  </div>
+
+  <div class="form-group" style="background:#f5f5f0;border:1.5px solid #ddd;border-radius:8px;padding:20px 24px;">
+    <label>Your Anthropic API key</label>
+    <div class="hint">Required to run analysis. Your key is used only in this browser session — never stored or transmitted anywhere else. Get yours at <a href="https://console.anthropic.com/settings/keys" target="_blank" style="color:#1a1a1a;">console.anthropic.com</a>.</div>
+    <input type="password" id="apiKey" placeholder="sk-ant-..." autocomplete="off">
+  </div>
+
+  <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
+    <button class="btn btn-primary" onclick="goToStep1()">Continue to Constraints →</button>
+  </div>
+</div>
+
+<!-- STEP 1: Constraints -->
+<div id="step1" style="display:none;">
+  <div class="section-title">Your real constraints</div>
+  <div class="section-subtitle">Answer honestly. These determine whether pursuit is feasible — and at what pace. There are no right answers, only honest ones.</div>
+
+  <div class="form-group">
+    <label>What is your current primary role?</label>
+    <div class="pills-group" id="roleGroup">
+      <div class="pill" onclick="selectPill(this,'role')">Faculty / academic</div>
+      <div class="pill" onclick="selectPill(this,'role')">Clinician (active practice)</div>
+      <div class="pill" onclick="selectPill(this,'role')">Industry / corporate</div>
+      <div class="pill" onclick="selectPill(this,'role')">Independent / consultant</div>
+      <div class="pill" onclick="selectPill(this,'role')">Student / trainee</div>
+      <div class="pill" onclick="selectPill(this,'role')">Founder (existing startup)</div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>How many hours per week can you realistically commit to this — right now?</label>
+    <div class="hint">Be brutal. Not aspirational hours. Current reality hours.</div>
+    <div class="range-row">
+      <input type="range" min="1" max="40" value="5" id="hoursSlider" oninput="updateRange('hoursSlider','hoursVal',v=>v+' hrs/week')">
+      <span class="range-val" id="hoursVal">5 hrs/week</span>
+    </div>
+    <div id="hoursTradeoff" class="tradeoff-box"></div>
+  </div>
+
+  <div class="form-group">
+    <label>What happens to your primary job if this fails and you spent the time on it?</label>
+    <div class="pills-group" id="jobRiskGroup">
+      <div class="pill" onclick="selectPill(this,'jobRisk')">Nothing — I have tenure / security</div>
+      <div class="pill" onclick="selectPill(this,'jobRisk')">Minor friction — boss knows, tolerates it</div>
+      <div class="pill" onclick="selectPill(this,'jobRisk')">Risk of reduced trust or promotion delay</div>
+      <div class="pill" onclick="selectPill(this,'jobRisk')">Real risk — could affect contract renewal</div>
+      <div class="pill" onclick="selectPill(this,'jobRisk')">I am fully independent — no job at risk</div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>Personal cash you are willing to invest (total, not per year)</label>
+    <div class="hint">This is the hard cap. Not what you hope to raise. What you would write a check for today if required.</div>
+    <div class="range-row">
+      <input type="range" min="0" max="150000" step="5000" value="10000" id="cashSlider" oninput="updateRange('cashSlider','cashVal',v=>'$'+Number(v).toLocaleString())">
+      <span class="range-val" id="cashVal">$10,000</span>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>Do you have a technical co-founder or key team member?</label>
+    <div class="pills-group" id="teamGroup">
+      <div class="pill" onclick="selectPill(this,'team')">Yes — committed co-founder</div>
+      <div class="pill" onclick="selectPill(this,'team')">Yes — but not yet committed</div>
+      <div class="pill" onclick="selectPill(this,'team')">No — solo right now</div>
+      <div class="pill" onclick="selectPill(this,'team')">Not needed for this innovation</div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>What is your primary motivation for pursuing this?</label>
+    <div class="pills-group" id="motivGroup">
+      <div class="pill" onclick="selectPill(this,'motiv')">It solves a problem I deeply believe in</div>
+      <div class="pill" onclick="selectPill(this,'motiv')">Financial upside</div>
+      <div class="pill" onclick="selectPill(this,'motiv')">Career / academic advancement</div>
+      <div class="pill" onclick="selectPill(this,'motiv')">I can't let it die — too much invested</div>
+      <div class="pill" onclick="selectPill(this,'motiv')">Obligation / it was my idea, I feel responsible</div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>If you make zero progress in 6 months, what do you do?</label>
+    <div class="pills-group" id="stallGroup">
+      <div class="pill" onclick="selectPill(this,'stall')">Reassess and possibly walk away</div>
+      <div class="pill" onclick="selectPill(this,'stall')">Pivot the approach</div>
+      <div class="pill" onclick="selectPill(this,'stall')">Push harder — double down</div>
+      <div class="pill" onclick="selectPill(this,'stall')">I honestly don't know</div>
+    </div>
+    <div class="tradeoff-box" id="stallTradeoff"></div>
+  </div>
+
+  <div class="form-group">
+    <label>Any specific constraints I should know?</label>
+    <div class="hint">Non-competes, IP ownership issues, geographic limits, family commitments, health, anything that creates a real boundary.</div>
+    <textarea id="extraConstraints" rows="3" placeholder="Optional — but the more honest, the better the roadmap..."></textarea>
+  </div>
+
+  <div style="display:flex;gap:12px;flex-wrap:wrap;">
+    <button class="btn btn-secondary" onclick="goToStep(0)">← Back</button>
+    <button class="btn btn-primary" onclick="runAnalysis()">Analyze risk &amp; build roadmap →</button>
+  </div>
+</div>
+
+<!-- STEP 2: Risk Verdict (streaming) -->
+<div id="step2" style="display:none;">
+  <div class="section-title">Risk verdict</div>
+  <div class="section-subtitle">Analyzing pitch, AIMS findings, and your personal constraints...</div>
+  <div id="verdictStream" class="stream-container">
+    <div class="loading-spinner">
+      <div class="spinner"></div>
+      <div class="loading-msg" id="loadingMsg">Reading your pitch and constraints...</div>
+    </div>
+  </div>
+  <div id="verdictActions" style="display:none;margin-top:32px;">
+    <div style="display:flex;gap:12px;flex-wrap:wrap;">
+      <button class="btn btn-secondary" onclick="goToStep(1)">← Revise constraints</button>
+      <button class="btn btn-primary" onclick="buildRoadmap()">Build my roadmap →</button>
+      <button class="btn btn-danger" onclick="abandonPath()">This confirms: I should walk away</button>
+    </div>
+  </div>
+</div>
+
+<!-- STEP 3: Roadmap (streaming) -->
+<div id="step3" style="display:none;">
+  <div class="section-title">Your personalized roadmap</div>
+  <div class="section-subtitle">A realistic, constraint-matched path — not a helicopter ride.</div>
+  <div id="roadmapStream" class="stream-container">
+    <div class="loading-spinner">
+      <div class="spinner"></div>
+      <div class="loading-msg" id="roadmapLoadingMsg">Designing your safe path to TRL 1–3...</div>
+    </div>
+  </div>
+  <div id="roadmapActions" style="display:none;margin-top:32px;">
+    <div style="display:flex;gap:12px;flex-wrap:wrap;">
+      <button class="btn btn-secondary" onclick="goToStep(1)">← Revise constraints</button>
+      <button class="btn btn-primary" onclick="window.print()">Print / save roadmap</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main-content -->
+
+<script>
+const SAMPLE_PITCH = `AIMS — Academic Innovation Management System
+
+An AI-powered platform that evaluates academic innovations and inventor teams for commercial potential. AIMS bridges the gap between universities and investors by providing comprehensive assessments including team capabilities, resource requirements, and market analysis — not just patent disclosures.
+
+Problem: Universities cannot support large numbers of innovators. Investors have no easy way to access academic ideas beyond patent disclosures. Physicians and scientists don't know how to assess commercial viability.
+
+Solution: AI-powered tool generates investor-grade analysis of any pitch in minutes. Provides GO/NO-GO recommendations, SWOT, financial projections, team assessment, patent landscape scan.
+
+Target users: University tech transfer offices (TTOs), physician inventors, VC/investors, pharma, medical device companies.
+Market: $2B university innovation management space.
+Business model: $250/assessment, targeting 5,000 units/year.`;
+
+const SAMPLE_AIMS = `AIMS Analysis Result — March 23, 2026
+
+VERDICT: NO-GO (conditional)
+
+Strengths:
+- Unique perspective on innovation based on 20 years of experience
+- AI-powered, easy to use platform for people without formal commercialization knowledge
+- Platform provides connection with external vendors
+- Pilot study at Harvard Medical School and MGH shows concept works
+
+Weaknesses:
+- No funding secured
+- Solo founder — no technical co-founder or AI/ML development team
+- Optimistic revenue projections without proven product-market fit
+- No patent filed
+
+Opportunities:
+- Innovation is a priority for most US universities and universities worldwide
+- $2B addressable market in university innovation space
+
+Threats:
+- TTOs are beginning to adopt AI tools (competitive threat from incumbents)
+- VC appetite for single-founder platforms is low
+
+Financial projections (Year 1): $1.25M revenue (5,000 units × $250)
+These are highly optimistic without proven demand.
+
+Key risks:
+1. Technology development risk — building AI evaluation requires significant expertise and data
+2. Single-founder risk — no team to execute
+3. Market adoption risk — TTOs are conservative buyers
+4. Competitive risk — Stanford, MGB, YC all have adjacent programs`;
+
+let currentStep = 0;
+let verdictResult = '';
+let constraints = {};
+let pitchData = {};
+
+function loadSample() {
+  document.getElementById('pitchText').value = SAMPLE_PITCH;
+  document.getElementById('aimsText').value = SAMPLE_AIMS;
+}
+
+function updateRange(sliderId, valId, formatter) {
+  const val = document.getElementById(sliderId).value;
+  document.getElementById(valId).textContent = formatter(val);
+
+  if (sliderId === 'hoursSlider') {
+    const box = document.getElementById('hoursTradeoff');
+    const h = parseInt(val);
+    if (h <= 3) {
+      box.textContent = 'At 3 hrs/week or less, only deep thinking and reading are realistic. No prototyping, no pitching, no team-building. This is a research-and-validate phase only.';
+      box.style.display = 'block';
+    } else if (h <= 8) {
+      box.textContent = 'At 5–8 hrs/week, you can run one focused sprint per week: one customer interview, one literature review, or one prototype sketch. Sequential, not parallel progress.';
+      box.style.display = 'block';
+    } else if (h <= 20) {
+      box.textContent = 'At 10–20 hrs/week, meaningful prototyping and external engagement become possible. Still not a startup. Think of it as a structured side project.';
+      box.style.display = 'block';
+    } else {
+      box.textContent = 'Above 20 hrs/week, you are beginning to compete with your primary job for cognitive bandwidth. Risk of burnout and role conflict increases sharply.';
+      box.style.display = 'block';
+    }
+  }
+}
+
+function selectPill(el, group) {
+  document.querySelectorAll(`#${group}Group .pill, #${group === 'role' ? 'roleGroup' : group+'Group'} .pill`).forEach(p => p.classList.remove('selected'));
+  el.classList.add('selected');
+
+  if (group === 'stall') {
+    const box = document.getElementById('stallTradeoff');
+    const val = el.textContent;
+    if (val.includes('walk away')) {
+      box.textContent = 'Good. Intellectual honesty about exit conditions is the single most protective behavior an innovator can have.';
+      box.style.display = 'block';
+    } else if (val.includes('double down')) {
+      box.textContent = 'This is the highest-risk posture. "Double down on failure" is how people lose careers and relationships. Your roadmap will include explicit checkpoint criteria.';
+      box.style.display = 'block';
+    } else if (val.includes("don't know")) {
+      box.textContent = "Uncertainty about exit is a risk factor. Your roadmap will define explicit stop criteria so you never face this ambiguity in a moment of passion.";
+      box.style.display = 'block';
+    } else {
+      box.style.display = 'none';
+    }
+  }
+}
+
+function collectConstraints() {
+  const getSelected = (groupId) => {
+    const sel = document.querySelector(`#${groupId}Group .pill.selected`);
+    return sel ? sel.textContent.trim() : 'not specified';
+  };
+
+  return {
+    role: getSelected('role'),
+    hoursPerWeek: document.getElementById('hoursSlider').value,
+    jobRisk: getSelected('jobRisk'),
+    cashBudget: document.getElementById('cashSlider').value,
+    team: getSelected('team'),
+    motivation: getSelected('motiv'),
+    stallResponse: getSelected('stall'),
+    extraConstraints: document.getElementById('extraConstraints').value.trim()
+  };
+}
+
+function getApiKey() {
+  return document.getElementById('apiKey').value.trim();
+}
+
+function goToStep1() {
+  pitchData = {
+    pitch: document.getElementById('pitchText').value.trim(),
+    aims: document.getElementById('aimsText').value.trim()
+  };
+  if (!pitchData.pitch) {
+    alert('Please enter your pitch description before continuing.');
+    return;
+  }
+  const key = getApiKey();
+  if (!key || !key.startsWith('sk-ant-')) {
+    alert('Please enter a valid Anthropic API key (starts with sk-ant-) before continuing.');
+    return;
+  }
+  goToStep(1);
+}
+
+function goToStep(n) {
+  document.getElementById('step'+currentStep).style.display = 'none';
+  document.getElementById('tab'+currentStep).classList.remove('active');
+  currentStep = n;
+  document.getElementById('step'+n).style.display = 'block';
+  document.getElementById('tab'+n).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+async function runAnalysis() {
+  constraints = collectConstraints();
+  goToStep(2);
+
+  const msgs = [
+    'Reading your pitch and constraints...',
+    'Weighing career and financial exposure...',
+    'Cross-referencing AIMS findings...',
+    'Calculating your actual risk profile...'
+  ];
+  let mi = 0;
+  const msgEl = document.getElementById('loadingMsg');
+  const msgInterval = setInterval(() => {
+    mi = (mi + 1) % msgs.length;
+    msgEl.textContent = msgs[mi];
+  }, 2000);
+
+  const prompt = buildVerdictPrompt(pitchData, constraints);
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'anthropic-version': '2023-06-01',
+        'x-api-key': getApiKey()
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1500,
+        stream: true,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    clearInterval(msgInterval);
+
+    if (!resp.ok) {
+      const errText = await resp.text();
+      let errMsg = `API error ${resp.status}`;
+      try { errMsg += ': ' + JSON.parse(errText).error?.message; } catch(e) { errMsg += ': ' + errText.slice(0,200); }
+      document.getElementById('verdictStream').innerHTML = `<div class="alert-box alert-danger">${errMsg}</div>`;
+      return;
+    }
+
+    document.getElementById('verdictStream').innerHTML = '<div class="output-stream" id="verdictOutput"></div>';
+
+    const reader = resp.body.getReader();
+    const decoder = new TextDecoder();
+    let output = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      const chunk = decoder.decode(value);
+      const lines = chunk.split('\n');
+      for (const line of lines) {
+        if (line.startsWith('data: ')) {
+          const data = line.slice(6);
+          if (data === '[DONE]') continue;
+          try {
+            const parsed = JSON.parse(data);
+            if (parsed.type === 'content_block_delta' && parsed.delta?.text) {
+              output += parsed.delta.text;
+              document.getElementById('verdictOutput').innerHTML = formatOutput(output);
+            }
+          } catch(e) {}
+        }
+      }
+    }
+
+    verdictResult = output;
+    document.getElementById('verdictActions').style.display = 'block';
+
+  } catch(err) {
+    clearInterval(msgInterval);
+    document.getElementById('verdictStream').innerHTML = `<div class="alert-box alert-danger">Analysis error: ${err.message}. Please check your connection and try again.</div>`;
+  }
+}
+
+async function buildRoadmap() {
+  goToStep(3);
+
+  const msgs = [
+    'Designing your safe path to TRL 1–3...',
+    'Calibrating phase durations to your hours/week...',
+    'Setting checkpoint criteria...',
+    'Building your constraint-matched schedule...'
+  ];
+  let mi = 0;
+  const msgEl = document.getElementById('roadmapLoadingMsg');
+  const msgInterval = setInterval(() => {
+    mi = (mi + 1) % msgs.length;
+    msgEl.textContent = msgs[mi];
+  }, 2000);
+
+  const prompt = buildRoadmapPrompt(pitchData, constraints, verdictResult);
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'anthropic-version': '2023-06-01',
+        'x-api-key': getApiKey()
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1500,
+        stream: true,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    clearInterval(msgInterval);
+
+    if (!resp.ok) {
+      const errText = await resp.text();
+      let errMsg = `API error ${resp.status}`;
+      try { errMsg += ': ' + JSON.parse(errText).error?.message; } catch(e) { errMsg += ': ' + errText.slice(0,200); }
+      document.getElementById('roadmapStream').innerHTML = `<div class="alert-box alert-danger">${errMsg}</div>`;
+      return;
+    }
+
+    document.getElementById('roadmapStream').innerHTML = '<div class="output-stream" id="roadmapOutput"></div>';
+
+    const reader = resp.body.getReader();
+    const decoder = new TextDecoder();
+    let output = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      const chunk = decoder.decode(value);
+      const lines = chunk.split('\n');
+      for (const line of lines) {
+        if (line.startsWith('data: ')) {
+          const data = line.slice(6);
+          if (data === '[DONE]') continue;
+          try {
+            const parsed = JSON.parse(data);
+            if (parsed.type === 'content_block_delta' && parsed.delta?.text) {
+              output += parsed.delta.text;
+              document.getElementById('roadmapOutput').innerHTML = formatOutput(output);
+            }
+          } catch(e) {}
+        }
+      }
+    }
+
+    document.getElementById('roadmapActions').style.display = 'block';
+
+  } catch(err) {
+    clearInterval(msgInterval);
+    document.getElementById('roadmapStream').innerHTML = `<div class="alert-box alert-danger">Roadmap generation error: ${err.message}</div>`;
+  }
+}
+
+function abandonPath() {
+  document.getElementById('verdictActions').style.display = 'none';
+  document.getElementById('verdictStream').insertAdjacentHTML('afterend', `
+    <div class="alert-box alert-success" style="margin-top:24px;">
+      <strong>That takes intellectual honesty and courage.</strong><br>
+      Avoiding a bad investment of time and money is not failure — it is the highest-value decision an innovator can make. The AIMS Risk Navigator has done its job. You can return when a different opportunity is ready.
+    </div>
+  `);
+}
+
+function formatOutput(text) {
+  return text
+    .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+    .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\n\n/g, '</p><p>')
+    .replace(/^/,'<p>')
+    .replace(/$/,'</p>');
+}
+
+function buildVerdictPrompt(pitch, c) {
+  return `You are the Innovation Risk Navigator — a brutally honest but constructive advisor to academic innovators and physician entrepreneurs. Your job is NOT to kill enthusiasm but to surface real risks so the person can make an informed decision.
+
+PITCH:
+${pitch.pitch}
+
+AIMS ANALYSIS:
+${pitch.aims || 'Not provided — assess from pitch alone.'}
+
+INNOVATOR CONSTRAINTS:
+- Role: ${c.role}
+- Available hours/week: ${c.hoursPerWeek}
+- Job security risk if this fails: ${c.jobRisk}
+- Personal cash willing to invest: $${Number(c.cashBudget).toLocaleString()}
+- Team status: ${c.team}
+- Primary motivation: ${c.motivation}
+- Response if zero progress in 6 months: ${c.stallResponse}
+- Additional constraints: ${c.extraConstraints || 'none stated'}
+
+Write a RISK VERDICT with these exact sections:
+
+## Overall verdict
+One of: PROCEED WITH CAUTION / CONDITIONAL PROCEED / HIGH RISK - RECONSIDER / DO NOT PURSUE. State it clearly and explain why in 3-4 sentences.
+
+## What could hurt you specifically
+List 3-5 specific personal risks given THIS person's role, hours, cash, and team situation. Be specific — not generic startup advice. E.g. "At ${c.hoursPerWeek} hours/week, you cannot complete a prototype in under 18 months without external help."
+
+## What the AIMS analysis reveals
+If AIMS data was provided, interpret what the GO/NO-GO means in context of their constraints. If no AIMS, assess from pitch.
+
+## The one thing that would change this verdict
+What single factor, if changed, would significantly improve the risk profile? Be specific.
+
+## Devil's advocate: the case FOR walking away
+Even if you recommend proceeding, make the strongest honest case for walking away. This is not discouragement — it is informed consent.
+
+Keep total response under 600 words. Write in clear, direct prose. No bullet-point dumps.`;
+}
+
+function buildRoadmapPrompt(pitch, c, verdict) {
+  const hrs = parseInt(c.hoursPerWeek);
+  const cash = parseInt(c.cashBudget);
+
+  return `You are the Innovation Risk Navigator. Based on the risk verdict and constraints below, design a personalized, constraint-matched roadmap.
+
+PITCH SUMMARY:
+${pitch.pitch.slice(0, 400)}
+
+RISK VERDICT SUMMARY:
+${verdict.slice(0, 400)}
+
+INNOVATOR CONSTRAINTS:
+- Hours/week: ${hrs}
+- Job risk: ${c.jobRisk}
+- Cash budget: $${cash.toLocaleString()}
+- Team: ${c.team}
+- Motivation: ${c.motivation}
+- Stall response: ${c.stallResponse}
+
+Design a TRL 0 → TRL 3 roadmap ONLY. Do not plan beyond TRL 3 unless cash and team are clearly sufficient. The roadmap must be calibrated to ${hrs} hours/week reality.
+
+Format with these sections:
+
+## Your constraint-matched roadmap
+
+### Phase 0: Validate before you invest (${hrs <= 5 ? '2–4 months' : '1–2 months'})
+**Time cost:** X hrs total | **Cash cost:** $0–$500
+List 3–4 specific tasks achievable at ${hrs} hrs/week. Focus on killing the idea cheaply if it should die.
+**Checkpoint:** What must be true to proceed to Phase 1? If not true, stop here.
+
+### Phase 1: Minimum viable proof (${hrs <= 5 ? '4–8 months' : '2–4 months'})
+**Time cost:** X hrs total | **Cash cost:** $${cash < 5000 ? '500–2,000' : '1,000–5,000'}
+3–4 tasks. Still not building. Still not hiring. Still not pitching investors.
+**Checkpoint:** Specific, measurable criterion. If not met, reassess.
+
+### Phase 2: First external validation (${hrs <= 5 ? '6–12 months' : '3–6 months'})
+**Time cost:** X hrs total | **Cash cost:** $${Math.min(cash, 10000).toLocaleString()} max
+3–4 tasks. First time spending meaningful money or time with outsiders.
+**Checkpoint:** What does external validation look like? Who says yes and how?
+
+### Phase 3: Decision point — scale or stop
+Not a phase of work — a structured decision.
+What would you need to have proved to justify full commitment or outside funding? What does walking away look like?
+
+## What this path protects
+2–3 sentences on specifically what this pacing protects: your job, your savings, your relationships, your credibility.
+
+## Your weekly schedule (realistic)
+Given ${hrs} hours/week, give a sample week breakdown. E.g. "2 hrs research/reading, 1 hr customer interview, 2 hrs prototype sketch."
+
+## Stop criteria
+Name 3 specific conditions that should trigger a full stop, no exceptions.
+
+Keep total response under 700 words. Be concrete and specific to this person's situation. No generic startup advice.`;
+}
+
+// Initialize range displays
+document.getElementById('hoursVal').textContent = '5 hrs/week';
+document.getElementById('cashVal').textContent = '$10,000';
+</script>
+</body>
+</html>

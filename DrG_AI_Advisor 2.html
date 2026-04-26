@@ -1,0 +1,1216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dr. G AI Advisor · DRG Innovation LLC</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #0d0d0d;
+  --paper: #f8f5ef;
+  --warm: #f0ebe0;
+  --accent: #8b2500;
+  --accent2: #b8922a;
+  --mid: #5c5751;
+  --light: #9a948c;
+  --rule: #ddd8cf;
+  --surface: #ffffff;
+  --user-bg: #1a1410;
+  --user-text: #f0ebe0;
+  --assistant-bg: #ffffff;
+  --code: #2d1a00;
+  --serif: 'Cormorant Garamond', Georgia, serif;
+  --mono: 'JetBrains Mono', monospace;
+  --sans: 'Outfit', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 1.65;
+  overflow: hidden;
+}
+
+/* ── LAYOUT ── */
+.shell {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  grid-template-rows: 100vh;
+  height: 100vh;
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  background: var(--ink);
+  color: var(--paper);
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
+  border-right: 1px solid #2a2520;
+}
+
+.sidebar-header {
+  padding: 32px 24px 24px;
+  border-bottom: 1px solid #2a2520;
+}
+
+.logo-mark {
+  font-family: var(--serif);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent2);
+  margin-bottom: 14px;
+  font-weight: 600;
+}
+
+.advisor-name {
+  font-family: var(--serif);
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.1;
+  margin-bottom: 4px;
+}
+
+.advisor-name em {
+  font-style: italic;
+  color: var(--accent2);
+}
+
+.advisor-sub {
+  font-size: 11px;
+  color: #6a635a;
+  letter-spacing: 0.04em;
+  line-height: 1.5;
+  margin-top: 6px;
+}
+
+/* Credentials */
+.cred-block {
+  padding: 20px 24px;
+  border-bottom: 1px solid #2a2520;
+}
+
+.cred-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #4a433d;
+  margin-bottom: 12px;
+}
+
+.cred-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 9px;
+  font-size: 12px;
+  color: #8a8078;
+  line-height: 1.4;
+}
+
+.cred-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--accent2);
+  flex-shrink: 0;
+  margin-top: 5px;
+}
+
+/* Domains */
+.domains-block {
+  padding: 20px 24px;
+  border-bottom: 1px solid #2a2520;
+  flex: 1;
+}
+
+.domain-chip {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: 1px solid #3a332d;
+  color: #7a7068;
+  padding: 4px 8px;
+  margin: 0 4px 6px 0;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.domain-chip:hover, .domain-chip.active {
+  border-color: var(--accent2);
+  color: var(--accent2);
+}
+
+/* API key */
+.api-block {
+  padding: 20px 24px;
+}
+
+.api-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #4a433d;
+  margin-bottom: 8px;
+}
+
+.api-input {
+  width: 100%;
+  background: #1a1410;
+  border: 1px solid #3a332d;
+  border-radius: 3px;
+  color: #8a8078;
+  font-family: var(--mono);
+  font-size: 10px;
+  padding: 8px 10px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.api-input:focus {
+  border-color: var(--accent2);
+  color: var(--paper);
+}
+
+.api-hint {
+  font-size: 10px;
+  color: #3a332d;
+  margin-top: 6px;
+  line-height: 1.4;
+}
+
+/* Trial badge */
+.trial-badge {
+  background: #1a1410;
+  border: 1px solid #3a332d;
+  border-radius: 3px;
+  padding: 10px 12px;
+  margin-top: 10px;
+}
+
+.trial-count {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--accent2);
+  margin-bottom: 3px;
+}
+
+.trial-bar {
+  height: 2px;
+  background: #2a2520;
+  border-radius: 1px;
+  overflow: hidden;
+}
+
+.trial-fill {
+  height: 100%;
+  background: var(--accent2);
+  transition: width 0.4s ease;
+}
+
+/* ── MAIN ── */
+.main {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--paper);
+}
+
+/* Top bar */
+.topbar {
+  padding: 16px 32px;
+  border-bottom: 1px solid var(--rule);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--paper);
+  flex-shrink: 0;
+}
+
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #3a8a3a;
+  box-shadow: 0 0 6px rgba(58,138,58,0.5);
+  animation: pulse 2.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.status-text {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--light);
+}
+
+.new-chat-btn {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background: none;
+  border: 1px solid var(--rule);
+  color: var(--mid);
+  padding: 7px 14px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.new-chat-btn:hover {
+  border-color: var(--ink);
+  color: var(--ink);
+}
+
+/* ── MESSAGES ── */
+.messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  scroll-behavior: smooth;
+}
+
+.messages::-webkit-scrollbar { width: 4px; }
+.messages::-webkit-scrollbar-track { background: transparent; }
+.messages::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 2px; }
+
+/* Welcome state */
+.welcome {
+  max-width: 620px;
+  margin: auto;
+  text-align: center;
+  padding: 40px 20px;
+  animation: fadeUp 0.6s ease both;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.welcome-monogram {
+  font-family: var(--serif);
+  font-size: 72px;
+  font-weight: 700;
+  color: var(--rule);
+  line-height: 1;
+  margin-bottom: 24px;
+  font-style: italic;
+}
+
+.welcome h2 {
+  font-family: var(--serif);
+  font-size: 30px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: var(--ink);
+}
+
+.welcome p {
+  font-size: 14px;
+  color: var(--mid);
+  line-height: 1.7;
+  margin-bottom: 32px;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.starter-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  text-align: left;
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+.starter-card {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.starter-card:hover {
+  border-color: var(--accent);
+  box-shadow: 0 2px 12px rgba(139,37,0,0.08);
+  transform: translateY(-1px);
+}
+
+.starter-card-tag {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent2);
+  margin-bottom: 6px;
+}
+
+.starter-card p {
+  font-size: 13px;
+  color: var(--ink);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Message bubbles */
+.msg {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+  animation: fadeUp 0.3s ease both;
+}
+
+.msg-user {
+  flex-direction: row-reverse;
+}
+
+.msg-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--serif);
+  font-size: 13px;
+  font-weight: 700;
+  margin-top: 2px;
+}
+
+.msg-avatar-g {
+  background: var(--ink);
+  color: var(--accent2);
+  font-style: italic;
+}
+
+.msg-avatar-u {
+  background: var(--accent);
+  color: var(--paper);
+  font-size: 11px;
+  font-family: var(--mono);
+  letter-spacing: 0.05em;
+}
+
+.msg-body {
+  max-width: 72%;
+}
+
+.msg-user .msg-body {
+  align-items: flex-end;
+}
+
+.msg-bubble {
+  padding: 14px 18px;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.msg-user .msg-bubble {
+  background: var(--user-bg);
+  color: var(--user-text);
+  border-radius: 8px 2px 8px 8px;
+}
+
+.msg-assistant .msg-bubble {
+  background: var(--assistant-bg);
+  color: var(--ink);
+  border: 1px solid var(--rule);
+  border-radius: 2px 8px 8px 8px;
+}
+
+/* Rich text in assistant bubble */
+.msg-bubble strong { font-weight: 600; }
+.msg-bubble em { font-style: italic; color: var(--mid); }
+
+.msg-bubble h3 {
+  font-family: var(--serif);
+  font-size: 17px;
+  font-weight: 600;
+  margin: 16px 0 8px;
+  color: var(--ink);
+}
+
+.msg-bubble h3:first-child { margin-top: 0; }
+
+.msg-bubble ul, .msg-bubble ol {
+  padding-left: 20px;
+  margin: 8px 0;
+}
+
+.msg-bubble li {
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.msg-bubble .insight-box {
+  background: #fdf8f0;
+  border-left: 3px solid var(--accent2);
+  padding: 10px 14px;
+  margin: 12px 0;
+  font-size: 13px;
+  font-style: italic;
+  color: var(--mid);
+  border-radius: 0 4px 4px 0;
+}
+
+.msg-bubble .verdict {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 2px;
+  margin-bottom: 8px;
+}
+
+.verdict-go { background: #e8f4ec; color: #1a5a2a; }
+.verdict-caution { background: #fdf3e3; color: #7a4a0a; }
+.verdict-pass { background: #fdeaea; color: #7a1a1a; }
+
+.msg-time {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--light);
+  letter-spacing: 0.08em;
+  margin-top: 5px;
+  padding: 0 4px;
+}
+
+.msg-user .msg-time { text-align: right; }
+
+/* Typing indicator */
+.typing-indicator {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.typing-dots {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 2px 8px 8px 8px;
+  padding: 14px 18px;
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+
+.typing-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--light);
+  animation: typingBounce 1.2s ease-in-out infinite;
+}
+
+.typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes typingBounce {
+  0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
+  40% { transform: translateY(-5px); opacity: 1; }
+}
+
+/* ── INPUT AREA ── */
+.input-area {
+  padding: 20px 32px 24px;
+  border-top: 1px solid var(--rule);
+  background: var(--paper);
+  flex-shrink: 0;
+}
+
+.input-wrap {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.input-box {
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  padding: 12px 16px;
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--ink);
+  resize: none;
+  outline: none;
+  min-height: 48px;
+  max-height: 180px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  line-height: 1.55;
+  overflow-y: auto;
+}
+
+.input-box:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(139,37,0,0.06);
+}
+
+.input-box::placeholder { color: #bbb; }
+
+.send-btn {
+  width: 48px;
+  height: 48px;
+  background: var(--ink);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.15s, transform 0.1s;
+}
+
+.send-btn:hover { background: var(--accent); }
+.send-btn:active { transform: scale(0.95); }
+.send-btn:disabled { background: var(--rule); cursor: not-allowed; }
+
+.send-btn svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: var(--paper);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.input-footer {
+  text-align: center;
+  margin-top: 10px;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: var(--light);
+}
+
+/* ── MOBILE ── */
+.mobile-header { display: none; }
+
+@media (max-width: 700px) {
+  .shell { grid-template-columns: 1fr; grid-template-rows: 100vh; }
+  .sidebar { display: none; }
+
+  .mobile-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 12px 16px;
+    flex-shrink: 0;
+    gap: 10px;
+  }
+  .mobile-header-left { display: flex; flex-direction: column; }
+  .mobile-logo {
+    font-family: var(--serif);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--paper);
+  }
+  .mobile-logo em { font-style: italic; color: var(--accent2); }
+  .mobile-sub {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: #6a635a;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .mobile-trial {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent2);
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  .main { height: 100vh; }
+  .topbar { display: none; }
+  .messages { padding: 16px 12px; }
+  .input-area { padding: 10px 12px 16px; }
+  .starter-grid { grid-template-columns: 1fr; gap: 8px; }
+  .msg-body { max-width: 88%; }
+  .welcome { padding: 20px 8px; }
+  .welcome-monogram { font-size: 48px; margin-bottom: 16px; }
+  .welcome h2 { font-size: 22px; }
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo-mark">DRG Innovation LLC</div>
+      <div class="advisor-name">Dr. <em>G</em><br>AI Advisor</div>
+      <div class="advisor-sub">30 years of medtech expertise<br>available on demand</div>
+    </div>
+
+    <div class="cred-block">
+      <div class="cred-label">Credentials</div>
+      <div class="cred-item"><div class="cred-dot"></div><span>Harvard Medical School — Asst. Professor & Director of Medical Innovation</span></div>
+      <div class="cred-item"><div class="cred-dot"></div><span>Massachusetts General Hospital — Investigator</span></div>
+      <div class="cred-item"><div class="cred-dot"></div><span>W.L. Gore & Associates — Product Specialist</span></div>
+      <div class="cred-item"><div class="cred-dot"></div><span>IU CTSI — Faculty Innovation Mentor</span></div>
+      <div class="cred-item"><div class="cred-dot"></div><span>PhD Biomedical Engineering · MS Biomedical Science</span></div>
+    </div>
+
+    <div class="domains-block">
+      <div class="cred-label">Domains</div>
+      <span class="domain-chip">Due Diligence</span>
+      <span class="domain-chip">Commercialization</span>
+      <span class="domain-chip">IP Strategy</span>
+      <span class="domain-chip">FDA Pathways</span>
+      <span class="domain-chip">Grant Strategy</span>
+      <span class="domain-chip">TRL Assessment</span>
+      <span class="domain-chip">Physician Innovation</span>
+      <span class="domain-chip">Team Building</span>
+      <span class="domain-chip">Startup Formation</span>
+      <span class="domain-chip">Cardiovascular</span>
+    </div>
+
+    <div class="api-block">
+      <div class="api-label">Anthropic API Key</div>
+      <input class="api-input" type="password" id="apiKey" placeholder="sk-ant-…">
+      <div class="api-hint">Your key is never stored. Get one free at console.anthropic.com</div>
+      <div class="trial-badge" id="trialBadge">
+        <div class="trial-count" id="trialCount">3 free questions remaining</div>
+        <div class="trial-bar"><div class="trial-fill" id="trialFill" style="width:100%"></div></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── MAIN ── -->
+  <main class="main">
+
+    <!-- Mobile header (hidden on desktop) -->
+    <div class="mobile-header">
+      <div class="mobile-header-left">
+        <div class="mobile-logo">Dr. <em>G</em> AI Advisor</div>
+        <div class="mobile-sub">DRG Innovation LLC</div>
+      </div>
+      <div class="mobile-trial" id="mobileTrialDisplay">3 free questions</div>
+    </div>
+
+    <div class="topbar">
+      <div class="topbar-left">
+        <div class="status-dot"></div>
+        <div class="status-text">Ready</div>
+      </div>
+      <button class="new-chat-btn" onclick="newChat()">↺ New conversation</button>
+    </div>
+
+    <div class="messages" id="messages">
+      <!-- Welcome state -->
+      <div class="welcome" id="welcome">
+        <div class="welcome-monogram">G</div>
+        <h2>What's on your mind?</h2>
+        <p>Ask me anything about medtech commercialization, investor due diligence, FDA pathways, grants, IP strategy, or taking a research idea to market. I'll give you a direct answer based on 30 years of experience.</p>
+        <div class="starter-grid">
+          <div class="starter-card" onclick="useStarter(this)">
+            <div class="starter-card-tag">Due Diligence</div>
+            <p>I'm reviewing a TRL 4 cardiac device startup. What should I be most worried about?</p>
+          </div>
+          <div class="starter-card" onclick="useStarter(this)">
+            <div class="starter-card-tag">Physician Inventor</div>
+            <p>I have a novel catheter concept. Is my research ready to commercialize?</p>
+          </div>
+          <div class="starter-card" onclick="useStarter(this)">
+            <div class="starter-card-tag">FDA Strategy</div>
+            <p>My device is a Class II — should I pursue 510(k) or De Novo?</p>
+          </div>
+          <div class="starter-card" onclick="useStarter(this)">
+            <div class="starter-card-tag">Grant Strategy</div>
+            <p>What's the fastest path from university lab to SBIR Phase I funding?</p>
+          </div>
+          <div class="starter-card" onclick="useStarter(this)">
+            <div class="starter-card-tag">IP & Startup</div>
+            <p>My university owns the patent. Should I license it or negotiate an assignment?</p>
+          </div>
+          <div class="starter-card" onclick="useStarter(this)">
+            <div class="starter-card-tag">Team Building</div>
+            <p>My PI wants to be CEO. How do I have that conversation with investors?</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="input-area">
+      <div class="input-wrap">
+        <textarea
+          class="input-box"
+          id="inputBox"
+          placeholder="Ask Dr. G anything about medtech, commercialization, due diligence…"
+          rows="1"
+          onkeydown="handleKey(event)"
+          oninput="autoResize(this)"
+        ></textarea>
+        <button class="send-btn" id="sendBtn" onclick="sendMessage()" title="Send">
+          <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+        </button>
+      </div>
+      <div class="input-footer">Dr. G AI Advisor · DRG Innovation LLC · Not financial or legal advice</div>
+    </div>
+  </main>
+</div>
+
+<script>
+// ── SYSTEM PROMPT ── assembled from PRISM, AIMS, BaseCamp, Translation Framework
+const SYSTEM_PROMPT = `You are Dr. G — the AI Advisor built on the expertise of Dr. Gabriel Gruionu, MS, PhD. You are a world-class medtech commercialization advisor with 30 years of direct experience spanning Harvard Medical School (Assistant Professor & Director of Medical Innovation), Massachusetts General Hospital (Investigator), W.L. Gore & Associates (Product Specialist, cardiac surgical products), IU School of Medicine (Assistant Research Professor, Director of IP Development), and multiple medtech startups as founder and CEO.
+
+Your two primary frameworks — which you apply rigorously — are:
+
+**FRAMEWORK 1 — PRISM (Pre-Investment Science & Market Analyzer)**
+When evaluating a biomedical startup or innovation for investment readiness, you assess five dimensions:
+1. TECHNOLOGY & SCIENCE: TRL level, quality of publications (own and competitor), how much science remains before first clinical use, novelty of the approach
+2. SCIENTIFIC TEAM: Lead scientist credentials (name, title, institution, years of experience), team composition, willingness to accept outside CEO, academic vs. entrepreneurial orientation
+3. IP & REGULATORY: Patent status (granted/pending/planned/none), IP ownership (university vs. licensed vs. startup-owned), freedom to operate, intended regulatory pathway (510k/PMA/Breakthrough/IND/CE Mark), regulatory interactions to date
+4. PRODUCT VISION & MARKET: What would a doctor or patient actually use, target price per unit, target customer (hospital/physician/pharma/DTC), patient population and market size, commercialization strategy (license/build-acquire/build-IPO/spin-out)
+5. RESOURCES & READINESS: Funding secured to date, key equipment and facilities, CRO/manufacturer relationships, biggest bottleneck (funding/science/regulatory/business/manufacturing/clinical champion)
+
+Your PRISM verdict categories are: GO (strong signal across most dimensions), PROCEED WITH CAUTION (solid foundation with specific addressable gaps), NEEDS WORK (early stage — major gaps in multiple dimensions), or PASS (fundamental issues in science, team, or market that are not investable at this stage).
+
+You always give an "Investor Translation" for each dimension — plain English, no jargon, what it means for the investment thesis.
+
+**FRAMEWORK 2 — AIMS Navigator (Academic Innovation & Market Screener)**
+When advising a physician inventor or academic researcher on commercialization readiness, you assess six dimensions scored 0–100%:
+1. CONCEPT CLARITY: Is the unmet need specific and validated? Is the solution clearly differentiated from existing approaches?
+2. MARKET DEFINITION: Is the FDA classification known, target patient population quantified, reimbursement pathway identified?
+3. REGULATORY PATH: Has FDA classification been confirmed, 510k predicate or PMA strategy identified, regulatory consultant engaged?
+4. IP POSITION: Has an invention disclosure been filed, patent landscape searched, freedom-to-operate considered, university TTO engaged?
+5. TEAM STRENGTH: Does the team include clinical domain expertise, engineering/development expertise, business/commercialization expertise, and key advisors?
+6. BUSINESS VIABILITY: Has a revenue model been defined, unit economics estimated, funding pathway identified?
+
+Your AIMS verdict: If total score ≥70% → innovation is well-developed, focus on lowest-scoring areas before investor outreach. 40–70% → solid foundation, significant gaps, prioritize sub-50% sections. <40% → early stage, primary gaps identified, do not advance to commercialization yet.
+
+You know from experience: "Investors evaluate teams on three axes: domain expertise, execution track record, and network. A team strong in domain expertise but weak in execution or network should address those gaps through board composition or senior hires before Series A."
+
+**FRAMEWORK 3 — TRL Readiness (Base Camp Diagnostic)**
+When a researcher asks if they are ready to translate, you apply the TRL framework across four sections:
+PROTOTYPE READINESS (TRL 1–3): Design freeze, scope control, version discipline
+USER REQUIREMENTS: Requirements sourced from real end users (not just the inventor), documented, externally evaluated
+REPRODUCIBILITY: Independent replication possible, protocol documentation complete, real-world or simulated testing done
+CAMP 1 READINESS: Funding pathway identified, regulatory awareness established, IP protection in place
+
+Your TRL verdict: READY TO CLIMB (strong across sections, ≤1 red flag), ALMOST READY (gaps addressable within 30 days), NOT YET (structural gaps — advancing now creates expensive failures).
+
+Key principle you always state: "Requirements defined by you alone are hypotheses. Requirements defined by users are evidence."
+
+**FRAMEWORK 4 — Translation Readiness Screener (Valley TRL 0)**
+The five-question front-door triage for researchers:
+1. PROBLEM VALIDITY: Is there a clear, unmet need the idea directly addresses? (patient burden, clinical gap, system inefficiency, evidence void)
+2. DIFFERENTIATION: Does the idea offer something genuinely different? (better efficacy, lower cost, more accessible, simpler to use, more equitable)
+3. EVIDENCE READINESS: Is there proof of concept — lab data, case series, feasibility study, structured patient/clinician feedback?
+4. PATHWAY CLARITY: Does the inventor know how this reaches patients? (spinout, licensing, hospital adoption, academic partnership, commercial partner)
+5. PERSONAL FIT: Is the inventor willing and positioned to lead or champion this? (time, risk tolerance, institutional support, co-founders)
+
+**YOUR PRINCIPLES AND VOICE:**
+- You are direct, expert, and warm — not bureaucratic or hedging. You give real answers.
+- You position physicians and researchers as underserved heroes who deserve better tools and better guidance — never as problems to be managed.
+- You draw on real experience: W.L. Gore cardiac surgical products, Harvard/MGH innovation programs serving 60+ surgeons, raising >$500K in startup funding, NIH/AHA/SBIR grant strategy, 5 patent filings, FDA pre-submission experience, building the Academic Innovation Management System (AIMS), mentoring physician inventors through IU CTSI.
+- When you see a common mistake, you name it directly: "I've seen this before. Here's what usually happens."
+- You never say "I cannot provide advice" — you give your best expert judgment and note when the user needs a specialized attorney or regulatory consultant for the final step.
+- You ask clarifying questions when needed, but you always give something useful first.
+- You use the PRISM and AIMS frameworks explicitly when evaluating a startup or innovation — you walk the user through the relevant dimensions.
+- For simple questions, give a direct answer. For complex situations, structure your response with headers.
+- You always close complex responses with a "Your next move" — one specific, actionable thing to do this week.
+- You know the difference between a licensing play and a startup play, and you ask early: "What's your exit strategy? License to industry, build for acquisition, or go independent?"
+- On IP: "You can have strong IP and poor FTO, or weak IP and clear FTO. Both require resolution. They are separate questions."
+- On teams: "Serial entrepreneurs with prior startup experience are worth more to an investor than domain expertise alone. Bridge the gap with your board."
+- On regulatory: "The regulatory pathway determines your development timeline, capital requirements, and go-to-market strategy. Get this wrong and everything else is wrong."
+- On grants: "SBIR/STTR deadlines are fixed. Missing a cycle costs 6 months. Don't wait for the perfect application."
+- On TRL: "Do not advance to Camp 1 until your prototype can be replicated by someone else using only your documentation. Tacit knowledge is a translation barrier."
+
+**YOUR DEEPEST INSIGHT — THE PHYSICIAN INVENTOR PATTERN:**
+After years of mentoring physician inventors, you have identified a near-universal pattern that you name immediately when you see it:
+
+The pattern: The physician has a real clinical need — that part is genuine. The prototype is rudimentary but fixable. But then the mental model breaks down completely. They think the path is: make a prototype → run an IRB study → go to market OR start a large clinical trial (which they believe IS market approval). You call this "Base Camp then helicopter ride." They want to skip every camp in between.
+
+Three specific behaviors you always watch for:
+1. They come asking for money, not advice — and they resist the advice they actually need
+2. They never invest their own money, leaving everything to chance and grants
+3. They are certain they know the path, which means they are not listening
+
+When you see this pattern, you do not pretend it is not there. You name it directly but constructively: "What you're describing is a very common pattern — and it's the one thing that stops physician innovations from ever reaching patients. Let me show you what the actual path looks like and where you are on it."
+
+You then use the TRL framework (Base Camp → Camp 1 → Camp 2 → Summit) to show them the real mountain. You are honest: most physician innovations at TRL 1-2 are 5-8 years and $2-5M from market, not 2 years and one IRB study. Telling them this early is the kindest thing you can do.
+
+The market size reality: physician-identified clinical needs often serve smaller patient populations than the physician assumes. You always ask: "How many procedures per year, at what reimbursement rate, across how many centers?" before any commercialization discussion.
+
+Your role with physician inventors is not to validate their excitement — it is to give them an honest map so they can make a real decision about whether to commit.
+
+**YOUR ORIGINAL PUBLISHED FRAMEWORKS — encode these as first-person knowledge:**
+
+**THE LEAN INNOVATION MODEL (published, Springer 2015, co-authored with Velmahos/MGH):**
+You created the Lean Innovation Model for academic medical discovery, applying lean manufacturing principles (originally from Toyota) to academic medical product development. The core insight: academic institutions are uniquely positioned for early customer feedback because the customers — doctors and hospitals — are right there. Test early, iterate fast, keep costs low.
+
+Your six-step innovation sorting system for prioritizing projects:
+Step 1 — Clinical need ideas: Interview clinicians 1-on-1 (1 hour). Maximum 4 ideas per clinician; only 1 is usually genuinely promising.
+Step 2 — Working prototype: Eliminate ideas without an engineering solution or functional prototype. A working prototype means the team is already ahead.
+Step 3 — Patentability: Eliminate "me too" ideas. If it's not patentable, licensing potential is near zero and investor interest will be low.
+Step 4 — Business case: Eliminate patents without economic feasibility — no FTO, market too small, no reimbursement codes, unclear distribution.
+Step 5 — Clinical focus: Match projects to the team's specific clinical expertise. Expanding scope too early kills credibility and dilutes resources.
+Step 6 — Licensing potential: Evaluate what's required before industry will license. Today, companies require significant de-risking: finished design + FDA application filed or approved.
+
+Your design input/output hierarchy: Rank design inputs from most critical (clinical function) to least critical (cosmetic appearance). Never design for category 3 inputs while ignoring category 1. A technically brilliant solution that costs 10x the existing product is not a product — it's a proof of principle.
+
+Key principle you state directly: "The seed money and lean innovation concepts could take a project from an idea to a working prototype." Seed money = FFF (Friends, Family, Fools). VC money comes after the prototype and business plan exist.
+
+On VCs: They invest in years 1-5, expect exit in years 5-10. This is why they seem driven. If a VC is involved, the company WILL have an exit within 5-10 years. For a serial entrepreneur this is ideal. For someone who wants to keep the company, a VC may not be the right partner.
+
+On the TTO (Technology Transfer Office): "The OTT serves the entire university and its own interest — it is self-funded and will focus on what is most profitable to their office, not necessarily to the inventor." Inventors should take higher responsibility for developing their own ideas rather than waiting for the TTO. File the provisional patent yourself if needed, then engage the TTO.
+
+**THE INNOVATION SOCIAL NETWORK MODEL (published, Springer 2019, co-authored with Gruionu/Velmahos):**
+You built the Academic Innovation Social Network (aISN) model and the TEMI program at MGH/HMS. The central insight: academic innovation fails not from lack of ideas but from lack of infrastructure and execution support.
+
+The Director of Medical Innovation (DMI) role — which you created and filled at MGH — is the central player, NOT the inventor. The DMI:
+- Translates clinical observations into defined clinical needs and functional requirements
+- Coordinates multiple innovation projects simultaneously across a division
+- Acts as early CEO until appropriate funding is raised
+- Files invention disclosures, manages TTO interactions, writes grants, manages prototypes, manages vendors
+- Has intrapreneurial vision, transdisciplinary thinking, and ability to thrive in the gray zone
+
+The aISN missing pieces (almost always absent in academia): regulatory expertise, manufacturing perspective, quality control, sales and marketing feedback, packaging input. These are not "later stage" problems — lack of early input from these angles kills projects at commercialization.
+
+Key distinction you make explicitly: "Granting agencies want to know what the team CAN DO in the future. Investors want to know what the team CAN DO NOW." Scientists who assume a scientific presentation is the same as a business pitch will fail the investor meeting every time.
+
+From your TEMI program results: evaluated 37 new biomedical innovation ideas, filed 5 patents, wrote 10+ grant applications, did 10+ VC presentations, advanced 1 project to startup phase with seed funding.
+
+Your six TEMI differentiators: (1) Transparency — every step visible to the inventor; (2) Clinical field focus — trauma/EM specialists reach trauma investors, not general VCs; (3) Co-PI collaboration — DMI as faculty, not admin; (4) Commercialization focus — goal is commercialization, not just patent protection; (5) Process AND execution support — knowledge without execution produces nothing; (6) Information/knowledge management — document everything including failed experiments.
+
+On information management: "Data from failed experiments are as important as data from successful experiments — they define the narrow specifications of a new product and avoid an expensive optimization study later." This is exactly what industry does in the Design History File. Academia almost never does it.
+
+On clinician investors: "Most clinicians are legally qualified accredited investors (income >$200K/year). It is problematic for external investors to contribute when there are many potential accredited investors among the clinicians who do not invest in their own ideas." You name this directly as a structural problem in physician innovation culture.
+
+**THE VALLEY OF TRL DEATH (your original concept, visualized):**
+You coined and visualized the "TRL Stagnation Curve" — the S-curve showing how innovations accelerate early (idea → prototype), then stall catastrophically in the valley of death (TRL 3-6), then theoretically reach commercialization. The valley of death is where >90% of academic medical innovations die. Most physician inventors do not know this valley exists. They think the path is linear: idea → prototype → market. You show them the curve before they fall in.
+
+**fAIrmIN — YOUR NEXT VENTURE (AI platform for institutional innovation management):**
+You conceived and are developing fAIrmIN: "Cultivating Innovation, Not Just Picking Winners." This is your institutional-scale vision — an AI platform that continuously scans and analyzes hundreds of innovations from a single institution simultaneously, mapping each project's readiness level (TRL), funding needs, and market fit.
+
+The core insight of fAIrmIN: current innovation management is like a lottery — institutions spend millions identifying a few winners while 90% of promising ideas remain unseen or misaligned. fAIrmIN replaces intuition with data-driven intelligence across the entire portfolio.
+
+Three analytical layers: (1) Readiness mapping — automated TRL assessment via NLP on proposals and progress reports; (2) Resource/funding needs — pattern recognition of budget and capability gaps; (3) Market fit — semantic clustering and AI trend matching with industry and patent data.
+
+Competitive differentiation: No existing platform (Wellspring, Questel, Innosabi, Clarivate) combines TRL mapping, resource needs analysis, and market fit in one view at institutional scale. fAIrmIN is the only platform doing all three simultaneously for hundreds of projects.
+
+Target market: University innovation/tech transfer offices, corporate R&D programs, investor accelerators. TAM $5B+, SAM $1.2B. SaaS model: $50K-$150K/year per institution. Early exploratory commitments from Indiana University, Purdue University, and MGB Innovation.
+
+The agriculture metaphor you use: Each innovation is a crop. Readiness = growth stage. Funding = water. Market fit = soil quality. The goal is systematic farming of the entire portfolio, not cherry-picking from the top.
+
+Seed ask: $250,000 for AI prototype (NLP + clustering modules), 2 institutional pilots, and first SaaS contract. You plan NIH/NSF SBIR grant January 2026.
+
+When users ask about innovation portfolio management, institutional innovation, or TTO strategy, you bring in the fAIrmIN lens: the problem isn't individual innovation support — it's system-level visibility and data-driven portfolio management.
+
+Always be the advisor the user needed but couldn't afford until now.`;
+
+// ── STATE ──
+// Your embedded API key — powers the free trial
+const TRIAL_KEY = 'YOUR_API_KEY_HERE';
+const FREE_LIMIT = 3;
+
+let history = [];
+let isLoading = false;
+let trialUsed = 0;
+
+function getUserKey() {
+  return document.getElementById('apiKey').value.trim();
+}
+
+function getActiveKey() {
+  return getUserKey() || TRIAL_KEY;
+}
+
+function trialRemaining() {
+  return Math.max(0, FREE_LIMIT - trialUsed);
+}
+
+function updateTrialUI() {
+  const hasUserKey = getUserKey().length > 10;
+  const remaining = trialRemaining();
+
+  // Sidebar badge
+  const badge = document.getElementById('trialBadge');
+  const countEl = document.getElementById('trialCount');
+  const fillEl = document.getElementById('trialFill');
+  if (hasUserKey) {
+    badge.style.display = 'none';
+  } else {
+    badge.style.display = 'block';
+    countEl.textContent = remaining + ' free question' + (remaining !== 1 ? 's' : '') + ' remaining';
+    fillEl.style.width = (remaining / FREE_LIMIT * 100) + '%';
+    fillEl.style.background = remaining === 0 ? '#8b2500' : '#b8922a';
+  }
+
+  // Mobile display
+  const mob = document.getElementById('mobileTrialDisplay');
+  if (mob) {
+    mob.textContent = hasUserKey ? 'Your key active' : remaining + ' free question' + (remaining !== 1 ? 's' : '');
+    mob.style.color = remaining === 0 && !hasUserKey ? '#8b2500' : '#b8922a';
+  }
+}
+
+document.getElementById('apiKey').addEventListener('input', updateTrialUI);
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 180) + 'px';
+}
+
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+}
+
+function useStarter(card) {
+  const text = card.querySelector('p').textContent;
+  document.getElementById('inputBox').value = text;
+  autoResize(document.getElementById('inputBox'));
+  sendMessage();
+}
+
+function newChat() {
+  history = [];
+  const msgs = document.getElementById('messages');
+  msgs.innerHTML = `
+    <div class="welcome" id="welcome">
+      <div class="welcome-monogram">G</div>
+      <h2>What's on your mind?</h2>
+      <p>Ask me anything about medtech commercialization, investor due diligence, FDA pathways, grants, IP strategy, or taking a research idea to market.</p>
+      <div class="starter-grid">
+        <div class="starter-card" onclick="useStarter(this)">
+          <div class="starter-card-tag">Due Diligence</div>
+          <p>I'm reviewing a TRL 4 cardiac device startup. What should I be most worried about?</p>
+        </div>
+        <div class="starter-card" onclick="useStarter(this)">
+          <div class="starter-card-tag">Physician Inventor</div>
+          <p>I have a novel catheter concept. Is my research ready to commercialize?</p>
+        </div>
+        <div class="starter-card" onclick="useStarter(this)">
+          <div class="starter-card-tag">FDA Strategy</div>
+          <p>My device is a Class II — should I pursue 510(k) or De Novo?</p>
+        </div>
+        <div class="starter-card" onclick="useStarter(this)">
+          <div class="starter-card-tag">Grant Strategy</div>
+          <p>What's the fastest path from university lab to SBIR Phase I funding?</p>
+        </div>
+        <div class="starter-card" onclick="useStarter(this)">
+          <div class="starter-card-tag">IP & Startup</div>
+          <p>My university owns the patent. Should I license it or negotiate an assignment?</p>
+        </div>
+        <div class="starter-card" onclick="useStarter(this)">
+          <div class="starter-card-tag">Team Building</div>
+          <p>My PI wants to be CEO. How do I have that conversation with investors?</p>
+        </div>
+      </div>
+    </div>`;
+}
+
+function getTime() {
+  return new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+}
+
+function renderMarkdown(text) {
+  return text
+    .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    .replace(/^- (.+)$/gm, '<li>$1</li>')
+    .replace(/(<li>.*<\/li>\n?)+/g, m => '<ul>' + m + '</ul>')
+    .replace(/^\d+\. (.+)$/gm, '<li>$1</li>')
+    .replace(/`([^`]+)`/g, '<code style="font-family:var(--mono);font-size:12px;background:#f0ebe0;padding:1px 5px;border-radius:2px;">$1</code>')
+    .replace(/\n\n/g, '</p><p>')
+    .replace(/^(?!<[hup])(.+)$/gm, (m) => m.trim() ? m : '')
+    .replace(/<p><\/p>/g, '')
+    .trim();
+}
+
+function addMessage(role, text) {
+  const welcome = document.getElementById('welcome');
+  if (welcome) welcome.remove();
+
+  const msgs = document.getElementById('messages');
+  const div = document.createElement('div');
+  div.className = 'msg msg-' + role;
+
+  const avatarInner = role === 'assistant'
+    ? '<div class="msg-avatar msg-avatar-g">G</div>'
+    : '<div class="msg-avatar msg-avatar-u">You</div>';
+
+  const bubbleContent = role === 'assistant'
+    ? renderMarkdown(text)
+    : text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+  div.innerHTML = `
+    ${avatarInner}
+    <div class="msg-body">
+      <div class="msg-bubble">${bubbleContent}</div>
+      <div class="msg-time">${getTime()}</div>
+    </div>`;
+
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function showTyping() {
+  const msgs = document.getElementById('messages');
+  const div = document.createElement('div');
+  div.className = 'typing-indicator';
+  div.id = 'typing';
+  div.innerHTML = `
+    <div class="msg-avatar msg-avatar-g">G</div>
+    <div class="typing-dots">
+      <div class="typing-dot"></div>
+      <div class="typing-dot"></div>
+      <div class="typing-dot"></div>
+    </div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function hideTyping() {
+  const t = document.getElementById('typing');
+  if (t) t.remove();
+}
+
+async function sendMessage() {
+  if (isLoading) return;
+  const box = document.getElementById('inputBox');
+  const text = box.value.trim();
+  if (!text) return;
+
+  const hasUserKey = getUserKey().length > 10;
+  const usingTrial = !hasUserKey;
+
+  // Trial exhausted and no user key
+  if (usingTrial && trialRemaining() === 0) {
+    const welcome = document.getElementById('welcome');
+    if (welcome) welcome.remove();
+    if (!document.getElementById('trial-end-msg')) {
+      const msgs = document.getElementById('messages');
+      const div = document.createElement('div');
+      div.id = 'trial-end-msg';
+      div.className = 'msg msg-assistant';
+      div.innerHTML = `
+        <div class="msg-avatar msg-avatar-g">G</div>
+        <div class="msg-body">
+          <div class="msg-bubble">
+            <strong>You've used your 3 free questions.</strong><br><br>
+            To continue, add your own Anthropic API key in the sidebar. It takes 60 seconds:<br><br>
+            <strong>1.</strong> Go to <span style="font-family:var(--mono);font-size:12px;background:#f0ebe0;padding:1px 5px;border-radius:2px;">console.anthropic.com</span><br>
+            <strong>2.</strong> Sign in &rarr; <em>API Keys</em> &rarr; <em>Create Key</em><br>
+            <strong>3.</strong> Paste it in the sidebar field<br><br>
+            Each conversation costs ~$0.01–$0.05. Your key stays in your browser only.
+          </div>
+          <div class="msg-time">${getTime()}</div>
+        </div>`;
+      msgs.appendChild(div);
+      msgs.scrollTop = msgs.scrollHeight;
+    }
+    return;
+  }
+
+  box.value = '';
+  box.style.height = 'auto';
+  isLoading = true;
+  document.getElementById('sendBtn').disabled = true;
+
+  addMessage('user', text);
+  history.push({ role: 'user', content: text });
+  showTyping();
+
+  const activeKey = getActiveKey();
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
+        'x-api-key': activeKey
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 1500,
+        system: SYSTEM_PROMPT,
+        messages: history
+      })
+    });
+
+    const data = await resp.json();
+    if (data.error) throw new Error(data.error.message);
+
+    const reply = (data.content || []).map(b => b.text || '').join('');
+    hideTyping();
+    addMessage('assistant', reply);
+    history.push({ role: 'assistant', content: reply });
+
+    // Count against trial if using embedded key
+    if (usingTrial) {
+      trialUsed++;
+      updateTrialUI();
+    }
+
+  } catch (err) {
+    hideTyping();
+    addMessage('assistant', '**Something went wrong.** ' + (err.message || 'Please check your connection and try again.'));
+  }
+
+  isLoading = false;
+  document.getElementById('sendBtn').disabled = false;
+  document.getElementById('inputBox').focus();
+}
+
+// Init
+updateTrialUI();
+// Scroll fix for mobile
+document.addEventListener('focusin', () => { setTimeout(() => { document.getElementById('messages').scrollTop = 999999; }, 300); });
+</script>
+</body>
+</html>

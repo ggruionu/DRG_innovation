@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Outreach Command — DRG Innovation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f7f6f2;
+  --surface: #ffffff;
+  --ink: #18181b;
+  --ink2: #52525b;
+  --ink3: #a1a1aa;
+  --border: #e4e4e7;
+  --blue: #1d4ed8;
+  --blue-light: #eff6ff;
+  --green: #15803d;
+  --green-light: #f0fdf4;
+  --amber: #b45309;
+  --amber-light: #fffbeb;
+  --red: #b91c1c;
+  --red-light: #fef2f2;
+  --purple: #6d28d9;
+  --purple-light: #f5f3ff;
+  --radius: 10px;
+  --radius-sm: 6px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--ink); font-size: 15px; line-height: 1.5; min-height: 100vh; }
+
+/* LAYOUT */
+.app { display: grid; grid-template-columns: 220px 1fr; min-height: 100vh; }
+@media (max-width: 700px) { .app { grid-template-columns: 1fr; } }
+
+/* SIDEBAR */
+.sidebar { background: #ffffff; border-right: 1px solid var(--border); padding: 0; position: sticky; top: 0; height: 100vh; overflow-y: auto; display: flex; flex-direction: column; }
+.sidebar-brand { padding: 24px 20px 16px; border-bottom: 1px solid var(--border); }
+.sidebar-brand h1 { font-family: 'Instrument Serif', serif; font-size: 20px; font-weight: 400; letter-spacing: -0.3px; color: var(--ink); }
+.sidebar-brand p { font-size: 12px; color: var(--ink3); margin-top: 3px; }
+.sidebar-nav { padding: 12px 10px; flex: 1; }
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: var(--radius-sm); cursor: pointer; font-size: 14px; color: var(--ink2); transition: all 0.15s; margin-bottom: 2px; }
+.nav-item:hover { background: var(--bg); color: var(--ink); }
+.nav-item.active { background: #eff6ff; color: var(--blue); font-weight: 600; }
+.nav-icon { font-size: 16px; width: 20px; text-align: center; }
+.sidebar-stats { padding: 16px 20px; border-top: 1px solid var(--border); background: var(--bg); }
+.sidebar-stat { display: flex; justify-content: space-between; font-size: 12px; color: var(--ink2); padding: 3px 0; }
+.sidebar-stat span:last-child { color: var(--ink); font-weight: 600; }
+
+/* MAIN */
+.main { padding: 32px 28px; max-width: 1000px; }
+@media (max-width: 700px) { .main { padding: 20px 16px; } .sidebar { height: auto; position: relative; } }
+
+/* PAGE HEADER */
+.page-header { margin-bottom: 24px; }
+.page-title { font-family: 'Instrument Serif', serif; font-size: 30px; font-weight: 400; letter-spacing: -0.5px; margin-bottom: 4px; }
+.page-sub { font-size: 14px; color: var(--ink2); }
+
+/* SCREEN */
+.screen { display: none; }
+.screen.active { display: block; }
+
+/* CARDS */
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 14px; }
+.card-sm { padding: 14px 16px; }
+
+/* STATS GRID */
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
+@media (max-width: 600px) { .stats-grid { grid-template-columns: repeat(2,1fr); } }
+.stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; }
+.stat-n { font-family: 'Instrument Serif', serif; font-size: 32px; color: var(--ink); line-height: 1; }
+.stat-l { font-size: 11px; color: var(--ink3); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 4px; }
+
+/* BUTTONS */
+.btn { font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; padding: 9px 16px; border-radius: var(--radius-sm); cursor: pointer; border: 1px solid var(--border); background: var(--surface); color: var(--ink); transition: all 0.15s; display: inline-flex; align-items: center; gap: 6px; }
+.btn:hover { background: var(--bg); }
+.btn:active { transform: scale(0.98); }
+.btn-primary { background: var(--blue); color: white; border-color: var(--blue); }
+.btn-primary:hover { background: #1e40af; }
+.btn-blue { background: var(--blue); color: white; border-color: var(--blue); }
+.btn-green { background: var(--green); color: white; border-color: var(--green); }
+.btn-sm { font-size: 12px; padding: 5px 10px; }
+.btn-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+
+/* BADGES */
+.badge { font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 99px; white-space: nowrap; }
+.badge-new { background: var(--blue-light); color: var(--blue); }
+.badge-contacted { background: var(--amber-light); color: var(--amber); }
+.badge-replied { background: var(--green-light); color: var(--green); }
+.badge-followup { background: #fef3c7; color: #92400e; }
+.badge-converted { background: var(--purple-light); color: var(--purple); }
+.badge-pass { background: #f4f4f5; color: var(--ink3); }
+
+/* PRODUCT TAGS */
+.tag { font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: 500; }
+.tag-prism { background: #dbeafe; color: #1e40af; }
+.tag-aims { background: #fce7f3; color: #9d174d; }
+.tag-basecamp { background: #d1fae5; color: #065f46; }
+.tag-advisor { background: #ede9fe; color: #5b21b6; }
+.tag-mentoring { background: #fff7ed; color: #9a3412; }
+.tag-none { background: #f4f4f5; color: #71717a; }
+.tag-general { background: #f0f4ff; color: #3730a3; }
+
+/* SEARCH & FILTERS */
+.search-bar { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+.search-input { flex: 1; min-width: 200px; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 9px 14px; font-family: 'DM Sans', sans-serif; font-size: 14px; outline: none; background: var(--surface); }
+.search-input:focus { border-color: var(--blue); }
+.filter-select { border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 9px 12px; font-family: 'DM Sans', sans-serif; font-size: 13px; outline: none; background: var(--surface); cursor: pointer; }
+
+/* CONTACT TABLE */
+.contact-table { width: 100%; border-collapse: collapse; }
+.contact-table th { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink3); padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border); background: var(--bg); }
+.contact-table td { padding: 11px 12px; border-bottom: 1px solid var(--border); font-size: 14px; vertical-align: middle; }
+.contact-table tr:last-child td { border-bottom: none; }
+.contact-table tr:hover td { background: var(--bg); }
+.contact-name { font-weight: 500; }
+.contact-company { font-size: 12px; color: var(--ink2); margin-top: 1px; }
+.contact-table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; overflow-x: auto; }
+
+/* PAGINATION */
+.pagination { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-top: 1px solid var(--border); font-size: 13px; color: var(--ink2); flex-wrap: wrap; gap: 8px; }
+
+/* MODAL */
+.modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 300; display: none; align-items: center; justify-content: center; padding: 20px; }
+.modal-bg.open { display: flex; }
+.modal { background: var(--surface); border-radius: 14px; padding: 28px; width: 100%; max-width: 580px; max-height: 90vh; overflow-y: auto; position: relative; }
+.modal-title { font-family: 'Instrument Serif', serif; font-size: 24px; font-weight: 400; margin-bottom: 4px; }
+.modal-sub { font-size: 13px; color: var(--ink2); margin-bottom: 20px; }
+.modal-close { position: absolute; top: 20px; right: 20px; background: none; border: none; font-size: 20px; cursor: pointer; color: var(--ink3); }
+
+/* FORMS */
+.form-group { margin-bottom: 14px; }
+.form-label { font-size: 12px; font-weight: 600; color: var(--ink2); margin-bottom: 5px; display: block; text-transform: uppercase; letter-spacing: 0.04em; }
+.form-input, .form-select, .form-textarea { width: 100%; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--ink); background: var(--bg); outline: none; transition: border-color 0.15s; }
+.form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--blue); background: white; }
+.form-textarea { resize: vertical; min-height: 100px; line-height: 1.6; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 480px) { .form-row { grid-template-columns: 1fr; } }
+
+/* EMAIL DRAFT */
+.email-draft { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 16px; margin: 14px 0; font-size: 14px; line-height: 1.7; white-space: pre-wrap; font-family: Georgia, serif; }
+
+/* UPLOAD ZONE */
+.upload-zone { border: 2px dashed var(--border); border-radius: var(--radius); padding: 40px 24px; text-align: center; cursor: pointer; transition: all 0.2s; background: var(--surface); }
+.upload-zone:hover, .upload-zone.dragover { border-color: var(--blue); background: var(--blue-light); }
+.upload-icon { font-size: 36px; margin-bottom: 12px; }
+.upload-title { font-size: 17px; font-weight: 500; margin-bottom: 6px; }
+.upload-sub { font-size: 13px; color: var(--ink2); }
+
+/* TODAY PANEL */
+.today-item { display: flex; align-items: center; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+.today-item:last-child { border-bottom: none; }
+.today-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.dot-followup { background: #f59e0b; }
+.dot-new { background: var(--blue); }
+.today-name { font-weight: 500; font-size: 15px; }
+.today-reason { font-size: 12px; color: var(--ink2); }
+
+/* EMPTY */
+.empty { text-align: center; padding: 48px 24px; color: var(--ink3); }
+.empty-icon { font-size: 40px; margin-bottom: 12px; }
+
+/* PROGRESS BAR */
+.progress-wrap { background: var(--border); border-radius: 99px; height: 8px; overflow: hidden; margin: 8px 0; }
+.progress-fill { height: 100%; background: var(--blue); border-radius: 99px; transition: width 0.3s; }
+
+/* PRINT */
+@media print { .sidebar, .btn-row, .search-bar, .pagination, .no-print { display: none !important; } .main { padding: 0; } }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+<div class="app">
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-brand">
+    <h1>Outreach OS</h1>
+    <p>DRG Innovation LLC</p>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-item active" onclick="showScreen('dashboard',this)"><span class="nav-icon">◉</span> Dashboard</div>
+    <div class="nav-item" onclick="showScreen('today',this)"><span class="nav-icon">⚡</span> Today's List</div>
+    <div class="nav-item" onclick="showScreen('contacts',this)"><span class="nav-icon">◎</span> All Contacts</div>
+    <div class="nav-item" onclick="showScreen('import',this)"><span class="nav-icon">↑</span> Import</div>
+    <div class="nav-item" onclick="showScreen('templates',this)"><span class="nav-icon">✉</span> Email Templates</div>
+  </div>
+  <div class="sidebar-stats" id="sidebarStats"></div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- DASHBOARD -->
+  <div class="screen active" id="screen-dashboard">
+    <div class="page-header">
+      <div class="page-title">Good to see you, Gabe.</div>
+      <div class="page-sub" id="dashDate"></div>
+    </div>
+    <div class="stats-grid" id="dashStats"></div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;" id="dashPanels">
+      <div class="card" style="grid-column:1/-1;">
+        <div style="font-size:13px;font-weight:600;color:var(--ink2);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:14px;">Campaign progress — 2,600 contacts</div>
+        <div class="progress-wrap"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--ink3);margin-top:6px;">
+          <span id="progressLabel">0 contacted</span>
+          <span id="progressPct">0%</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="font-size:13px;font-weight:600;color:var(--ink2);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:12px;">Needs follow-up today</div>
+    <div class="card card-sm" id="dashFollowup"></div>
+
+    <div style="font-size:13px;font-weight:600;color:var(--ink2);text-transform:uppercase;letter-spacing:0.05em;margin:20px 0 12px;">Recent activity</div>
+    <div class="card card-sm" id="dashRecent"></div>
+  </div>
+
+  <!-- TODAY'S LIST -->
+  <div class="screen" id="screen-today">
+    <div class="page-header">
+      <div class="page-title">Today's List</div>
+      <div class="page-sub">Who to contact right now — follow-ups first, then new outreach</div>
+    </div>
+    <div class="btn-row" style="margin-bottom:20px;">
+      <button class="btn btn-primary" onclick="openQuickAdd()">+ Add contact manually</button>
+      <button class="btn" onclick="showScreen('contacts',document.querySelector('.nav-item:nth-child(3)'))">See all contacts →</button>
+    </div>
+    <div id="todayList"></div>
+  </div>
+
+  <!-- ALL CONTACTS -->
+  <div class="screen" id="screen-contacts">
+    <div class="page-header">
+      <div class="page-title">All Contacts</div>
+      <div class="page-sub" id="contactsSubtitle"></div>
+    </div>
+    <div class="search-bar">
+      <input type="text" class="search-input" id="searchInput" placeholder="Search name, company, position..." oninput="renderContacts()">
+      <select class="filter-select" id="filterStatus" onchange="renderContacts()">
+        <option value="">All statuses</option>
+        <option value="new">New</option>
+        <option value="contacted">Contacted</option>
+        <option value="followup">Follow-up due</option>
+        <option value="replied">Replied</option>
+        <option value="converted">Converted</option>
+        <option value="pass">Pass</option>
+      </select>
+      <select class="filter-select" id="filterProduct" onchange="renderContacts()">
+        <option value="">All products</option>
+        <option value="PRISM">PRISM</option>
+        <option value="AIMS">AIMS Navigator</option>
+        <option value="BaseCamp">Base Camp</option>
+        <option value="Advisor">Dr. G Advisor</option>
+        <option value="Mentoring">Mentoring OS</option>
+      </select>
+    </div>
+    <div class="contact-table-wrap">
+      <table class="contact-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Position / Company</th>
+            <th>Product</th>
+            <th>Status</th>
+            <th>Last contact</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="contactsBody"></tbody>
+      </table>
+      <div class="pagination" id="pagination"></div>
+    </div>
+  </div>
+
+  <!-- IMPORT -->
+  <div class="screen" id="screen-import">
+    <div class="page-header">
+      <div class="page-title">Import Contacts</div>
+      <div class="page-sub">Upload your LinkedIn Excel or CSV export — all 2,600 contacts load instantly</div>
+    </div>
+    <div class="upload-zone" id="uploadZone" onclick="document.getElementById('csvFile').click()" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropFile(event)">
+      <div class="upload-icon">📥</div>
+      <div class="upload-title">Drop your LinkedIn file here</div>
+      <div class="upload-sub">Accepts <strong>.xlsx</strong> (Excel) or <strong>.csv</strong> · Same headers work for both:<br>First Name · Last Name · URL · Email Address · Company · Position · Connected On</div>
+      <input type="file" id="csvFile" accept=".csv,.xlsx,.xls" style="display:none;" onchange="handleFile(event)">
+    </div>
+    <div id="importResult" style="margin-top:16px;"></div>
+
+    <div style="margin-top:28px;">
+      <div style="font-size:13px;font-weight:600;color:var(--ink2);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:12px;">Or add a single contact</div>
+      <div class="card">
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">First name</label><input type="text" class="form-input" id="addFN" placeholder="First"></div>
+          <div class="form-group"><label class="form-label">Last name</label><input type="text" class="form-input" id="addLN" placeholder="Last"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Position</label><input type="text" class="form-input" id="addPos" placeholder="Title / Role"></div>
+          <div class="form-group"><label class="form-label">Company</label><input type="text" class="form-input" id="addCo" placeholder="Organization"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Email</label><input type="text" class="form-input" id="addEmail" placeholder="email@example.com"></div>
+          <div class="form-group"><label class="form-label">LinkedIn URL</label><input type="text" class="form-input" id="addURL" placeholder="linkedin.com/in/..."></div>
+        </div>
+        <button class="btn btn-primary" onclick="addSingleContact()">Add contact →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TEMPLATES -->
+  <div class="screen" id="screen-templates">
+    <div class="page-header">
+      <div class="page-title">Email Templates</div>
+      <div class="page-sub">Your proven 3-sentence outreach formats — personalized when you use them</div>
+    </div>
+    <div id="templatesList"></div>
+  </div>
+
+</div><!-- /main -->
+</div><!-- /app -->
+
+<!-- CONTACT DETAIL MODAL -->
+<div class="modal-bg" id="contactModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('contactModal')">✕</button>
+    <div class="modal-title" id="cModalName"></div>
+    <div class="modal-sub" id="cModalSub"></div>
+
+    <div class="form-row" style="margin-bottom:14px;">
+      <div class="form-group">
+        <label class="form-label">Product angle</label>
+        <select class="form-select" id="cProduct" onchange="refreshDraft()">
+          <option value="">— choose —</option>
+          <option value="PRISM">PRISM (investors, TTOs, VCs)</option>
+          <option value="AIMS">AIMS Navigator (physician inventors)</option>
+          <option value="BaseCamp">Base Camp TRL (scientists, faculty)</option>
+          <option value="Advisor">Dr. G AI Advisor (general)</option>
+          <option value="Mentoring">Mentoring OS (program directors)</option>
+          <option value="General">General / Other Industry</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Status</label>
+        <select class="form-select" id="cStatus">
+          <option value="new">New</option>
+          <option value="contacted">Contacted</option>
+          <option value="followup">Follow-up due</option>
+          <option value="replied">Replied</option>
+          <option value="converted">Converted ✓</option>
+          <option value="pass">Pass</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Follow-up date</label>
+      <input type="date" class="form-input" id="cFollowup">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Personal opening line <span style="font-weight:400;color:var(--ink3);font-size:11px;">— appears as first line of email draft</span></label>
+      <input type="text" class="form-input" id="cPersonalNote" oninput="refreshDraft()" placeholder="e.g. Saw your recent work on the Kelley entrepreneurship program — really strong framing.">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Notes</label>
+      <textarea class="form-textarea" id="cNotes" placeholder="What did they say? What's the context? Any personal detail to reference next time..."></textarea>
+    </div>
+
+    <div style="font-size:12px;font-weight:600;color:var(--ink2);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:8px;">Draft email</div>
+    <div class="email-draft" id="emailDraft">Select a product angle above to generate a draft.</div>
+    <div class="btn-row" style="margin-top:12px;">
+      <button class="btn btn-primary" onclick="saveContact()">Save →</button>
+      <button class="btn btn-blue" onclick="copyDraft()">Copy email draft</button>
+      <button class="btn" onclick="openEmail()">Open in email app</button>
+    </div>
+  </div>
+</div>
+
+<!-- QUICK ADD MODAL -->
+<div class="modal-bg" id="quickAddModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('quickAddModal')">✕</button>
+    <div class="modal-title">Add Contact</div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">First name</label><input type="text" class="form-input" id="qaFN"></div>
+      <div class="form-group"><label class="form-label">Last name</label><input type="text" class="form-input" id="qaLN"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Position</label><input type="text" class="form-input" id="qaPos"></div>
+      <div class="form-group"><label class="form-label">Company</label><input type="text" class="form-input" id="qaCo"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Email</label><input type="text" class="form-input" id="qaEmail"></div>
+    <button class="btn btn-primary" style="width:100%;margin-top:8px;" onclick="saveQuickAdd()">Add →</button>
+  </div>
+</div>
+
+<script>
+// ── STATE ──
+let contacts = [];
+let currentPage = 1;
+const PAGE_SIZE = 50;
+let editingId = null;
+
+// ── PRODUCT AUTO-ASSIGN ──
+function guessProduct(position, company) {
+  const p = (position + ' ' + company).toLowerCase();
+  if (/venture|vc |investor|capital|fund|partner|portfolio|angel/.test(p)) return 'PRISM';
+  if (/physician|doctor|md |surgeon|clinician|medical director|chief of|attending/.test(p)) return 'AIMS';
+  if (/tto|tech transfer|license|commerciali|innovation office/.test(p)) return 'PRISM';
+  if (/professor|faculty|research|phd|scientist|postdoc|academic|university|college/.test(p)) return 'BaseCamp';
+  if (/mentor|program director|coordinator|ecosystem|accelerator|incubator/.test(p)) return 'Mentoring';
+  if (/pharma|biotech|device|medtech|industry|director|executive|vp |ceo|cto|coo/.test(p)) return 'AIMS';
+  return 'Advisor';
+}
+
+// ── EMAIL TEMPLATES ──
+const productLinks = {
+  PRISM: 'https://ggruionu.gumroad.com/l/PRISM',
+  AIMS: 'https://ggruionu.gumroad.com/l/AIMS_navigator',
+  BaseCamp: 'https://ggruionu.gumroad.com/l/basecamp_html',
+  Advisor: 'https://ggruionu.gumroad.com/l/drg_innovation_advisor',
+  Mentoring: 'https://ggruionu.gumroad.com/l/drgmentoringtool',
+  Roadmap: 'https://ggruionu.gumroad.com/l/roadmap',
+  General: 'https://ggruionu.gumroad.com/l/drg_innovation_advisor'
+};
+
+const templates = {
+  PRISM: {
+    label: 'PRISM — Investors & TTOs',
+    subject: 'What 30 years of biomedical due diligence taught me',
+    body: (c, note='') => `Hi ${c.firstName},
+${note ? note + '\n\n' : ''}After two decades evaluating biomedical innovations at Harvard Medical School, MGH, W.L. Gore, and IU — sitting across the table from physician inventors, scientists, and VCs — I noticed the same pattern: most deals die not because the science is weak, but because no one asked the right questions early enough.
+
+I distilled that experience into PRISM, an AI-powered due diligence framework that stress-tests biomedical startups across team, IP, regulatory, commercialization, and resources — before the hard conversations happen in a boardroom.
+
+If you have 5 minutes, you can try it here — no signup required:
+${productLinks.PRISM}
+More tools available in the Featured section of my LinkedIn profile (see below).
+
+Happy to talk through what you find. Would a brief call work?
+
+Gabriel Gruionu, PhD
+Former Assistant Professor, Harvard Medical School | Director of Medical Innovation, MGH
+DRG Innovation LLC | drginnovation.com
+LinkedIn: linkedin.com/in/gabrielgruionu`
+  },
+  AIMS: {
+    label: 'AIMS Navigator — Physician Inventors',
+    subject: 'The gap between a great clinical idea and a viable company',
+    body: (c, note='') => `Hi ${c.firstName},
+${note ? note + '\n\n' : ''}In my years running medical innovation programs at Harvard Medical School and MGH, I worked with hundreds of physician inventors. Almost all of them had real clinical insights. Very few understood how far their idea was from a company — and most found out the hard way, after spending years and significant personal capital.
+
+I built AIMS Navigator to change that. A colleague described it as "an effective reality check for a doctor who believes they're ready to open a company."
+
+You can try it in 5 minutes here — no signup, no cost to try:
+${productLinks.AIMS}
+More tools available in the Featured section of my LinkedIn profile (see below).
+
+If you'd also like to see how the full translation pathway looks, the Research Translation Roadmap maps the journey from idea to TRL 3:
+${productLinks.Roadmap}
+
+I'd welcome your reaction. Would a brief call work?
+
+Gabriel Gruionu, PhD
+Former Assistant Professor, Harvard Medical School | Director of Medical Innovation, MGH
+DRG Innovation LLC | drginnovation.com
+LinkedIn: linkedin.com/in/gabrielgruionu`
+  },
+  BaseCamp: {
+    label: 'Base Camp TRL — Scientists & Faculty',
+    subject: 'Why most academic innovations never leave TRL 3',
+    body: (c, note='') => `Hi ${c.firstName},
+${note ? note + '\n\n' : ''}Across my career at Harvard, MGH, and Indiana University, I watched talented researchers produce genuinely important science that never reached patients — not because the work wasn't good, but because TRL 1–3 is where translation breaks down and nobody tells you why.
+
+I built Base Camp to change that — a structured diagnostic that tells researchers exactly where they stand before they commit time and money to the wrong next step.
+
+You can try it in 5 minutes — no signup required:
+${productLinks.BaseCamp}
+More tools available in the Featured section of my LinkedIn profile (see below).
+
+The Research Translation Roadmap pairs well with it — it maps the full journey from idea to market-ready:
+${productLinks.Roadmap}
+
+I'd value your reaction. Would a brief conversation work?
+
+Gabriel Gruionu, PhD
+Former Assistant Professor, Harvard Medical School | Assistant Research Professor, Indiana University
+DRG Innovation LLC | drginnovation.com
+LinkedIn: linkedin.com/in/gabrielgruionu`
+  },
+  Advisor: {
+    label: 'Dr. G AI Advisor — General',
+    subject: 'Packaging 30 years of biomedical experience into something useful',
+    body: (c, note='') => `Hi ${c.firstName},
+${note ? note + '\n\n' : ''}My career has taken me from W.L. Gore's cardiac surgery division to Harvard Medical School to building startups in Boston and Indianapolis. Along the way I developed a way of thinking about biomedical innovation — what works, what kills good ideas, what questions nobody asks early enough — that I spent years teaching to physicians, scientists, and entrepreneurs.
+
+I've now built that framework into Dr. G AI Advisor, an on-demand tool that gives innovators and program leaders access to that thinking in real time. You can try it free here — 3 questions at no cost:
+${productLinks.Advisor}
+More tools available in the Featured section of my LinkedIn profile (see below).
+
+I'd value your reaction. Would a brief call work?
+
+Gabriel Gruionu, PhD
+Former Assistant Professor, Harvard Medical School | Director of Medical Innovation, MGH
+DRG Innovation LLC | drginnovation.com
+LinkedIn: linkedin.com/in/gabrielgruionu`
+  },
+  General: {
+    label: 'General / Other Industry',
+    subject: 'What stepping away from academia taught me about work',
+    body: (c, note='') => `Hi ${c.firstName},
+${note ? note + '\n\n' : ''}After years as a researcher and professor — fully consumed by papers, grant applications, and innovation programs at Harvard and Indiana University — I stepped back and did something I hadn't done in decades: I looked at how I actually work.
+
+What I found was that most of my expertise existed only in my head. Every framework I'd built, every pattern I'd learned from evaluating hundreds of innovations, every hard-won insight from years of teaching — none of it was organized, searchable, or useful to anyone else. It was all noise.
+
+So I started building tools to change that. The first one I'm most proud of is Dr. G AI Advisor — it takes 30 years of experience and makes it available on demand, to anyone who needs it, in plain language. It works for anyone navigating complex decisions, not just scientists. The first 3 questions are free — no signup needed:
+${productLinks.General}
+More tools available in the Featured section of my LinkedIn profile (see below).
+
+I'd be curious what you think — does this resonate with how you see expertise getting lost in organizations?
+
+Gabriel Gruionu, PhD
+Former Assistant Professor, Harvard Medical School | Director of Medical Innovation, MGH
+DRG Innovation LLC | drginnovation.com
+LinkedIn: linkedin.com/in/gabrielgruionu`
+  },
+
+  Mentoring: {
+    label: 'Mentoring OS — Program Directors',
+    subject: 'Making innovation mentoring programs actually work',
+    body: (c, note='') => `Hi ${c.firstName},
+${note ? note + '\n\n' : ''}Running medical innovation programs at Harvard and IU, I saw firsthand how much mentoring potential gets lost to logistics — mismatched expertise, unprepared sessions, no structured follow-through. The mentors were exceptional. The system around them wasn't.
+
+I built Mentoring OS to fix the infrastructure, not the mentors. It handles structured intake, session prep, and mentor-mentee matching so program directors can focus on outcomes rather than coordination.
+
+You can see exactly how it works here:
+${productLinks.Mentoring}
+More tools available in the Featured section of my LinkedIn profile (see below).
+
+Given your role at ${c.company || 'your program'}, I suspect this is a problem you know well. Could we find 20 minutes to compare notes?
+
+Gabriel Gruionu, PhD
+Former Assistant Professor, Harvard Medical School | Faculty Innovation Mentor, IU CTSI
+DRG Innovation LLC | drginnovation.com
+LinkedIn: linkedin.com/in/gabrielgruionu`
+  }
+};
+
+// ── INIT ──
+function init() {
+  const saved = localStorage.getItem('drg_contacts');
+  contacts = saved ? JSON.parse(saved) : [];
+  renderAll();
+}
+
+function save() { localStorage.setItem('drg_contacts', JSON.stringify(contacts)); }
+
+function uid() { return 'c' + Date.now() + Math.random().toString(36).slice(2,5); }
+
+function today() { return new Date().toISOString().split('T')[0]; }
+
+function fmtDate(d) {
+  if (!d) return '—';
+  const [y,m,day] = d.split('-');
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return months[parseInt(m)-1] + ' ' + parseInt(day);
+}
+
+function daysSince(d) {
+  if (!d) return null;
+  return Math.floor((new Date() - new Date(d)) / 86400000);
+}
+
+// ── RENDER ALL ──
+function renderAll() {
+  renderSidebarStats();
+  renderDashboard();
+  renderTodayList();
+  renderContacts();
+  renderTemplates();
+  document.getElementById('dashDate').textContent = new Date().toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+}
+
+// ── SIDEBAR STATS ──
+function renderSidebarStats() {
+  const total = contacts.length;
+  const contacted = contacts.filter(c => c.status !== 'new').length;
+  const converted = contacts.filter(c => c.status === 'converted').length;
+  const followup = contacts.filter(c => c.followupDate && c.followupDate <= today()).length;
+  document.getElementById('sidebarStats').innerHTML = `
+    <div class="sidebar-stat"><span>Total contacts</span><span>${total.toLocaleString()}</span></div>
+    <div class="sidebar-stat"><span>Contacted</span><span>${contacted.toLocaleString()}</span></div>
+    <div class="sidebar-stat"><span>Follow-ups due</span><span>${followup}</span></div>
+    <div class="sidebar-stat"><span>Converted</span><span>${converted}</span></div>
+  `;
+}
+
+// ── DASHBOARD ──
+function renderDashboard() {
+  const total = contacts.length;
+  const contacted = contacts.filter(c => c.status !== 'new').length;
+  const replied = contacts.filter(c => c.status === 'replied' || c.status === 'converted').length;
+  const converted = contacts.filter(c => c.status === 'converted').length;
+  const followup = contacts.filter(c => c.followupDate && c.followupDate <= today()).length;
+
+  document.getElementById('dashStats').innerHTML = `
+    <div class="stat-card"><div class="stat-n">${total.toLocaleString()}</div><div class="stat-l">Total contacts</div></div>
+    <div class="stat-card"><div class="stat-n">${contacted.toLocaleString()}</div><div class="stat-l">Contacted</div></div>
+    <div class="stat-card"><div class="stat-n">${replied}</div><div class="stat-l">Replied</div></div>
+    <div class="stat-card"><div class="stat-n">${converted}</div><div class="stat-l">Converted</div></div>
+  `;
+
+  const pct = total ? Math.round((contacted / total) * 100) : 0;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = contacted.toLocaleString() + ' of ' + total.toLocaleString() + ' contacted';
+  document.getElementById('progressPct').textContent = pct + '%';
+
+  // Follow-ups
+  const fups = contacts.filter(c => c.followupDate && c.followupDate <= today()).slice(0, 5);
+  document.getElementById('dashFollowup').innerHTML = fups.length
+    ? fups.map(c => `<div class="today-item">
+        <div class="today-dot dot-followup"></div>
+        <div style="flex:1;">
+          <div class="today-name">${c.firstName} ${c.lastName}</div>
+          <div class="today-reason">${c.position || ''} ${c.company ? '· ' + c.company : ''} · Follow-up due ${fmtDate(c.followupDate)}</div>
+        </div>
+        <button class="btn btn-sm" onclick="openContact('${c.id}')">Open →</button>
+      </div>`).join('')
+    : '<div style="padding:12px;color:var(--ink3);font-size:14px;">No follow-ups due today. 🎉</div>';
+
+  // Recent activity
+  const recent = [...contacts].filter(c => c.lastContactDate).sort((a,b) => b.lastContactDate > a.lastContactDate ? 1 : -1).slice(0, 5);
+  document.getElementById('dashRecent').innerHTML = recent.length
+    ? recent.map(c => `<div class="today-item">
+        <div class="today-dot" style="background:var(--blue);"></div>
+        <div style="flex:1;">
+          <div class="today-name">${c.firstName} ${c.lastName}</div>
+          <div class="today-reason">${c.position || ''} ${c.company ? '· ' + c.company : ''} · ${fmtDate(c.lastContactDate)}</div>
+        </div>
+        <span class="badge badge-${c.status}">${c.status}</span>
+      </div>`).join('')
+    : '<div style="padding:12px;color:var(--ink3);font-size:14px;">No contacts logged yet. Start with Today\'s List.</div>';
+}
+
+// ── TODAY LIST ──
+function renderTodayList() {
+  const el = document.getElementById('todayList');
+  const followups = contacts.filter(c => c.followupDate && c.followupDate <= today());
+  const newContacts = contacts.filter(c => c.status === 'new' && !c.lastContactDate).slice(0, 20 - followups.length);
+  const all = [...followups, ...newContacts];
+
+  if (!contacts.length) {
+    el.innerHTML = `<div class="empty"><div class="empty-icon">📥</div><div class="empty-text">Import your LinkedIn file first (Excel or CSV).<br>Then your daily list appears here automatically.</div></div>`;
+    return;
+  }
+
+  if (!all.length) {
+    el.innerHTML = `<div class="card" style="text-align:center;padding:32px;color:var(--ink2);">All caught up for today. No follow-ups due, no new contacts queued.</div>`;
+    return;
+  }
+
+  el.innerHTML = `
+    <div style="font-size:13px;color:var(--ink2);margin-bottom:14px;">${followups.length} follow-up${followups.length!==1?'s':''} due · ${newContacts.length} new contacts queued · 20 per day target</div>
+    ${all.map(c => `
+      <div class="card card-sm" style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:160px;">
+          <div style="font-weight:500;font-size:15px;">${c.firstName} ${c.lastName}</div>
+          <div style="font-size:12px;color:var(--ink2);">${c.position || '—'} ${c.company ? '· ' + c.company : ''}</div>
+        </div>
+        <span class="tag tag-${(c.product||'none').toLowerCase().replace(' ','-')}">${c.product || 'unassigned'}</span>
+        ${c.followupDate && c.followupDate <= today() ? `<span class="badge badge-followup">Follow-up due</span>` : `<span class="badge badge-new">New</span>`}
+        <button class="btn btn-primary btn-sm" onclick="openContact('${c.id}')">Contact →</button>
+      </div>
+    `).join('')}
+  `;
+}
+
+// ── CONTACTS TABLE ──
+function renderContacts() {
+  const search = document.getElementById('searchInput').value.toLowerCase();
+  const statusFilter = document.getElementById('filterStatus').value;
+  const productFilter = document.getElementById('filterProduct').value;
+
+  let filtered = contacts.filter(c => {
+    const text = `${c.firstName} ${c.lastName} ${c.position||''} ${c.company||''}`.toLowerCase();
+    if (search && !text.includes(search)) return false;
+    if (statusFilter === 'followup') {
+      if (!(c.followupDate && c.followupDate <= today())) return false;
+    } else if (statusFilter && c.status !== statusFilter) return false;
+    if (productFilter && c.product !== productFilter) return false;
+    return true;
+  });
+  // Contacts with email first, then alphabetical by last name
+  filtered.sort((a,b) => {
+    const ae = a.email ? 1 : 0, be = b.email ? 1 : 0;
+    if (be !== ae) return be - ae;
+    return (a.lastName||'').localeCompare(b.lastName||'');
+  });
+
+  document.getElementById('contactsSubtitle').textContent = `${filtered.length.toLocaleString()} of ${contacts.length.toLocaleString()} contacts`;
+
+  const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+  if (currentPage > totalPages) currentPage = 1;
+  const page = filtered.slice((currentPage-1)*PAGE_SIZE, currentPage*PAGE_SIZE);
+
+  const tbody = document.getElementById('contactsBody');
+  if (!filtered.length) {
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--ink3);">No contacts match this filter.</td></tr>`;
+  } else {
+    tbody.innerHTML = page.map(c => `
+      <tr>
+        <td>
+          <div class="contact-name">${c.firstName} ${c.lastName}</div>
+          ${c.email ? `<div class="contact-company">${c.email}</div>` : '<div class="contact-company" style="color:var(--ink3);">no email</div>'}
+        </td>
+        <td>
+          <div>${c.position || '—'}</div>
+          <div class="contact-company">${c.company || ''}</div>
+        </td>
+        <td><span class="tag tag-${(c.product||'none').toLowerCase().replace(/\s/g,'-')}">${c.product || '—'}</span></td>
+        <td><span class="badge badge-${c.status||'new'}">${c.status||'new'}</span></td>
+        <td style="white-space:nowrap;">${fmtDate(c.lastContactDate)}</td>
+        <td><button class="btn btn-sm" onclick="openContact('${c.id}')">Open</button></td>
+      </tr>
+    `).join('');
+  }
+
+  // Pagination
+  document.getElementById('pagination').innerHTML = `
+    <span>Showing ${((currentPage-1)*PAGE_SIZE)+1}–${Math.min(currentPage*PAGE_SIZE, filtered.length)} of ${filtered.length.toLocaleString()}</span>
+    <div class="btn-row">
+      <button class="btn btn-sm" onclick="changePage(-1)" ${currentPage<=1?'disabled':''}>‹ Prev</button>
+      <span style="font-size:13px;">Page ${currentPage} of ${totalPages||1}</span>
+      <button class="btn btn-sm" onclick="changePage(1)" ${currentPage>=totalPages?'disabled':''}>Next ›</button>
+    </div>
+  `;
+}
+
+function changePage(dir) { currentPage += dir; renderContacts(); window.scrollTo(0,0); }
+
+// ── CONTACT MODAL ──
+function openContact(id) {
+  const c = contacts.find(c => c.id === id);
+  if (!c) return;
+  editingId = id;
+  document.getElementById('cModalName').textContent = c.firstName + ' ' + c.lastName;
+  document.getElementById('cModalSub').textContent = [c.position, c.company].filter(Boolean).join(' · ') + (c.email ? ' · ' + c.email : '');
+  document.getElementById('cProduct').value = c.product || '';
+  document.getElementById('cStatus').value = c.status || 'new';
+  document.getElementById('cFollowup').value = c.followupDate || '';
+  document.getElementById('cNotes').value = c.notes || '';
+  document.getElementById('cPersonalNote').value = c.personalNote || '';
+  refreshDraft();
+  document.getElementById('contactModal').classList.add('open');
+}
+
+function refreshDraft() {
+  const product = document.getElementById('cProduct').value;
+  const c = contacts.find(c => c.id === editingId);
+  if (!c) return;
+  if (!product || !templates[product]) {
+    document.getElementById('emailDraft').textContent = 'Select a product angle above to generate a draft.';
+    return;
+  }
+  const personalNote = document.getElementById('cPersonalNote').value.trim();
+  document.getElementById('emailDraft').textContent = templates[product].body(c, personalNote);
+}
+
+function saveContact() {
+  const idx = contacts.findIndex(c => c.id === editingId);
+  if (idx === -1) return;
+  const wasNew = contacts[idx].status === 'new';
+  contacts[idx] = {
+    ...contacts[idx],
+    product: document.getElementById('cProduct').value,
+    status: document.getElementById('cStatus').value,
+    followupDate: document.getElementById('cFollowup').value,
+    notes: document.getElementById('cNotes').value,
+    personalNote: document.getElementById('cPersonalNote').value.trim(),
+    lastContactDate: wasNew && document.getElementById('cStatus').value !== 'new' ? today() : contacts[idx].lastContactDate
+  };
+  if (contacts[idx].status === 'contacted' && !contacts[idx].followupDate) {
+    const d = new Date(); d.setDate(d.getDate() + 7);
+    contacts[idx].followupDate = d.toISOString().split('T')[0];
+  }
+  save();
+  closeModal('contactModal');
+  renderAll();
+}
+
+function copyDraft() {
+  const text = document.getElementById('emailDraft').textContent;
+  navigator.clipboard.writeText(text).then(() => alert('Copied to clipboard!')).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+    alert('Copied!');
+  });
+}
+
+function openEmail() {
+  const c = contacts.find(c => c.id === editingId);
+  const product = document.getElementById('cProduct').value;
+  if (!c || !product || !templates[product]) return alert('Select a product angle first.');
+  const subject = encodeURIComponent(templates[product].subject);
+  const body = encodeURIComponent(templates[product].body(c));
+  const email = c.email || '';
+  window.open(`mailto:${email}?subject=${subject}&body=${body}`);
+}
+
+// ── FILE IMPORT (Excel + CSV) ──
+function dragOver(e) { e.preventDefault(); document.getElementById('uploadZone').classList.add('dragover'); }
+function dragLeave(e) { document.getElementById('uploadZone').classList.remove('dragover'); }
+function dropFile(e) {
+  e.preventDefault();
+  document.getElementById('uploadZone').classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  if (file) handleFile({ target: { files: [file] } });
+}
+function handleFile(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const name = file.name.toLowerCase();
+  if (name.endsWith('.xlsx') || name.endsWith('.xls')) {
+    importExcel(file);
+  } else {
+    importCSV(file);
+  }
+}
+
+function importRows(rows) {
+  // rows = array of objects with header keys
+  let imported = 0, skipped = 0;
+  const existingEmails = new Set(contacts.map(c => c.email).filter(Boolean));
+  const existingURLs = new Set(contacts.map(c => c.url).filter(Boolean));
+
+  rows.forEach(row => {
+    // Normalize keys — find matching header regardless of case/spacing
+    const get = (...keys) => {
+      for (const k of Object.keys(row)) {
+        const kl = k.toLowerCase().trim();
+        if (keys.some(target => kl.includes(target))) return (row[k] || '').toString().trim();
+      }
+      return '';
+    };
+    const fn = get('first');
+    const ln = get('last');
+    const email = get('email');
+    const url = get('url');
+    const company = get('company');
+    const position = get('position');
+
+    if (!fn && !ln) { skipped++; return; }
+    if (email && existingEmails.has(email)) { skipped++; return; }
+    if (url && existingURLs.has(url)) { skipped++; return; }
+
+    const product = guessProduct(position, company);
+    contacts.push({ id: uid(), firstName: fn, lastName: ln, email, url, company, position, product, status: 'new', notes: '', lastContactDate: '', followupDate: '' });
+    if (email) existingEmails.add(email);
+    if (url) existingURLs.add(url);
+    imported++;
+  });
+
+  save();
+  document.getElementById('importResult').innerHTML = `
+    <div class="card" style="background:var(--green-light);border-color:#bbf7d0;">
+      <div style="font-size:17px;font-weight:600;color:var(--green);margin-bottom:6px;">✓ Import complete</div>
+      <div style="font-size:14px;color:var(--green);">${imported.toLocaleString()} contacts imported · ${skipped} duplicates or empty rows skipped</div>
+      <div style="font-size:13px;color:#166534;margin-top:8px;">Products were auto-assigned based on title and company. You can adjust them individually.</div>
+      <button class="btn btn-primary" style="margin-top:12px;" onclick="showScreen('contacts',document.querySelectorAll('.nav-item')[2])">View all contacts →</button>
+    </div>`;
+  renderAll();
+}
+
+function importExcel(file) {
+  document.getElementById('importResult').innerHTML = `<div class="card" style="color:var(--ink2);font-size:14px;">Reading Excel file...</div>`;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = new Uint8Array(e.target.result);
+      const workbook = XLSX.read(data, { type: 'array' });
+      const sheet = workbook.Sheets[workbook.SheetNames[0]];
+
+      // Convert to array-of-arrays so we can find the real header row
+      // LinkedIn exports add 3-4 preamble rows before the actual headers
+      const raw = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '' });
+
+      // Find the row that contains "First Name" — that's the real header row
+      let headerRowIdx = 0;
+      for (let i = 0; i < Math.min(raw.length, 10); i++) {
+        const rowStr = raw[i].join(' ').toLowerCase();
+        if (rowStr.includes('first name') || rowStr.includes('first') && rowStr.includes('last')) {
+          headerRowIdx = i;
+          break;
+        }
+      }
+
+      const headers = raw[headerRowIdx].map(h => (h || '').toString().trim());
+      const rows = [];
+      for (let i = headerRowIdx + 1; i < raw.length; i++) {
+        if (!raw[i] || raw[i].every(cell => !cell)) continue; // skip empty rows
+        const row = {};
+        headers.forEach((h, idx) => { row[h] = (raw[i][idx] || '').toString().trim(); });
+        rows.push(row);
+      }
+
+      importRows(rows);
+    } catch(err) {
+      document.getElementById('importResult').innerHTML = `<div class="card" style="background:var(--red-light);color:var(--red);">Error reading Excel file: ${err.message}. Try saving as CSV and importing that instead.</div>`;
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function importCSV(file) {
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const text = e.target.result;
+    const lines = text.split('\n').filter(l => l.trim());
+    if (!lines.length) return;
+
+    const parseRow = (row) => {
+      const cols = []; let inQuote = false, cur = '';
+      for (let i = 0; i < row.length; i++) {
+        if (row[i] === '"') { inQuote = !inQuote; }
+        else if (row[i] === ',' && !inQuote) { cols.push(cur.trim()); cur = ''; }
+        else { cur += row[i]; }
+      }
+      cols.push(cur.trim());
+      return cols;
+    };
+
+    const headers = parseRow(lines[0]).map(h => h.replace(/"/g,'').trim());
+    const rows = [];
+    for (let i = 1; i < lines.length; i++) {
+      const cols = parseRow(lines[i]);
+      const row = {};
+      headers.forEach((h, idx) => { row[h] = cols[idx] || ''; });
+      rows.push(row);
+    }
+    importRows(rows);
+  };
+  reader.readAsText(file);
+}
+
+// ── SINGLE ADD ──
+function addSingleContact() {
+  const fn = document.getElementById('addFN').value.trim();
+  const ln = document.getElementById('addLN').value.trim();
+  if (!fn && !ln) return alert('Enter a name.');
+  const position = document.getElementById('addPos').value.trim();
+  const company = document.getElementById('addCo').value.trim();
+  contacts.push({ id: uid(), firstName: fn, lastName: ln, email: document.getElementById('addEmail').value.trim(), url: document.getElementById('addURL').value.trim(), company, position, product: guessProduct(position, company), status: 'new', notes: '', lastContactDate: '', followupDate: '' });
+  save();
+  ['addFN','addLN','addPos','addCo','addEmail','addURL'].forEach(id => document.getElementById(id).value = '');
+  renderAll();
+  alert(`${fn} ${ln} added.`);
+}
+
+function openQuickAdd() {
+  ['qaFN','qaLN','qaPos','qaCo','qaEmail'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('quickAddModal').classList.add('open');
+}
+
+function saveQuickAdd() {
+  const fn = document.getElementById('qaFN').value.trim();
+  const ln = document.getElementById('qaLN').value.trim();
+  if (!fn && !ln) return alert('Enter a name.');
+  const position = document.getElementById('qaPos').value.trim();
+  const company = document.getElementById('qaCo').value.trim();
+  contacts.push({ id: uid(), firstName: fn, lastName: ln, email: document.getElementById('qaEmail').value.trim(), url: '', company, position, product: guessProduct(position, company), status: 'new', notes: '', lastContactDate: '', followupDate: '' });
+  save(); closeModal('quickAddModal'); renderAll();
+}
+
+// ── TEMPLATES PAGE ──
+function renderTemplates() {
+  document.getElementById('templatesList').innerHTML = Object.entries(templates).map(([key, t]) => `
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <div>
+          <div style="font-weight:600;font-size:16px;">${t.label}</div>
+          <div style="font-size:13px;color:var(--ink2);">Subject: ${t.subject}</div>
+        </div>
+        <span class="tag tag-${key.toLowerCase()}">${key}</span>
+      </div>
+      <div class="email-draft" style="font-size:13px;">${t.body({firstName:'[First Name]',company:'[Their Organization]'})}</div>
+      <div style="font-size:12px;color:var(--ink3);margin-top:8px;">This template is personalized with the contact's first name and company when you open a contact.</div>
+    </div>
+  `).join('');
+}
+
+// ── NAVIGATION ──
+function showScreen(name, el) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+  if (el) el.classList.add('active');
+  if (name === 'contacts') renderContacts();
+  if (name === 'today') renderTodayList();
+  if (name === 'dashboard') renderDashboard();
+}
+
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+document.querySelectorAll('.modal-bg').forEach(bg => {
+  bg.addEventListener('click', e => { if (e.target === bg) bg.classList.remove('open'); });
+});
+
+init();
+</script>
+</body>
+</html>

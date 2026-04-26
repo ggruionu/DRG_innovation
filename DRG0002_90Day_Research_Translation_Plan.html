@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DRG0002 – 90-Day Research Translation Plan</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+  :root {
+    --navy: #0d1b2a;
+    --deep: #1b2d45;
+    --teal: #00b4d8;
+    --teal-light: #90e0ef;
+    --gold: #e9c46a;
+    --cream: #f8f5f0;
+    --muted: #8899aa;
+    --white: #ffffff;
+    --step1: #00b4d8;
+    --step2: #0096c7;
+    --step3: #0077b6;
+    --step4: #023e8a;
+    --step5: #e9c46a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--navy);
+    color: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ---- BACKGROUND TEXTURE ---- */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 20%, rgba(0,180,216,0.08) 0%, transparent 55%),
+      radial-gradient(ellipse at 80% 80%, rgba(233,196,106,0.06) 0%, transparent 55%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ---- HEADER ---- */
+  header {
+    position: relative;
+    z-index: 1;
+    padding: 56px 48px 40px;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+
+  .header-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0,180,216,0.12);
+    border: 1px solid rgba(0,180,216,0.3);
+    border-radius: 4px;
+    padding: 4px 12px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--teal);
+    width: fit-content;
+    margin-bottom: 8px;
+  }
+
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(28px, 4vw, 46px);
+    font-weight: 900;
+    line-height: 1.1;
+    color: var(--white);
+  }
+
+  header h1 span { color: var(--teal); }
+
+  header p {
+    font-size: 15px;
+    color: var(--muted);
+    max-width: 560px;
+    line-height: 1.6;
+    margin-top: 4px;
+  }
+
+  .header-meta {
+    display: flex;
+    gap: 24px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+  }
+
+  .meta-item {
+    font-size: 12px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .meta-item strong {
+    color: var(--cream);
+    font-weight: 500;
+  }
+
+  /* ---- PROGRESS BAR ---- */
+  .progress-wrap {
+    position: relative;
+    z-index: 1;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 28px 48px;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+  }
+
+  .progress-label {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .progress-bar-bg {
+    background: rgba(255,255,255,0.07);
+    border-radius: 4px;
+    height: 6px;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--teal), var(--gold));
+    border-radius: 4px;
+    transition: width 0.5s ease;
+    width: 0%;
+  }
+
+  .step-dots {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 12px;
+  }
+
+  .step-dot {
+    font-size: 11px;
+    color: var(--muted);
+    cursor: pointer;
+    transition: color 0.2s;
+    text-align: center;
+  }
+
+  .step-dot.active { color: var(--teal); font-weight: 600; }
+  .step-dot:hover { color: var(--cream); }
+
+  /* ---- MAIN LAYOUT ---- */
+  main {
+    position: relative;
+    z-index: 1;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 48px 80px;
+  }
+
+  /* ---- INTRO PANEL ---- */
+  .intro-panel {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 12px;
+    padding: 32px;
+    margin: 32px 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 24px;
+  }
+
+  .intro-q {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .intro-q .num {
+    font-size: 40px;
+    font-weight: 900;
+    font-family: 'Playfair Display', serif;
+    color: var(--teal);
+    line-height: 1;
+  }
+
+  .intro-q h3 {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--white);
+  }
+
+  .intro-q p {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  /* ---- STEP CARDS ---- */
+  .step-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    margin: 24px 0;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+
+  .step-card.active {
+    border-color: rgba(0,180,216,0.4);
+  }
+
+  .step-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 24px 28px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .step-header:hover { background: rgba(255,255,255,0.03); }
+
+  .step-badge {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 900;
+    font-family: 'Playfair Display', serif;
+    flex-shrink: 0;
+  }
+
+  .step-info { flex: 1; }
+
+  .step-weeks {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+  }
+
+  .step-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--white);
+  }
+
+  .step-chevron {
+    color: var(--muted);
+    font-size: 18px;
+    transition: transform 0.3s;
+    flex-shrink: 0;
+  }
+
+  .step-card.active .step-chevron { transform: rotate(90deg); }
+
+  .step-body {
+    display: none;
+    padding: 0 28px 28px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    margin-top: 0;
+  }
+
+  .step-card.active .step-body { display: block; }
+
+  .field-group {
+    margin-top: 20px;
+  }
+
+  .field-label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  .field-input {
+    width: 100%;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 12px 14px;
+    color: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    resize: vertical;
+    transition: border-color 0.2s, background 0.2s;
+    min-height: 56px;
+  }
+
+  .field-input:focus {
+    outline: none;
+    border-color: rgba(0,180,216,0.5);
+    background: rgba(0,180,216,0.04);
+  }
+
+  .field-input::placeholder { color: rgba(255,255,255,0.2); }
+
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  /* Interview rows */
+  .interview-rows { display: flex; flex-direction: column; gap: 16px; }
+
+  .interview-row {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 10px;
+    padding: 16px;
+  }
+
+  .interview-row h4 {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--teal);
+    margin-bottom: 12px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  /* Checkbox list */
+  .checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 8px;
+  }
+
+  .checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.07);
+    background: rgba(255,255,255,0.02);
+    transition: all 0.2s;
+  }
+
+  .checkbox-item:hover { background: rgba(0,180,216,0.05); border-color: rgba(0,180,216,0.2); }
+
+  .checkbox-item.checked {
+    background: rgba(0,180,216,0.1);
+    border-color: rgba(0,180,216,0.4);
+  }
+
+  .checkbox-box {
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(255,255,255,0.2);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+
+  .checkbox-item.checked .checkbox-box {
+    background: var(--teal);
+    border-color: var(--teal);
+  }
+
+  .checkbox-check {
+    color: white;
+    font-size: 11px;
+    display: none;
+  }
+
+  .checkbox-item.checked .checkbox-check { display: block; }
+
+  .checkbox-label {
+    font-size: 14px;
+    color: var(--cream);
+  }
+
+  /* Question hints */
+  .hint-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 12px;
+    padding: 16px;
+    background: rgba(255,255,255,0.02);
+    border-radius: 8px;
+    border-left: 3px solid var(--teal);
+  }
+
+  .hint-list p {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  .hint-list p::before {
+    content: '→ ';
+    color: var(--teal);
+  }
+
+  /* numbered inputs */
+  .numbered-inputs { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
+
+  .numbered-input-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .num-label {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: rgba(0,180,216,0.15);
+    border: 1px solid rgba(0,180,216,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--teal);
+    flex-shrink: 0;
+  }
+
+  /* ---- ACTION PLAN ---- */
+  .action-plan {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 32px;
+    margin: 24px 0;
+  }
+
+  .action-plan h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: var(--white);
+    margin-bottom: 4px;
+  }
+
+  .action-plan > p {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+
+  .action-steps-list { display: flex; flex-direction: column; gap: 12px; }
+
+  .action-step-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .action-num {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--teal), #0096c7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: white;
+    flex-shrink: 0;
+    margin-top: 10px;
+  }
+
+  /* ---- REFLECTION ---- */
+  .reflection-panel {
+    background: linear-gradient(135deg, rgba(0,180,216,0.08), rgba(233,196,106,0.06));
+    border: 1px solid rgba(0,180,216,0.2);
+    border-radius: 16px;
+    padding: 32px;
+    margin: 24px 0;
+  }
+
+  .reflection-panel h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: var(--white);
+    margin-bottom: 4px;
+  }
+
+  .reflection-panel > p {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+
+  /* ---- BUTTONS ---- */
+  .btn-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 32px;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+  }
+
+  .btn-primary {
+    background: var(--teal);
+    color: var(--navy);
+  }
+
+  .btn-primary:hover {
+    background: var(--teal-light);
+    transform: translateY(-1px);
+  }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--cream);
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+
+  .btn-outline:hover {
+    background: rgba(255,255,255,0.06);
+    border-color: rgba(255,255,255,0.35);
+  }
+
+  .btn-gold {
+    background: var(--gold);
+    color: var(--navy);
+  }
+
+  .btn-gold:hover {
+    background: #f4d07e;
+    transform: translateY(-1px);
+  }
+
+  /* ---- FOOTER ---- */
+  footer {
+    position: relative;
+    z-index: 1;
+    border-top: 1px solid rgba(255,255,255,0.07);
+    padding: 24px 48px;
+    max-width: 960px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: gap;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  footer strong { color: var(--cream); }
+
+  /* COLOR VARIANTS PER STEP */
+  .s1 .step-badge { background: rgba(0,180,216,0.15); color: var(--step1); }
+  .s1 .step-weeks { color: var(--step1); }
+  .s2 .step-badge { background: rgba(0,150,199,0.15); color: var(--step2); }
+  .s2 .step-weeks { color: var(--step2); }
+  .s3 .step-badge { background: rgba(0,119,182,0.15); color: var(--step3); }
+  .s3 .step-weeks { color: var(--step3); }
+  .s4 .step-badge { background: rgba(2,62,138,0.2); color: #4ea8de; }
+  .s4 .step-weeks { color: #4ea8de; }
+  .s5 .step-badge { background: rgba(233,196,106,0.15); color: var(--step5); }
+  .s5 .step-weeks { color: var(--step5); }
+
+  /* Print */
+  @media print {
+    body { background: white; color: #111; }
+    body::before { display: none; }
+    .btn-row { display: none; }
+    .step-body { display: block !important; }
+  }
+
+  @media (max-width: 640px) {
+    header, .progress-wrap, main, footer { padding-left: 20px; padding-right: 20px; }
+    .intro-panel { grid-template-columns: 1fr; }
+    .field-row { grid-template-columns: 1fr; }
+    .step-dots { display: none; }
+  }
+
+  /* Fade-in animation */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .step-card { animation: fadeUp 0.4s ease both; }
+  .step-card:nth-child(1) { animation-delay: 0.05s; }
+  .step-card:nth-child(2) { animation-delay: 0.1s; }
+  .step-card:nth-child(3) { animation-delay: 0.15s; }
+  .step-card:nth-child(4) { animation-delay: 0.2s; }
+  .step-card:nth-child(5) { animation-delay: 0.25s; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-badge">DRG0002 &bull; DRG Innovation LLC</div>
+  <h1>90-Day Research <span>Translation Plan</span></h1>
+  <p>A practical execution guide for researchers who want to translate a clinical idea into first real-world validation—step by step.</p>
+  <div class="header-meta">
+    <div class="meta-item">🧭 <strong>5 Steps</strong> &nbsp;Concept → Validation</div>
+    <div class="meta-item">📅 <strong>90 Days</strong> &nbsp;Structured timeline</div>
+    <div class="meta-item">👤 <strong>Dr. Gabriel Gruionu, PhD</strong></div>
+  </div>
+</header>
+
+<div class="progress-wrap">
+  <div class="progress-label">
+    <span>Your completion progress</span>
+    <span id="pct-label">0%</span>
+  </div>
+  <div class="progress-bar-bg">
+    <div class="progress-bar-fill" id="progress-fill"></div>
+  </div>
+  <div class="step-dots">
+    <div class="step-dot" onclick="jumpTo(0)">Wk 1–2<br>Define</div>
+    <div class="step-dot" onclick="jumpTo(1)">Wk 2–4<br>Interviews</div>
+    <div class="step-dot" onclick="jumpTo(2)">Wk 4–6<br>Prototype</div>
+    <div class="step-dot" onclick="jumpTo(3)">Wk 6–10<br>Evidence</div>
+    <div class="step-dot" onclick="jumpTo(4)">Wk 10–12<br>Pathway</div>
+  </div>
+</div>
+
+<main>
+
+  <!-- INTRO PANEL -->
+  <div class="intro-panel">
+    <div class="intro-q">
+      <div class="num">01</div>
+      <h3>Is the problem real?</h3>
+      <p>Validate that the clinical gap genuinely exists and frustrates real users.</p>
+    </div>
+    <div class="intro-q">
+      <div class="num">02</div>
+      <h3>Does the solution work?</h3>
+      <p>Build and test the minimum prototype that can generate credible evidence.</p>
+    </div>
+    <div class="intro-q">
+      <div class="num">03</div>
+      <h3>Does anyone care?</h3>
+      <p>Identify and confirm a viable translation pathway and early adopters.</p>
+    </div>
+  </div>
+
+  <!-- STEP 1 -->
+  <div class="step-card s1" id="card-0">
+    <div class="step-header" onclick="toggleStep(0)">
+      <div class="step-badge">1</div>
+      <div class="step-info">
+        <div class="step-weeks">Week 1–2</div>
+        <div class="step-title">Define the Real Problem</div>
+      </div>
+      <div class="step-chevron">›</div>
+    </div>
+    <div class="step-body">
+      <div class="field-group">
+        <label class="field-label">The problem in one sentence</label>
+        <textarea class="field-input" rows="2" placeholder="e.g., Surgeons lack a fast, reliable method to assess intramyocardial hemorrhage risk before reperfusion therapy..." oninput="updateProgress()"></textarea>
+      </div>
+      <div class="field-row">
+        <div class="field-group">
+          <label class="field-label">Who experiences this problem?</label>
+          <textarea class="field-input" rows="2" placeholder="e.g., Interventional cardiologists, STEMI patients..." oninput="updateProgress()"></textarea>
+        </div>
+        <div class="field-group">
+          <label class="field-label">How often does it occur?</label>
+          <textarea class="field-input" rows="2" placeholder="e.g., ~800,000 STEMI cases/yr in the US..." oninput="updateProgress()"></textarea>
+        </div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Why do current solutions fail?</label>
+        <textarea class="field-input" rows="2" placeholder="e.g., No real-time biomarker exists; imaging-only assessment is too late..." oninput="updateProgress()"></textarea>
+      </div>
+
+      <div class="field-group" style="margin-top: 24px;">
+        <label class="field-label">Step 1 Validation – 3 stakeholders who confirm the problem</label>
+        <div class="numbered-inputs">
+          <div class="numbered-input-row"><div class="num-label">1</div><input class="field-input" type="text" placeholder="Name, role, institution" oninput="updateProgress()" style="min-height:0;padding:10px 14px;"></div>
+          <div class="numbered-input-row"><div class="num-label">2</div><input class="field-input" type="text" placeholder="Name, role, institution" oninput="updateProgress()" style="min-height:0;padding:10px 14px;"></div>
+          <div class="numbered-input-row"><div class="num-label">3</div><input class="field-input" type="text" placeholder="Name, role, institution" oninput="updateProgress()" style="min-height:0;padding:10px 14px;"></div>
+        </div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Key insight from conversations</label>
+        <textarea class="field-input" rows="2" placeholder="What surprised you? What confirmed your hypothesis?" oninput="updateProgress()"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="step-card s2" id="card-1">
+    <div class="step-header" onclick="toggleStep(1)">
+      <div class="step-badge">2</div>
+      <div class="step-info">
+        <div class="step-weeks">Week 2–4</div>
+        <div class="step-title">Interview Real Users</div>
+      </div>
+      <div class="step-chevron">›</div>
+    </div>
+    <div class="step-body">
+      <p style="font-size:13px;color:var(--muted);margin-bottom:16px;">Conduct 5–10 structured user interviews. Document your top 3 below.</p>
+      <div class="hint-list" style="margin-bottom:20px;">
+        <p>When do you encounter this problem?</p>
+        <p>What do you do today? What frustrates you most?</p>
+        <p>What would the ideal solution look like?</p>
+        <p>Would you try a new solution if it were available?</p>
+      </div>
+      <div class="interview-rows">
+        <div class="interview-row">
+          <h4>Interview #1</h4>
+          <div class="field-row">
+            <div class="field-group"><label class="field-label">Name</label><input class="field-input" type="text" placeholder="Full name" oninput="updateProgress()" style="min-height:0;padding:10px 14px;"></div>
+            <div class="field-group"><label class="field-label">Institution / Role</label><input class="field-input" type="text" placeholder="e.g., Cardiologist, MGH" oninput="updateProgress()" style="min-height:0;padding:10px 14px;"></div>
+          </div>
+          <div class="field-group"><label class="field-label">Key insights</label><textarea class="field-input" rows="2" placeholder="Main takeaway from this interview..." oninput="updateProgress()"></textarea></div>
+        </div>
+        <div class="interview-row">
+          <h4>Interview #2</h4>
+          <div class="field-row">
+            <div class="field-group"><label class="field-label">Name</label><input class="field-input" type="text" placeholder="Full name" oninput="updateProgress()" style="min-height:0;padding:10px 14px;"></div>
+            <div class="field-group"><label class="field-label">Institution / Role</label><input class="field-input" type="text" placeholder="e.g., Interventional Radiologist, IU Health" oninput="updateProgress()" style="min-height:0;padding:10px 14px;"></div>
+          </div>
+          <div class="field-group"><label class="field-label">Key insights</label><textarea class="field-input" rows="2" placeholder="Main takeaway from this interview..." oninput="updateProgress()"></textarea></div>
+        </div>
+        <div class="interview-row">
+          <h4>Interview #3</h4>
+          <div class="field-row">
+            <div class="field-group"><label class="field-label">Name</label><input class="field-input" type="text" placeholder="Full name" oninput="updateProgress()" style="min-height:0;padding:10px 14px;"></div>
+            <div class="field-group"><label class="field-label">Institution / Role</label><input class="field-input" type="text" placeholder="..." oninput="updateProgress()" style="min-height:0;padding:10px 14px;"></div>
+          </div>
+          <div class="field-group"><label class="field-label">Key insights</label><textarea class="field-input" rows="2" placeholder="Main takeaway from this interview..." oninput="updateProgress()"></textarea></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="step-card s3" id="card-2">
+    <div class="step-header" onclick="toggleStep(2)">
+      <div class="step-badge">3</div>
+      <div class="step-info">
+        <div class="step-weeks">Week 4–6</div>
+        <div class="step-title">Define Your Minimum Prototype</div>
+      </div>
+      <div class="step-chevron">›</div>
+    </div>
+    <div class="step-body">
+      <div class="field-group">
+        <label class="field-label">What is the simplest version of your solution?</label>
+        <textarea class="field-input" rows="3" placeholder="Describe the minimum feature set or physical design..." oninput="updateProgress()"></textarea>
+      </div>
+      <div class="field-row">
+        <div class="field-group">
+          <label class="field-label">What does it need to prove?</label>
+          <textarea class="field-input" rows="3" placeholder="What is the single most important thing this prototype must demonstrate?" oninput="updateProgress()"></textarea>
+        </div>
+        <div class="field-group">
+          <label class="field-label">What does it NOT need yet?</label>
+          <textarea class="field-input" rows="3" placeholder="What are you explicitly leaving out of this version?" oninput="updateProgress()"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 4 -->
+  <div class="step-card s4" id="card-3">
+    <div class="step-header" onclick="toggleStep(3)">
+      <div class="step-badge">4</div>
+      <div class="step-info">
+        <div class="step-weeks">Week 6–10</div>
+        <div class="step-title">Evidence Plan</div>
+      </div>
+      <div class="step-chevron">›</div>
+    </div>
+    <div class="step-body">
+      <div class="field-group">
+        <label class="field-label">What evidence will convince a skeptic?</label>
+        <textarea class="field-input" rows="2" placeholder="Describe the standard of proof that would make a funder, clinician, or investor believe in this solution..." oninput="updateProgress()"></textarea>
+      </div>
+      <div class="field-group">
+        <label class="field-label">What experiment or test will generate that evidence?</label>
+        <textarea class="field-input" rows="2" placeholder="Describe the study design, method, or validation approach..." oninput="updateProgress()"></textarea>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Likely evidence format (select all that apply)</label>
+        <div class="checkbox-group">
+          <div class="checkbox-item" onclick="toggleCheck(this)">
+            <div class="checkbox-box"><span class="checkbox-check">✓</span></div>
+            <span class="checkbox-label">Bench test / In vitro experiment</span>
+          </div>
+          <div class="checkbox-item" onclick="toggleCheck(this)">
+            <div class="checkbox-box"><span class="checkbox-check">✓</span></div>
+            <span class="checkbox-label">Pilot clinical study (IRB required)</span>
+          </div>
+          <div class="checkbox-item" onclick="toggleCheck(this)">
+            <div class="checkbox-box"><span class="checkbox-check">✓</span></div>
+            <span class="checkbox-label">Computational simulation / modeling</span>
+          </div>
+          <div class="checkbox-item" onclick="toggleCheck(this)">
+            <div class="checkbox-box"><span class="checkbox-check">✓</span></div>
+            <span class="checkbox-label">Animal study (IACUC required)</span>
+          </div>
+          <div class="checkbox-item" onclick="toggleCheck(this)">
+            <div class="checkbox-box"><span class="checkbox-check">✓</span></div>
+            <span class="checkbox-label">Retrospective data analysis</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 5 -->
+  <div class="step-card s5" id="card-4">
+    <div class="step-header" onclick="toggleStep(4)">
+      <div class="step-badge">5</div>
+      <div class="step-info">
+        <div class="step-weeks">Week 10–12</div>
+        <div class="step-title">Translation Pathway</div>
+      </div>
+      <div class="step-chevron">›</div>
+    </div>
+    <div class="step-body">
+      <div class="field-group">
+        <label class="field-label">Choose the most likely pathway</label>
+        <div class="checkbox-group">
+          <div class="checkbox-item pathway-item" onclick="selectPathway(this)">
+            <div class="checkbox-box"><span class="checkbox-check">✓</span></div>
+            <span class="checkbox-label">🚀 Startup / Spinout company</span>
+          </div>
+          <div class="checkbox-item pathway-item" onclick="selectPathway(this)">
+            <div class="checkbox-box"><span class="checkbox-check">✓</span></div>
+            <span class="checkbox-label">📜 Licensing to industry partner</span>
+          </div>
+          <div class="checkbox-item pathway-item" onclick="selectPathway(this)">
+            <div class="checkbox-box"><span class="checkbox-check">✓</span></div>
+            <span class="checkbox-label">🤝 Industry-sponsored research partnership</span>
+          </div>
+          <div class="checkbox-item pathway-item" onclick="selectPathway(this)">
+            <div class="checkbox-box"><span class="checkbox-check">✓</span></div>
+            <span class="checkbox-label">🏥 Direct clinical adoption / standard of care</span>
+          </div>
+        </div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">My likely pathway – rationale</label>
+        <textarea class="field-input" rows="3" placeholder="Why is this the best path for this innovation given market, regulatory, and resource constraints?" oninput="updateProgress()"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- 90-DAY ACTION PLAN -->
+  <div class="action-plan">
+    <h2>Your 90-Day Action Plan</h2>
+    <p>Write the next three concrete, time-bound steps you will take.</p>
+    <div class="action-steps-list">
+      <div class="action-step-row"><div class="action-num">1</div><textarea class="field-input" rows="2" placeholder="e.g., By Day 14 – schedule and complete 5 structured clinician interviews at IU Health..." oninput="updateProgress()" style="flex:1;"></textarea></div>
+      <div class="action-step-row"><div class="action-num">2</div><textarea class="field-input" rows="2" placeholder="e.g., By Day 30 – complete bench prototype of catheter sensor with bioelectronics team..." oninput="updateProgress()" style="flex:1;"></textarea></div>
+      <div class="action-step-row"><div class="action-num">3</div><textarea class="field-input" rows="2" placeholder="e.g., By Day 60 – submit IRB protocol for retrospective data analysis..." oninput="updateProgress()" style="flex:1;"></textarea></div>
+    </div>
+  </div>
+
+  <!-- FINAL REFLECTION -->
+  <div class="reflection-panel">
+    <h2>Final Reflection</h2>
+    <p>Honest self-assessment at the close of your 90 days.</p>
+    <div class="field-group">
+      <label class="field-label">What did you learn about your idea?</label>
+      <textarea class="field-input" rows="3" placeholder="What changed? What was confirmed? What was completely wrong?" oninput="updateProgress()"></textarea>
+    </div>
+    <div class="field-row">
+      <div class="field-group">
+        <label class="field-label">What is the biggest remaining risk?</label>
+        <textarea class="field-input" rows="3" placeholder="Technical? Regulatory? Reimbursement? Market timing?" oninput="updateProgress()"></textarea>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Who should you speak with next?</label>
+        <textarea class="field-input" rows="3" placeholder="Name specific individuals, organizations, or programs..." oninput="updateProgress()"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- BUTTONS -->
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="expandAll()">▼ Expand All Steps</button>
+    <button class="btn btn-outline" onclick="collapseAll()">▲ Collapse All</button>
+    <button class="btn btn-gold" onclick="exportPrint()">⬇ Save / Print</button>
+  </div>
+
+</main>
+
+<footer>
+  <span><strong>DRG0002</strong> – 90-Day Research Translation Plan &nbsp;·&nbsp; Dr. Gabriel Gruionu, PhD &nbsp;·&nbsp; DRG Innovation LLC</span>
+  <span>gruionu@gmail.com</span>
+</footer>
+
+<script>
+  const TOTAL_FIELDS = 20; // approximate trackable fields
+
+  function toggleStep(idx) {
+    const card = document.getElementById('card-' + idx);
+    card.classList.toggle('active');
+    updateDots();
+    updateProgress();
+  }
+
+  function jumpTo(idx) {
+    collapseAll();
+    const card = document.getElementById('card-' + idx);
+    card.classList.add('active');
+    card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    updateDots();
+  }
+
+  function expandAll() {
+    for (let i = 0; i < 5; i++) document.getElementById('card-' + i).classList.add('active');
+    updateDots();
+  }
+
+  function collapseAll() {
+    for (let i = 0; i < 5; i++) document.getElementById('card-' + i).classList.remove('active');
+    updateDots();
+  }
+
+  function updateDots() {
+    document.querySelectorAll('.step-dot').forEach((dot, i) => {
+      dot.classList.toggle('active', document.getElementById('card-' + i).classList.contains('active'));
+    });
+  }
+
+  function toggleCheck(el) {
+    el.classList.toggle('checked');
+    updateProgress();
+  }
+
+  function selectPathway(el) {
+    document.querySelectorAll('.pathway-item').forEach(p => p.classList.remove('checked'));
+    el.classList.add('checked');
+    updateProgress();
+  }
+
+  function updateProgress() {
+    const inputs = document.querySelectorAll('.field-input');
+    let filled = 0;
+    inputs.forEach(inp => {
+      if (inp.value && inp.value.trim().length > 3) filled++;
+    });
+    const checked = document.querySelectorAll('.checkbox-item.checked').length;
+    const total = inputs.length + 5;
+    const pct = Math.min(100, Math.round(((filled + checked) / total) * 100));
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('pct-label').textContent = pct + '%';
+  }
+
+  function exportPrint() {
+    expandAll();
+    setTimeout(() => window.print(), 300);
+  }
+
+  // Open first step by default
+  document.getElementById('card-0').classList.add('active');
+  updateDots();
+</script>
+</body>
+</html>

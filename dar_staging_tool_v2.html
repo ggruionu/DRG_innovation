@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Staging Planner — Dar's Jobs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cream: #faf8f4;
+  --warm-white: #ffffff;
+  --ink: #1c1a17;
+  --ink-soft: #5a5650;
+  --ink-faint: #a8a39c;
+  --amber: #d47c1a;
+  --amber-light: #fef3e2;
+  --amber-mid: #f9dda0;
+  --green: #2d6a4f;
+  --green-light: #e8f5ee;
+  --red: #b93333;
+  --red-light: #fdf0f0;
+  --border: #e8e4dc;
+  --shadow: 0 2px 12px rgba(28,26,23,0.08);
+  --radius: 14px;
+  --radius-sm: 8px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--ink); min-height: 100vh; font-size: 16px; line-height: 1.5; }
+
+/* HEADER */
+.header { background: var(--ink); color: var(--cream); padding: 18px 20px 16px; position: sticky; top: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; }
+.header-title { font-family: 'DM Serif Display', serif; font-size: 22px; letter-spacing: -0.3px; }
+.header-sub { font-size: 12px; color: #a8a39c; margin-top: 1px; }
+.header-btn { background: var(--amber); color: white; border: none; border-radius: var(--radius-sm); padding: 10px 16px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+
+/* TABS */
+.tabs { display: flex; background: var(--warm-white); border-bottom: 1px solid var(--border); overflow-x: auto; -ms-overflow-style: none; scrollbar-width: none; }
+.tabs::-webkit-scrollbar { display: none; }
+.tab { padding: 14px 18px; font-size: 13px; font-weight: 500; color: var(--ink-faint); white-space: nowrap; cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.15s; }
+.tab.active { color: var(--ink); border-bottom-color: var(--amber); }
+
+/* SCREENS */
+.screen { display: none; padding: 20px; max-width: 700px; margin: 0 auto; }
+.screen.active { display: block; }
+
+/* CARDS */
+.card { background: var(--warm-white); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; margin-bottom: 14px; box-shadow: var(--shadow); }
+.card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+.card-title { font-family: 'DM Serif Display', serif; font-size: 19px; line-height: 1.3; }
+.card-address { font-size: 13px; color: var(--ink-soft); margin-top: 3px; }
+
+/* BADGES */
+.badge { font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 99px; white-space: nowrap; flex-shrink: 0; }
+.badge-active { background: var(--amber-light); color: var(--amber); }
+.badge-staged { background: var(--green-light); color: var(--green); }
+.badge-destaged { background: #f0f0f0; color: var(--ink-soft); }
+
+/* META */
+.meta-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+.meta-chip { font-size: 12px; color: var(--ink-soft); background: var(--cream); border: 1px solid var(--border); border-radius: 99px; padding: 4px 10px; }
+
+/* FURNITURE */
+.furniture-summary { background: var(--cream); border-radius: var(--radius-sm); padding: 12px 14px; margin-bottom: 12px; }
+.furniture-summary-title { font-size: 12px; font-weight: 600; color: var(--ink-soft); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.04em; }
+.furniture-list { display: flex; flex-wrap: wrap; gap: 6px; }
+.furniture-tag { font-size: 13px; background: var(--warm-white); border: 1px solid var(--border); border-radius: 6px; padding: 4px 10px; color: var(--ink); }
+
+/* BUTTONS */
+.btn-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.btn { font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; padding: 10px 16px; border-radius: var(--radius-sm); cursor: pointer; border: 1.5px solid var(--border); background: var(--warm-white); color: var(--ink); transition: all 0.15s; }
+.btn:active { transform: scale(0.97); }
+.btn-primary { background: var(--ink); color: white; border-color: var(--ink); }
+.btn-danger { background: var(--red-light); color: var(--red); border-color: var(--red); }
+.btn-amber { background: var(--amber); color: white; border-color: var(--amber); }
+.btn-green { background: var(--green); color: white; border-color: var(--green); }
+
+/* HEADINGS */
+.section-heading { font-family: 'DM Serif Display', serif; font-size: 22px; margin-bottom: 4px; }
+.section-sub { font-size: 14px; color: var(--ink-soft); margin-bottom: 20px; }
+
+/* AVAILABILITY */
+.avail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+@media (max-width: 400px) { .avail-grid { grid-template-columns: 1fr; } }
+.avail-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px; }
+.avail-card.free { border-left: 3px solid var(--green); }
+.avail-card.busy { border-left: 3px solid var(--amber); }
+.avail-item-name { font-size: 15px; font-weight: 500; margin-bottom: 4px; }
+.avail-item-status { font-size: 12px; color: var(--ink-soft); }
+.avail-item-job { font-size: 12px; color: var(--amber); font-weight: 500; margin-top: 2px; }
+
+/* MODAL */
+.modal-bg { position: fixed; inset: 0; background: rgba(28,26,23,0.55); z-index: 200; display: none; align-items: flex-end; justify-content: center; }
+.modal-bg.open { display: flex; }
+.modal { background: var(--warm-white); border-radius: 20px 20px 0 0; padding: 24px 20px 40px; width: 100%; max-width: 700px; max-height: 90vh; overflow-y: auto; }
+.modal-title { font-family: 'DM Serif Display', serif; font-size: 22px; margin-bottom: 4px; }
+.modal-sub { font-size: 14px; color: var(--ink-soft); margin-bottom: 20px; }
+.modal-close { float: right; background: none; border: none; font-size: 22px; cursor: pointer; color: var(--ink-faint); margin-top: -4px; }
+
+/* FORMS */
+.form-group { margin-bottom: 16px; }
+.form-label { font-size: 13px; font-weight: 600; color: var(--ink-soft); margin-bottom: 6px; display: block; text-transform: uppercase; letter-spacing: 0.04em; }
+.form-input, .form-select { width: 100%; border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 12px 14px; font-family: 'DM Sans', sans-serif; font-size: 16px; color: var(--ink); background: var(--cream); outline: none; transition: border-color 0.15s; }
+.form-input:focus, .form-select:focus { border-color: var(--amber); background: white; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 380px) { .form-row { grid-template-columns: 1fr; } }
+
+/* ROOM PICKERS */
+.room-section { margin-bottom: 16px; }
+.room-label { font-size: 14px; font-weight: 600; margin-bottom: 8px; color: var(--ink); }
+.furniture-picker { display: flex; flex-wrap: wrap; gap: 8px; }
+.furn-pill { font-size: 14px; padding: 8px 14px; border: 1.5px solid var(--border); border-radius: 99px; cursor: pointer; background: var(--cream); color: var(--ink-soft); transition: all 0.15s; user-select: none; }
+.furn-pill:active { transform: scale(0.95); }
+.furn-pill.selected { background: var(--ink); color: white; border-color: var(--ink); }
+.furn-pill.conflict { border-color: var(--red); color: var(--red); background: var(--red-light); }
+.furn-pill.conflict.selected { background: var(--red); color: white; }
+
+/* EMPTY STATE */
+.empty { text-align: center; padding: 48px 24px; color: var(--ink-faint); }
+.empty-icon { font-size: 40px; margin-bottom: 12px; }
+.empty-text { font-size: 16px; }
+
+/* DATE FILTER */
+.date-filter { background: var(--warm-white); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px; margin-bottom: 16px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.date-filter label { font-size: 13px; font-weight: 600; color: var(--ink-soft); white-space: nowrap; }
+
+/* LOAD LIST */
+.load-list-card { background: var(--ink); color: var(--cream); border-radius: var(--radius); padding: 20px; margin-bottom: 14px; }
+.load-list-title { font-family: 'DM Serif Display', serif; font-size: 20px; margin-bottom: 4px; }
+.load-list-date { font-size: 13px; color: var(--ink-faint); margin-bottom: 16px; }
+.load-section { margin-bottom: 14px; }
+.load-section-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-faint); margin-bottom: 8px; }
+.load-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.08); font-size: 15px; }
+.load-item:last-child { border-bottom: none; }
+.load-checkbox { width: 22px; height: 22px; border: 2px solid rgba(255,255,255,0.3); border-radius: 5px; flex-shrink: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+.load-checkbox.checked { background: var(--amber); border-color: var(--amber); }
+.load-checkbox.checked::after { content: '✓'; font-size: 13px; color: white; font-weight: 700; }
+
+/* CONFLICT BANNER */
+.conflict-banner { background: var(--red-light); border: 1.5px solid #f5b8b8; border-radius: var(--radius-sm); padding: 12px 14px; margin-bottom: 14px; font-size: 14px; color: var(--red); line-height: 1.5; }
+.conflict-banner strong { font-weight: 600; }
+
+/* STATS */
+.stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+.stat-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px 12px; text-align: center; }
+.stat-num { font-family: 'DM Serif Display', serif; font-size: 28px; color: var(--ink); }
+.stat-label { font-size: 11px; color: var(--ink-faint); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.04em; }
+
+/* INSTRUCTIONS */
+.instructions-card { background: var(--amber-light); border: 1.5px solid var(--amber-mid); border-radius: var(--radius); padding: 20px; margin-bottom: 20px; }
+.instructions-title { font-family: 'DM Serif Display', serif; font-size: 20px; color: var(--ink); margin-bottom: 14px; display: flex; align-items: center; gap: 10px; justify-content: space-between; }
+.instructions-step { display: flex; gap: 14px; margin-bottom: 14px; align-items: flex-start; }
+.step-num { width: 28px; height: 28px; background: var(--amber); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+.step-text { font-size: 15px; line-height: 1.5; color: var(--ink); }
+.step-text strong { font-weight: 600; }
+.step-text em { color: var(--ink-soft); font-style: italic; font-size: 13px; }
+.dismiss-btn { font-size: 12px; padding: 4px 10px; border: 1px solid var(--amber); border-radius: 99px; background: none; color: var(--amber); cursor: pointer; font-family: 'DM Sans', sans-serif; white-space: nowrap; }
+
+/* CALENDAR */
+.cal-header-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
+.cal-nav { display: flex; align-items: center; gap: 12px; }
+.cal-nav-btn { background: var(--warm-white); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px 14px; cursor: pointer; font-size: 16px; }
+.cal-month-label { font-family: 'DM Serif Display', serif; font-size: 22px; min-width: 180px; text-align: center; }
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; margin-bottom: 16px; }
+.cal-day-header { text-align: center; font-size: 11px; font-weight: 600; color: var(--ink-faint); padding: 6px 2px; text-transform: uppercase; letter-spacing: 0.04em; }
+.cal-cell { background: var(--warm-white); border: 1px solid var(--border); border-radius: 6px; min-height: 64px; padding: 5px 6px; position: relative; vertical-align: top; }
+.cal-cell.other-month { background: var(--cream); opacity: 0.5; }
+.cal-cell.today { border-color: var(--amber); border-width: 2px; }
+.cal-date-num { font-size: 12px; font-weight: 600; color: var(--ink-soft); margin-bottom: 3px; }
+.cal-job-dot { font-size: 10px; line-height: 1.3; padding: 2px 4px; border-radius: 3px; margin-bottom: 2px; color: white; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cal-dot-staged { background: var(--green); }
+.cal-dot-planned { background: var(--amber); }
+.cal-legend { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 14px; }
+.cal-legend-item { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--ink-soft); }
+.cal-legend-dot { width: 12px; height: 12px; border-radius: 2px; }
+
+/* PRINT STYLES */
+@media print {
+  .header, .tabs, .no-print, .btn-row, .btn { display: none !important; }
+  body { background: white; font-size: 12px; }
+  .screen { display: block !important; padding: 0; }
+  .screen:not(.print-target) { display: none !important; }
+  .print-sheet { display: block !important; }
+  .card { box-shadow: none; border: 1px solid #ccc; page-break-inside: avoid; }
+  .cal-cell { min-height: 50px; }
+  .cal-job-dot { font-size: 9px; }
+}
+.print-sheet { display: none; }
+
+/* ANIMATIONS */
+@keyframes slideUp { from { transform: translateY(16px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.card { animation: slideUp 0.18s ease; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="header-title">Staging Planner</div>
+    <div class="header-sub">Dar's Jobs</div>
+  </div>
+  <button class="header-btn" onclick="openNewJob()">+ New Job</button>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="showTab('jobs',this)">Jobs</div>
+  <div class="tab" onclick="showTab('loadlist',this)">Load List</div>
+  <div class="tab" onclick="showTab('availability',this)">What's Free?</div>
+  <div class="tab" onclick="showTab('calendar',this)">Calendar</div>
+  <div class="tab" onclick="showTab('inventory',this)">Inventory</div>
+</div>
+
+<!-- JOBS TAB -->
+<div class="screen active" id="tab-jobs">
+
+  <!-- INSTRUCTIONS -->
+  <div class="instructions-card" id="instructionsCard">
+    <div class="instructions-title">
+      <span>👋 How to use this planner</span>
+      <button class="dismiss-btn" onclick="dismissInstructions()">Hide</button>
+    </div>
+    <div class="instructions-step">
+      <div class="step-num">1</div>
+      <div class="step-text"><strong>Add a new job</strong> — tap <strong>+ New Job</strong> at the top. Enter the house name, address, staging date, and expected destage date. Then tap the furniture pieces you plan to bring.<br><em>Pieces already in another job on those dates show in red — don't pick those.</em></div>
+    </div>
+    <div class="instructions-step">
+      <div class="step-num">2</div>
+      <div class="step-text"><strong>Use the Load List tab</strong> before you load the trailer. It shows your next job's furniture organized by room. Tap each item as you put it on the trailer. Tori can hold the phone while you load.<br><em>Tap "Reset" when the job is done.</em></div>
+    </div>
+    <div class="instructions-step">
+      <div class="step-num">3</div>
+      <div class="step-text"><strong>Use "What's Free?"</strong> when a realtor calls with a last-minute job. Pick any date to instantly see which pieces are available and which are already in a staged house.<br><em>No more mental math on the phone.</em></div>
+    </div>
+    <div class="instructions-step">
+      <div class="step-num">4</div>
+      <div class="step-text"><strong>Mark jobs as Staged or Destaged</strong> using the buttons on each job card. This updates availability automatically.<br><em>Destaged = furniture is free again.</em></div>
+    </div>
+    <div class="instructions-step">
+      <div class="step-num">5</div>
+      <div class="step-text"><strong>Print a job sheet or monthly calendar</strong> — each job card has a Print button. The Calendar tab has a Print Month button for a full paper calendar. Good for the van, the fridge, or the realtor.<br><em>Everything saves automatically in your browser — no login needed.</em></div>
+    </div>
+  </div>
+
+  <div class="stats-row" id="statsRow"></div>
+  <div id="jobsList"></div>
+</div>
+
+<!-- LOAD LIST TAB -->
+<div class="screen" id="tab-loadlist">
+  <div class="section-heading">Load List</div>
+  <div class="section-sub">Tap items as you load the trailer</div>
+  <div id="loadListContent"></div>
+</div>
+
+<!-- AVAILABILITY TAB -->
+<div class="screen" id="tab-availability">
+  <div class="section-heading">What's Free?</div>
+  <div class="section-sub">Check which pieces are available on a given date</div>
+  <div class="date-filter">
+    <label>Check date:</label>
+    <input type="date" class="form-input" id="availDate" style="max-width:200px;" oninput="renderAvailability()">
+  </div>
+  <div id="availContent"></div>
+</div>
+
+<!-- CALENDAR TAB -->
+<div class="screen" id="tab-calendar">
+  <div class="cal-header-row">
+    <div class="cal-nav">
+      <button class="cal-nav-btn no-print" onclick="changeMonth(-1)">‹</button>
+      <div class="cal-month-label" id="calMonthLabel"></div>
+      <button class="cal-nav-btn no-print" onclick="changeMonth(1)">›</button>
+    </div>
+    <button class="btn btn-primary no-print" onclick="printCalendar()">🖨 Print Month</button>
+  </div>
+  <div class="cal-legend no-print">
+    <div class="cal-legend-item"><div class="cal-legend-dot" style="background:var(--amber);"></div>Planned</div>
+    <div class="cal-legend-item"><div class="cal-legend-dot" style="background:var(--green);"></div>Staged (active)</div>
+  </div>
+  <div class="cal-grid" id="calGrid"></div>
+</div>
+
+<!-- INVENTORY TAB -->
+<div class="screen" id="tab-inventory">
+  <div class="section-heading">Inventory</div>
+  <div class="section-sub">Your furniture pieces — add or remove anytime</div>
+  <div id="inventoryContent"></div>
+  <button class="btn btn-primary" style="width:100%;margin-top:8px;" onclick="openAddInventory()">+ Add Piece</button>
+</div>
+
+<!-- NEW JOB MODAL -->
+<div class="modal-bg" id="newJobModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('newJobModal')">✕</button>
+    <div class="modal-title" id="modalTitle">New Staging Job</div>
+    <div class="modal-sub">Fill in the details — takes 60 seconds</div>
+    <div class="form-group">
+      <label class="form-label">Client / House nickname</label>
+      <input type="text" class="form-input" id="jobName" placeholder="e.g. Miller house, Oak St listing">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Address</label>
+      <input type="text" class="form-input" id="jobAddress" placeholder="Street address">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Staging date</label>
+        <input type="date" class="form-input" id="jobDate">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Expected destage</label>
+        <input type="date" class="form-input" id="jobDestageDate">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Realtor name</label>
+      <input type="text" class="form-input" id="jobRealtor" placeholder="Who's the realtor?">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Notes (requests, access info, quirks)</label>
+      <input type="text" class="form-input" id="jobNotes" placeholder="Optional">
+    </div>
+    <div style="margin-bottom:8px;font-size:13px;font-weight:600;color:var(--ink-soft);text-transform:uppercase;letter-spacing:0.04em;">Select furniture to bring</div>
+    <div style="font-size:13px;color:var(--ink-faint);margin-bottom:14px;">Red = already in another job on these dates</div>
+    <div id="roomPickers"></div>
+    <div id="conflictWarning" style="display:none;" class="conflict-banner"></div>
+    <button class="btn btn-primary" style="width:100%;margin-top:8px;padding:14px;" onclick="saveJob()">Save Job →</button>
+  </div>
+</div>
+
+<!-- PRINT JOB MODAL -->
+<div class="modal-bg" id="printJobModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('printJobModal')">✕</button>
+    <div class="modal-title">Print Job Sheet</div>
+    <div class="modal-sub">Select a job to print a full load sheet</div>
+    <div id="printJobList"></div>
+  </div>
+</div>
+
+<!-- ADD INVENTORY MODAL -->
+<div class="modal-bg" id="inventoryModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('inventoryModal')">✕</button>
+    <div class="modal-title">Add Furniture Piece</div>
+    <div class="modal-sub">Add an item to your inventory</div>
+    <div class="form-group">
+      <label class="form-label">Item name</label>
+      <input type="text" class="form-input" id="newItemName" placeholder="e.g. Gray sectional sofa">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Room category</label>
+      <select class="form-select" id="newItemRoom">
+        <option value="Living Room">Living Room</option>
+        <option value="Dining Room">Dining Room</option>
+        <option value="Primary Bedroom">Primary Bedroom</option>
+        <option value="Bedroom 2">Bedroom 2</option>
+        <option value="Office / Den">Office / Den</option>
+        <option value="Entryway / Hallway">Entryway / Hallway</option>
+        <option value="Accent / Decor">Accent / Decor</option>
+      </select>
+    </div>
+    <button class="btn btn-primary" style="width:100%;margin-top:8px;padding:14px;" onclick="saveInventoryItem()">Add to Inventory →</button>
+  </div>
+</div>
+
+<!-- HIDDEN PRINT AREA -->
+<div id="printArea" style="display:none;"></div>
+
+<script>
+// ── STATE ──
+let jobs = [], inventory = [], editingJobId = null, checkedItems = {};
+let calYear = new Date().getFullYear();
+let calMonth = new Date().getMonth();
+
+const seedInventory = [
+  { id:'i1', name:'Gray sectional sofa', room:'Living Room' },
+  { id:'i2', name:'White sofa (2-seat)', room:'Living Room' },
+  { id:'i3', name:'Accent chair (navy)', room:'Living Room' },
+  { id:'i4', name:'Coffee table (round)', room:'Living Room' },
+  { id:'i5', name:'TV console', room:'Living Room' },
+  { id:'i6', name:'Floor lamp (arc)', room:'Living Room' },
+  { id:'i7', name:'Dining table (6-seat)', room:'Dining Room' },
+  { id:'i8', name:'Dining table (4-seat)', room:'Dining Room' },
+  { id:'i9', name:'Dining chairs (set of 4)', room:'Dining Room' },
+  { id:'i10', name:'Dining chairs (set of 6)', room:'Dining Room' },
+  { id:'i11', name:'Sideboard / buffet', room:'Dining Room' },
+  { id:'i12', name:'King bed frame', room:'Primary Bedroom' },
+  { id:'i13', name:'Queen bed frame', room:'Primary Bedroom' },
+  { id:'i14', name:'Nightstands (pair)', room:'Primary Bedroom' },
+  { id:'i15', name:'Dresser (white)', room:'Primary Bedroom' },
+  { id:'i16', name:'Queen bed frame #2', room:'Bedroom 2' },
+  { id:'i17', name:'Twin bed frame', room:'Bedroom 2' },
+  { id:'i18', name:'Desk + chair', room:'Office / Den' },
+  { id:'i19', name:'Bookshelf (tall)', room:'Office / Den' },
+  { id:'i20', name:'Console table (entryway)', room:'Entryway / Hallway' },
+  { id:'i21', name:'Mirror (large)', room:'Entryway / Hallway' },
+  { id:'i22', name:'Area rug 8x10', room:'Accent / Decor' },
+  { id:'i23', name:'Area rug 5x7', room:'Accent / Decor' },
+  { id:'i24', name:'Throw pillows (set)', room:'Accent / Decor' },
+  { id:'i25', name:'Table lamps (pair)', room:'Accent / Decor' },
+  { id:'i26', name:'Artwork (large)', room:'Accent / Decor' },
+  { id:'i27', name:'Plants / greenery', room:'Accent / Decor' },
+];
+
+function init() {
+  const sj = localStorage.getItem('dar_jobs');
+  const si = localStorage.getItem('dar_inventory');
+  const sc = localStorage.getItem('dar_checked');
+  const sd = localStorage.getItem('dar_instructions_dismissed');
+  jobs = sj ? JSON.parse(sj) : [];
+  inventory = si ? JSON.parse(si) : JSON.parse(JSON.stringify(seedInventory));
+  checkedItems = sc ? JSON.parse(sc) : {};
+  if (sd === '1') document.getElementById('instructionsCard').style.display = 'none';
+  document.getElementById('availDate').value = today();
+  renderCalendar();
+  render();
+}
+
+function save() {
+  localStorage.setItem('dar_jobs', JSON.stringify(jobs));
+  localStorage.setItem('dar_inventory', JSON.stringify(inventory));
+  localStorage.setItem('dar_checked', JSON.stringify(checkedItems));
+}
+
+function dismissInstructions() {
+  document.getElementById('instructionsCard').style.display = 'none';
+  localStorage.setItem('dar_instructions_dismissed', '1');
+}
+
+function today() { return new Date().toISOString().split('T')[0]; }
+
+function fmtDate(d) {
+  if (!d) return '—';
+  const [y,m,day] = d.split('-');
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return months[parseInt(m)-1] + ' ' + parseInt(day) + ', ' + y;
+}
+
+function fmtShortDate(d) {
+  if (!d) return '—';
+  const [y,m,day] = d.split('-');
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return months[parseInt(m)-1] + ' ' + parseInt(day);
+}
+
+function uid() { return 'j' + Date.now() + Math.random().toString(36).slice(2,6); }
+
+function getConflictingItems(date, destageDate, excludeJobId) {
+  const busy = new Set();
+  jobs.forEach(j => {
+    if (j.id === excludeJobId || j.status === 'destaged') return;
+    const jStart = j.date;
+    const jEnd = j.destageDate || '9999-12-31';
+    const checkEnd = destageDate || date;
+    if (jStart <= checkEnd && date <= jEnd) {
+      (j.furniture || []).forEach(id => busy.add(id));
+    }
+  });
+  return busy;
+}
+
+// ── TABS ──
+function showTab(name, el) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  el.classList.add('active');
+  if (name === 'availability') renderAvailability();
+  if (name === 'loadlist') renderLoadList();
+  if (name === 'inventory') renderInventory();
+  if (name === 'calendar') renderCalendar();
+  if (name === 'jobs') render();
+}
+
+// ── MAIN RENDER ──
+function render() { renderStats(); renderJobs(); }
+
+function renderStats() {
+  const active = jobs.filter(j => j.status === 'staged').length;
+  const upcoming = jobs.filter(j => j.status === 'planned' && j.date >= today()).length;
+  const busyIds = new Set();
+  jobs.filter(j => j.status !== 'destaged').forEach(j => (j.furniture||[]).forEach(id => busyIds.add(id)));
+  const free = inventory.length - busyIds.size;
+  document.getElementById('statsRow').innerHTML = `
+    <div class="stat-card"><div class="stat-num">${upcoming}</div><div class="stat-label">Upcoming</div></div>
+    <div class="stat-card"><div class="stat-num">${active}</div><div class="stat-label">Staged</div></div>
+    <div class="stat-card"><div class="stat-num">${free}</div><div class="stat-label">Pieces free</div></div>
+  `;
+}
+
+function renderJobs() {
+  const list = document.getElementById('jobsList');
+  if (!jobs.length) {
+    list.innerHTML = `<div class="empty"><div class="empty-icon">🛋️</div><div class="empty-text">No jobs yet.<br>Tap <strong>+ New Job</strong> to add one.</div></div>`;
+    return;
+  }
+  const sorted = [...jobs].sort((a,b) => (a.date||'') < (b.date||'') ? -1 : 1);
+  list.innerHTML = sorted.map(j => renderJobCard(j)).join('');
+}
+
+function renderJobCard(j) {
+  const furnitureTags = (j.furniture || []).map(id => {
+    const item = inventory.find(i => i.id === id);
+    return item ? `<span class="furniture-tag">${item.name}</span>` : '';
+  }).join('');
+  const badgeMap = { planned: 'badge-active', staged: 'badge-staged', destaged: 'badge-destaged' };
+  const labelMap = { planned: 'Planned', staged: 'Staged', destaged: 'Destaged' };
+  const statusBtns = j.status === 'planned'
+    ? `<button class="btn btn-green" onclick="setStatus('${j.id}','staged')">Mark Staged</button>`
+    : j.status === 'staged'
+    ? `<button class="btn" onclick="setStatus('${j.id}','destaged')">Mark Destaged</button>`
+    : '';
+  return `
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">${j.name}</div>
+          <div class="card-address">${j.address || ''}</div>
+        </div>
+        <span class="badge ${badgeMap[j.status]}">${labelMap[j.status]}</span>
+      </div>
+      <div class="meta-row">
+        <span class="meta-chip">📅 Stage: ${fmtShortDate(j.date)}</span>
+        ${j.destageDate ? `<span class="meta-chip">🔄 Destage: ${fmtShortDate(j.destageDate)}</span>` : ''}
+        ${j.realtor ? `<span class="meta-chip">👤 ${j.realtor}</span>` : ''}
+      </div>
+      ${j.notes ? `<div style="font-size:13px;color:var(--ink-soft);margin-bottom:10px;font-style:italic;">${j.notes}</div>` : ''}
+      ${furnitureTags ? `<div class="furniture-summary"><div class="furniture-summary-title">Furniture (${(j.furniture||[]).length} pieces)</div><div class="furniture-list">${furnitureTags}</div></div>` : ''}
+      <div class="btn-row">
+        ${statusBtns}
+        <button class="btn" onclick="editJob('${j.id}')">Edit</button>
+        <button class="btn btn-amber" onclick="printJobSheet('${j.id}')">🖨 Print</button>
+        <button class="btn btn-danger" onclick="deleteJob('${j.id}')">Delete</button>
+      </div>
+    </div>
+  `;
+}
+
+// ── PRINT JOB SHEET ──
+function printJobSheet(id) {
+  const j = jobs.find(j => j.id === id);
+  if (!j) return;
+
+  const byRoom = {};
+  (j.furniture || []).forEach(fid => {
+    const item = inventory.find(i => i.id === fid);
+    if (!item) return;
+    if (!byRoom[item.room]) byRoom[item.room] = [];
+    byRoom[item.room].push(item.name);
+  });
+
+  const roomSections = Object.keys(byRoom).map(room => `
+    <div style="margin-bottom:18px;">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#666;border-bottom:1px solid #ccc;padding-bottom:4px;margin-bottom:8px;">${room}</div>
+      ${byRoom[room].map(name => `
+        <div style="display:flex;align-items:center;gap:10px;padding:5px 0;border-bottom:1px solid #eee;font-size:14px;">
+          <div style="width:18px;height:18px;border:2px solid #888;border-radius:3px;flex-shrink:0;"></div>
+          ${name}
+        </div>
+      `).join('')}
+    </div>
+  `).join('');
+
+  const printContent = `
+    <div style="font-family:Georgia,serif;max-width:700px;margin:0 auto;padding:24px;">
+      <div style="border-bottom:3px solid #1c1a17;padding-bottom:14px;margin-bottom:20px;">
+        <div style="font-size:28px;font-weight:bold;margin-bottom:4px;">${j.name}</div>
+        <div style="font-size:14px;color:#555;">${j.address || ''}</div>
+        <div style="display:flex;gap:24px;margin-top:10px;font-size:13px;color:#444;flex-wrap:wrap;">
+          <span><strong>Staging date:</strong> ${fmtDate(j.date)}</span>
+          ${j.destageDate ? `<span><strong>Destage:</strong> ${fmtDate(j.destageDate)}</span>` : ''}
+          ${j.realtor ? `<span><strong>Realtor:</strong> ${j.realtor}</span>` : ''}
+        </div>
+        ${j.notes ? `<div style="margin-top:8px;font-size:13px;color:#555;font-style:italic;">Notes: ${j.notes}</div>` : ''}
+      </div>
+      <div style="font-size:16px;font-weight:700;margin-bottom:14px;">Furniture Load List — ${(j.furniture||[]).length} pieces total</div>
+      ${roomSections || '<p style="color:#999;">No furniture assigned to this job.</p>'}
+      <div style="margin-top:28px;border-top:1px solid #ddd;padding-top:14px;font-size:12px;color:#999;">
+        Printed from Dar's Staging Planner · ${new Date().toLocaleDateString()}
+      </div>
+    </div>
+  `;
+
+  const win = window.open('', '_blank');
+  win.document.write(`<!DOCTYPE html><html><head><title>Load Sheet — ${j.name}</title>
+    <style>@media print{body{margin:0;}}</style>
+    </head><body>${printContent}
+    <script>window.onload=function(){window.print();}<\/script></body></html>`);
+  win.document.close();
+}
+
+// ── LOAD LIST ──
+function renderLoadList() {
+  const el = document.getElementById('loadListContent');
+  const upcoming = jobs.filter(j => j.status === 'planned' && j.date >= today()).sort((a,b) => a.date < b.date ? -1 : 1);
+  if (!upcoming.length) {
+    el.innerHTML = `<div class="empty"><div class="empty-icon">📋</div><div class="empty-text">No upcoming jobs yet.<br>Add a job to generate a load list.</div></div>`;
+    return;
+  }
+  const j = upcoming[0];
+  const byRoom = {};
+  const allItems = [];
+  (j.furniture || []).forEach(fid => {
+    const item = inventory.find(i => i.id === fid);
+    if (!item) return;
+    if (!byRoom[item.room]) byRoom[item.room] = [];
+    byRoom[item.room].push(item);
+    allItems.push(item);
+  });
+
+  if (!allItems.length) {
+    el.innerHTML = `<div class="conflict-banner">Next job "${j.name}" has no furniture assigned. <button class="btn" style="margin-top:8px;" onclick="editJob('${j.id}')">Add furniture →</button></div>`;
+    return;
+  }
+
+  const jobKey = j.id;
+  if (!checkedItems[jobKey]) checkedItems[jobKey] = {};
+  const checkedCount = Object.values(checkedItems[jobKey]).filter(Boolean).length;
+
+  let html = `
+    <div class="load-list-card">
+      <div class="load-list-title">${j.name}</div>
+      <div class="load-list-date">Stage: ${fmtDate(j.date)} · ${checkedCount}/${allItems.length} loaded</div>
+      ${Object.keys(byRoom).map(room => `
+        <div class="load-section">
+          <div class="load-section-title">${room}</div>
+          ${byRoom[room].map(item => `
+            <div class="load-item" onclick="toggleCheck('${jobKey}','${item.id}')">
+              <div class="load-checkbox ${checkedItems[jobKey][item.id] ? 'checked' : ''}"></div>
+              <span style="${checkedItems[jobKey][item.id] ? 'text-decoration:line-through;opacity:0.5;' : ''}">${item.name}</span>
+            </div>
+          `).join('')}
+        </div>
+      `).join('')}
+    </div>
+    <button class="btn" style="width:100%;margin-bottom:8px;" onclick="clearChecks('${jobKey}')">Reset checkboxes</button>
+    <button class="btn btn-amber" style="width:100%;margin-bottom:14px;" onclick="printJobSheet('${jobKey}')">🖨 Print this load list</button>
+  `;
+
+  if (upcoming.length > 1) {
+    html += `<div style="margin-top:8px;font-size:13px;font-weight:600;color:var(--ink-soft);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:10px;">Also coming up</div>`;
+    upcoming.slice(1).forEach(j2 => {
+      html += `<div class="card" style="opacity:0.7;"><div class="card-title" style="font-size:16px;">${j2.name}</div><div class="card-address" style="margin-top:4px;">${fmtShortDate(j2.date)} · ${(j2.furniture||[]).length} pieces</div></div>`;
+    });
+  }
+  el.innerHTML = html;
+}
+
+function toggleCheck(jobKey, itemId) {
+  if (!checkedItems[jobKey]) checkedItems[jobKey] = {};
+  checkedItems[jobKey][itemId] = !checkedItems[jobKey][itemId];
+  save();
+  renderLoadList();
+}
+
+function clearChecks(jobKey) {
+  checkedItems[jobKey] = {};
+  save();
+  renderLoadList();
+}
+
+// ── AVAILABILITY ──
+function renderAvailability() {
+  const date = document.getElementById('availDate').value || today();
+  const busyIds = getConflictingItems(date, date, null);
+  const el = document.getElementById('availContent');
+  const byRoom = {};
+  inventory.forEach(item => {
+    if (!byRoom[item.room]) byRoom[item.room] = [];
+    byRoom[item.room].push({ ...item, busy: busyIds.has(item.id) });
+  });
+  const freeCount = inventory.filter(i => !busyIds.has(i.id)).length;
+  const busyCount = busyIds.size;
+  let html = `
+    <div style="display:flex;gap:10px;margin-bottom:16px;">
+      <div class="stat-card" style="flex:1;"><div class="stat-num" style="color:var(--green);">${freeCount}</div><div class="stat-label">Available</div></div>
+      <div class="stat-card" style="flex:1;"><div class="stat-num" style="color:var(--amber);">${busyCount}</div><div class="stat-label">In a job</div></div>
+    </div>
+  `;
+  Object.keys(byRoom).forEach(room => {
+    html += `<div style="margin-bottom:16px;"><div style="font-size:13px;font-weight:600;color:var(--ink-soft);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:8px;">${room}</div><div class="avail-grid">`;
+    byRoom[room].forEach(item => {
+      let jobName = '';
+      if (item.busy) {
+        const j = jobs.find(j => j.status !== 'destaged' && (j.furniture||[]).includes(item.id));
+        if (j) jobName = j.name;
+      }
+      html += `<div class="avail-card ${item.busy ? 'busy' : 'free'}">
+        <div class="avail-item-name">${item.name}</div>
+        ${item.busy
+          ? `<div class="avail-item-status">In use</div><div class="avail-item-job">${jobName}</div>`
+          : `<div class="avail-item-status" style="color:var(--green);">✓ Free</div>`}
+      </div>`;
+    });
+    html += `</div></div>`;
+  });
+  el.innerHTML = html;
+}
+
+// ── CALENDAR ──
+function renderCalendar() {
+  const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('calMonthLabel').textContent = monthNames[calMonth] + ' ' + calYear;
+
+  const firstDay = new Date(calYear, calMonth, 1).getDay();
+  const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+  const todayStr = today();
+
+  // Build day headers
+  const dayHeaders = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d =>
+    `<div class="cal-day-header">${d}</div>`
+  ).join('');
+
+  // Build cells
+  let cells = '';
+  // Empty cells before month starts
+  for (let i = 0; i < firstDay; i++) {
+    cells += `<div class="cal-cell other-month"></div>`;
+  }
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dateStr = calYear + '-' + String(calMonth+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+    const isToday = dateStr === todayStr;
+
+    // Find jobs active on this day
+    const activeJobs = jobs.filter(j => {
+      if (j.status === 'destaged') return false;
+      const jEnd = j.destageDate || j.date;
+      return j.date <= dateStr && jEnd >= dateStr;
+    });
+
+    const dots = activeJobs.map(j => {
+      const cls = j.status === 'staged' ? 'cal-dot-staged' : 'cal-dot-planned';
+      return `<div class="cal-job-dot ${cls}" title="${j.name}">${j.name}</div>`;
+    }).join('');
+
+    cells += `<div class="cal-cell ${isToday ? 'today' : ''}">
+      <div class="cal-date-num">${d}</div>
+      ${dots}
+    </div>`;
+  }
+
+  // Fill remaining cells
+  const totalCells = firstDay + daysInMonth;
+  const remainder = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
+  for (let i = 0; i < remainder; i++) {
+    cells += `<div class="cal-cell other-month"></div>`;
+  }
+
+  document.getElementById('calGrid').innerHTML = dayHeaders + cells;
+}
+
+function changeMonth(dir) {
+  calMonth += dir;
+  if (calMonth > 11) { calMonth = 0; calYear++; }
+  if (calMonth < 0) { calMonth = 11; calYear--; }
+  renderCalendar();
+}
+
+function printCalendar() {
+  const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const monthLabel = monthNames[calMonth] + ' ' + calYear;
+  const firstDay = new Date(calYear, calMonth, 1).getDay();
+  const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+  const todayStr = today();
+
+  const dayHeaders = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d =>
+    `<div style="text-align:center;font-size:10px;font-weight:700;text-transform:uppercase;color:#888;padding:6px 2px;">${d}</div>`
+  ).join('');
+
+  let cells = '';
+  for (let i = 0; i < firstDay; i++) {
+    cells += `<div style="background:#f5f5f5;border:1px solid #ddd;border-radius:4px;min-height:72px;"></div>`;
+  }
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dateStr = calYear + '-' + String(calMonth+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+    const isToday = dateStr === todayStr;
+    const activeJobs = jobs.filter(j => {
+      if (j.status === 'destaged') return false;
+      const jEnd = j.destageDate || j.date;
+      return j.date <= dateStr && jEnd >= dateStr;
+    });
+    const dots = activeJobs.map(j => {
+      const bg = j.status === 'staged' ? '#2d6a4f' : '#d47c1a';
+      return `<div style="font-size:9px;background:${bg};color:white;padding:2px 4px;border-radius:2px;margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${j.name}</div>`;
+    }).join('');
+    cells += `<div style="background:${isToday?'#fff8ed':'white'};border:${isToday?'2px solid #d47c1a':'1px solid #ddd'};border-radius:4px;min-height:72px;padding:5px 6px;">
+      <div style="font-size:11px;font-weight:600;color:#666;margin-bottom:3px;">${d}</div>
+      ${dots}
+    </div>`;
+  }
+  const totalCells = firstDay + daysInMonth;
+  const remainder = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
+  for (let i = 0; i < remainder; i++) {
+    cells += `<div style="background:#f5f5f5;border:1px solid #ddd;border-radius:4px;min-height:72px;"></div>`;
+  }
+
+  const printContent = `
+    <div style="font-family:Georgia,serif;max-width:900px;margin:0 auto;padding:20px;">
+      <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:16px;border-bottom:3px solid #1c1a17;padding-bottom:12px;">
+        <div style="font-size:28px;font-weight:bold;">${monthLabel}</div>
+        <div style="font-size:13px;color:#888;">Dar's Staging Planner</div>
+      </div>
+      <div style="display:flex;gap:16px;margin-bottom:12px;font-size:12px;">
+        <span style="display:flex;align-items:center;gap:5px;"><span style="width:12px;height:12px;background:#d47c1a;border-radius:2px;display:inline-block;"></span> Planned</span>
+        <span style="display:flex;align-items:center;gap:5px;"><span style="width:12px;height:12px;background:#2d6a4f;border-radius:2px;display:inline-block;"></span> Staged (active)</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;">
+        ${dayHeaders}${cells}
+      </div>
+      <div style="margin-top:20px;font-size:11px;color:#aaa;">Printed ${new Date().toLocaleDateString()}</div>
+    </div>
+  `;
+
+  const win = window.open('', '_blank');
+  win.document.write(`<!DOCTYPE html><html><head><title>Calendar — ${monthLabel}</title>
+    <style>*{box-sizing:border-box;}@media print{body{margin:0;}}</style>
+    </head><body>${printContent}
+    <script>window.onload=function(){window.print();}<\/script></body></html>`);
+  win.document.close();
+}
+
+// ── INVENTORY ──
+function renderInventory() {
+  const byRoom = {};
+  inventory.forEach(item => {
+    if (!byRoom[item.room]) byRoom[item.room] = [];
+    byRoom[item.room].push(item);
+  });
+  document.getElementById('inventoryContent').innerHTML = Object.keys(byRoom).map(room => `
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;color:var(--ink-soft);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:10px;">${room}</div>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        ${byRoom[room].map(item => `
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);">
+            <span style="font-size:15px;">${item.name}</span>
+            <button onclick="removeInventoryItem('${item.id}')" style="background:none;border:none;cursor:pointer;color:var(--ink-faint);font-size:18px;padding:0 4px;">✕</button>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── JOB MODAL ──
+function openNewJob() {
+  editingJobId = null;
+  document.getElementById('modalTitle').textContent = 'New Staging Job';
+  ['jobName','jobAddress','jobDate','jobDestageDate','jobRealtor','jobNotes'].forEach(id => document.getElementById(id).value = '');
+  buildRoomPickers([]);
+  document.getElementById('conflictWarning').style.display = 'none';
+  document.getElementById('newJobModal').classList.add('open');
+}
+
+function editJob(id) {
+  const j = jobs.find(j => j.id === id);
+  if (!j) return;
+  editingJobId = id;
+  document.getElementById('modalTitle').textContent = 'Edit Job';
+  document.getElementById('jobName').value = j.name;
+  document.getElementById('jobAddress').value = j.address || '';
+  document.getElementById('jobDate').value = j.date || '';
+  document.getElementById('jobDestageDate').value = j.destageDate || '';
+  document.getElementById('jobRealtor').value = j.realtor || '';
+  document.getElementById('jobNotes').value = j.notes || '';
+  buildRoomPickers(j.furniture || []);
+  document.getElementById('newJobModal').classList.add('open');
+}
+
+function buildRoomPickers(selected) {
+  const date = document.getElementById('jobDate').value;
+  const destageDate = document.getElementById('jobDestageDate').value;
+  const busyIds = date ? getConflictingItems(date, destageDate, editingJobId) : new Set();
+  const byRoom = {};
+  inventory.forEach(item => {
+    if (!byRoom[item.room]) byRoom[item.room] = [];
+    byRoom[item.room].push(item);
+  });
+  document.getElementById('roomPickers').innerHTML = Object.keys(byRoom).map(room => `
+    <div class="room-section">
+      <div class="room-label">${room}</div>
+      <div class="furniture-picker">
+        ${byRoom[room].map(item => {
+          const isConflict = busyIds.has(item.id);
+          const isSel = selected.includes(item.id);
+          return `<div class="furn-pill ${isSel?'selected':''} ${isConflict&&!isSel?'conflict':''}"
+            onclick="toggleFurniture('${item.id}',this)" data-id="${item.id}">
+            ${item.name}${isConflict&&!isSel?' ⚠':''}
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleFurniture(id, el) { el.classList.toggle('selected'); checkConflicts(); }
+
+function checkConflicts() {
+  const date = document.getElementById('jobDate').value;
+  const destageDate = document.getElementById('jobDestageDate').value;
+  if (!date) return;
+  const busyIds = getConflictingItems(date, destageDate, editingJobId);
+  const conflicts = getSelectedFurniture().filter(id => busyIds.has(id));
+  const warn = document.getElementById('conflictWarning');
+  if (conflicts.length) {
+    const names = conflicts.map(id => inventory.find(i => i.id === id)?.name).filter(Boolean);
+    warn.innerHTML = `<strong>⚠ Conflict:</strong> ${names.join(', ')} ${names.length===1?'is':'are'} already in another job on these dates.`;
+    warn.style.display = 'block';
+  } else { warn.style.display = 'none'; }
+}
+
+function getSelectedFurniture() {
+  return [...document.querySelectorAll('.furn-pill.selected')].map(el => el.dataset.id);
+}
+
+function saveJob() {
+  const name = document.getElementById('jobName').value.trim();
+  if (!name) { alert('Please enter a job name.'); return; }
+  const job = {
+    id: editingJobId || uid(),
+    name,
+    address: document.getElementById('jobAddress').value.trim(),
+    date: document.getElementById('jobDate').value,
+    destageDate: document.getElementById('jobDestageDate').value,
+    realtor: document.getElementById('jobRealtor').value.trim(),
+    notes: document.getElementById('jobNotes').value.trim(),
+    furniture: getSelectedFurniture(),
+    status: editingJobId ? jobs.find(j=>j.id===editingJobId).status : 'planned'
+  };
+  jobs = editingJobId ? jobs.map(j => j.id === editingJobId ? job : j) : [...jobs, job];
+  save(); closeModal('newJobModal'); render(); renderCalendar();
+}
+
+function setStatus(id, status) {
+  jobs = jobs.map(j => j.id === id ? {...j, status} : j);
+  save(); render(); renderCalendar();
+}
+
+function deleteJob(id) {
+  if (!confirm('Delete this job?')) return;
+  jobs = jobs.filter(j => j.id !== id);
+  save(); render(); renderCalendar();
+}
+
+function openAddInventory() {
+  document.getElementById('newItemName').value = '';
+  document.getElementById('inventoryModal').classList.add('open');
+}
+
+function saveInventoryItem() {
+  const name = document.getElementById('newItemName').value.trim();
+  if (!name) { alert('Enter an item name.'); return; }
+  inventory.push({ id:'i'+Date.now(), name, room: document.getElementById('newItemRoom').value });
+  save(); closeModal('inventoryModal'); renderInventory();
+}
+
+function removeInventoryItem(id) {
+  if (!confirm('Remove this item from inventory?')) return;
+  inventory = inventory.filter(i => i.id !== id);
+  save(); renderInventory();
+}
+
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+document.addEventListener('change', e => {
+  if (e.target.id === 'jobDate' || e.target.id === 'jobDestageDate') {
+    buildRoomPickers(getSelectedFurniture()); checkConflicts();
+  }
+});
+
+document.querySelectorAll('.modal-bg').forEach(bg => {
+  bg.addEventListener('click', e => { if (e.target === bg) bg.classList.remove('open'); });
+});
+
+init();
+</script>
+</body>
+</html>
