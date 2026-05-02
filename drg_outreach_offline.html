@@ -187,6 +187,11 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--i
     <div class="nav-item" onclick="showScreen('templates',this)"><span class="nav-icon">✉</span> Email Templates</div>
   </div>
   <div class="sidebar-stats" id="sidebarStats"></div>
+<div style="padding:12px 14px;border-top:1px solid var(--border);display:flex;gap:8px;">
+  <button class="btn btn-sm" style="flex:1;font-size:12px;" onclick="exportContacts()" title="Save all contacts to a file">⬇ Export</button>
+  <button class="btn btn-sm" style="flex:1;font-size:12px;" onclick="document.getElementById('importBackupFile').click()" title="Restore contacts from a file">⬆ Import</button>
+  <input type="file" id="importBackupFile" accept=".json" style="display:none;" onchange="importContacts(event)">
+</div>
 </div>
 
 <!-- MAIN -->
@@ -549,6 +554,57 @@ LinkedIn: linkedin.com/in/gabrielgruionu`
 };
 
 // ── INIT ──
+// ── EXPORT / IMPORT ──
+function exportContacts() {
+  if (!contacts.length) { alert('No contacts to export yet.'); return; }
+  const data = {
+    version: 1,
+    exportDate: new Date().toISOString(),
+    contactCount: contacts.length,
+    contacts: contacts
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const date = new Date().toISOString().split('T')[0];
+  a.href = url;
+  a.download = 'drg_outreach_backup_' + date + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importContacts(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    try {
+      const data = JSON.parse(ev.target.result);
+      const imported = Array.isArray(data) ? data : (data.contacts || []);
+      if (!imported.length) { alert('No contacts found in this file.'); return; }
+      const confirmed = confirm(
+        'This will MERGE ' + imported.length + ' contacts from the backup with your existing ' + contacts.length + ' contacts.\n\n' +
+        'Duplicates (same ID) will be updated with the backup version.\n\nContinue?'
+      );
+      if (!confirmed) return;
+      const existingIds = new Map(contacts.map(c => [c.id, c]));
+      let added = 0, updated = 0;
+      imported.forEach(c => {
+        if (existingIds.has(c.id)) { updated++; } else { added++; }
+        existingIds.set(c.id, c);
+      });
+      contacts = Array.from(existingIds.values());
+      save();
+      renderAll();
+      alert('Import complete\n' + added + ' new contacts added\n' + updated + ' existing contacts updated\nTotal: ' + contacts.length + ' contacts');
+    } catch(err) {
+      alert('Error reading file: ' + err.message + '\n\nMake sure you are importing a backup exported from this tool.');
+    }
+    e.target.value = '';
+  };
+  reader.readAsText(file);
+}
+
 function init() {
   const saved = localStorage.getItem('drg_contacts');
   contacts = saved ? JSON.parse(saved) : [];
